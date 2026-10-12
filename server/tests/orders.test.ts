@@ -75,7 +75,7 @@ test('价格快照：改价后历史订单金额不变，新单用新价', async
   const got = await getJson(`${s.base}/api/orders/${o1.body.order_no}`);
   assert.equal(got.total_cents, 3600); // 历史不变
 
-  const o2 = await s.order({ table_no: '2', items: [{ dish_id: d.id, qty: 1 }] });
+  const o2 = await s.order({ table_no: '2b', items: [{ dish_id: d.id, qty: 1 }] });
   assert.equal(o2.body.total_cents, 9900); // 新单新价
 });
 
@@ -112,7 +112,7 @@ test('并发30单：订单号唯一且连续、金额零误差', async () => {
   const results = await Promise.all(
     Array.from({ length: 30 }, (_, i) =>
       s.order({
-        table_no: String(10 + (i % 5)),
+        table_no: String(100 + i),
         items: [
           { dish_id: dA.id, qty: 2 },
           { dish_id: dB.id, qty: 3 },
@@ -134,7 +134,7 @@ test('并发30单：订单号唯一且连续、金额零误差', async () => {
 test('日报：收入=非取消订单之和，取消单独计数', async () => {
   const { body: d } = await s.createDish('日报菜', '10');
   await s.order({ table_no: '6', items: [{ dish_id: d.id, qty: 2 }] });
-  const o2 = await s.order({ table_no: '6', items: [{ dish_id: d.id, qty: 1 }] });
+  const o2 = await s.order({ table_no: '6b', items: [{ dish_id: d.id, qty: 1 }] });
   await fetch(`${s.base}/api/orders/${o2.body.order_no}/cancel`, {
     method: 'POST',
     headers: s.admin,

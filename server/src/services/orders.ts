@@ -4,7 +4,7 @@ import { nextOrderNo } from '../utils/orderNo.js';
 import { klDate, klDayRangeUtc } from '../utils/time.js';
 import { formatRM } from '../utils/money.js';
 
-export const PAY_METHODS = ['tng', 'cash', 'alipay', 'wechat', 'card'] as const;
+export const PAY_METHODS = ['tng', 'cash', 'alipay', 'wechat', 'card', 'member'] as const;
 export type PayMethod = (typeof PAY_METHODS)[number];
 export const PAY_LABELS: Record<string, string> = {
   tng: 'TnG',
@@ -12,6 +12,7 @@ export const PAY_LABELS: Record<string, string> = {
   alipay: '支付宝',
   wechat: '微信',
   card: '银行卡',
+  member: '会员卡',
 };
 
 export interface CreateOrderInput {
@@ -45,6 +46,8 @@ interface OrderRow {
   payment_method: string;
   paid_at: string | null;
   source: string;
+  member_card_no: string | null;
+  ip: string;
   note: string;
   created_at: string;
   confirmed_at: string | null;
@@ -56,11 +59,13 @@ interface OrderRow {
 }
 
 export interface OrderItemDTO {
+  id: number;
   dish_id: number;
   dish_name: string;
   qty: number;
   unit_price_cents: number;
   subtotal_cents: number;
+  served: boolean;
 }
 
 export interface OrderFullDTO {
@@ -73,6 +78,7 @@ export interface OrderFullDTO {
   discount_rm: string;
   payment_method: string;
   paid: boolean;
+  member_card_no: string;
   source: string;
   note: string;
   reason: string;
@@ -83,12 +89,14 @@ export interface OrderFullDTO {
 }
 
 function loadItems(db: DB, orderId: number): OrderItemDTO[] {
-  return db
+  const rows = db
     .prepare(
-      `SELECT dish_id, dish_name, qty, unit_price_cents, subtotal_cents
+      `SELECT id, dish_id, dish_name, qty, unit_price_cents, subtotal_cents,
+              (served_at IS NOT NULL) AS served
        FROM order_items WHERE order_id = ? ORDER BY id`
     )
-    .all(orderId) as OrderItemDTO[];
+    .all(orderId) as Array<OrderItemDTO & { served: number | boolean }>;
+  return rows.map((r) => ({ ...r, served: !!r.served }));
 }
 
 function toFullDTO(row: OrderRow, items: OrderItemDTO[]): OrderFullDTO {
@@ -102,6 +110,7 @@ function toFullDTO(row: OrderRow, items: OrderItemDTO[]): OrderFullDTO {
     discount_rm: formatRM(row.discount_cents),
     payment_method: row.payment_method,
     paid: !!row.paid_at,
+    member_card_no: (row as { member_card_no?: string }).member_card_no ?? '',
     source: row.source,
     note: row.note,
     reason: row.cancel_reason,
@@ -218,11 +227,53 @@ function insertLines(db: DB, orderId: number, lines: BuiltLine[]): void {
 /**
  * 顾客下单（幂等）—— 财务红线同前：单事务/服务端计价/订单号原子自增
  */
-export function createOrder(db: DB, input: CreateOrderInput): OrderFullDTO & { duplicate: boolean } {
+export function createOrder(
+  db: DB,
+  input: CreateOrderInput,
+  ip = ''
+): OrderFullDTO & { duplicate: boolean } {
   const table = String(input.table_no ?? '').trim();
   if (!table || table.length > 20) throw new HttpError(400, '桌号缺失或超长');
   const note = String(input.note ?? '').slice(0, 200);
   const clientId = input.client_id ? String(input.client_id).slice(0, 64) : null;
+
+  /* ===== 反滥用五层（调研结论#3，10-12深夜版） ===== */
+  // 第0层 幂等前置：网络重试必须拿回原单，绝不能吃429（财务红线优先于防滥用）
+  if (clientId) {
+    const existed = db
+      .prepare('SELECT * FROM orders WHERE client_id = ?')
+      .get(clientId) as OrderRow | undefined;
+    if (existed) return { ...toFullDTO(existed, loadItems(db, existed.id)), duplicate: true };
+  }
+  // 第1层 蜜罐：正常用户永远看不见这个字段，机器人自动填充即拒绝
+  if (String((input as Record<string, unknown>).hp ?? '').length > 0) {
+    throw new HttpError(400, '请求异常');
+  }
+  // 第2层 后厨积压熔断：待接单堆到阈值先拒新单，防洪水单淹没后厨
+  const backlog = (
+    db.prepare(`SELECT COUNT(*) AS n FROM orders WHERE status = 'pending'`).get() as { n: number }
+  ).n;
+  if (backlog >= 60) throw new HttpError(503, '后厨繁忙，请稍后再试');
+  // 第3层 桌位冷却30秒：机器速度的洪水单被拦，人类加菜节奏（分钟级）不受影响
+  const cooldown = (
+    db
+      .prepare(
+        `SELECT COUNT(*) AS n FROM orders WHERE table_no = ? AND created_at > datetime('now', '-30 seconds')`
+      )
+      .get(table) as { n: number }
+  ).n;
+  if (cooldown > 0) throw new HttpError(429, '该桌刚刚已下单，请稍等片刻再追加');
+  // 第4层 单IP每日上限50单（吉隆坡时区计日）
+  if (ip) {
+    const { start } = klDayRangeUtc(klDate());
+    const ipCount = (
+      db
+        .prepare(`SELECT COUNT(*) AS n FROM orders WHERE ip = ? AND created_at >= ?`)
+        .get(ip, start) as { n: number }
+    ).n;
+    if (ipCount >= 50) throw new HttpError(429, '今日下单次数已达上限');
+  }
+  // 第5层 express限流（app.ts 20单/分/IP）+ Cloudflare代理层防DDoS（已开）
 
   const tx = db.transaction((): { row: OrderRow; items: OrderItemDTO[]; duplicate: boolean } => {
     if (clientId) {
@@ -232,16 +283,17 @@ export function createOrder(db: DB, input: CreateOrderInput): OrderFullDTO & { d
       if (existed) return { row: existed, items: loadItems(db, existed.id), duplicate: true };
     }
     const lines = buildLines(db, input.items, {});
+    if (lines.length > 20) throw new HttpError(400, '单笔订单菜品数超出上限');
     const total = lines.reduce((s, l) => s + l.subtotal_cents, 0);
     if (total > 100_000_00) throw new HttpError(400, '单笔订单金额超出上限');
 
     const orderNo = nextOrderNo(db);
     const info = db
       .prepare(
-        `INSERT INTO orders(order_no, client_id, table_no, status, total_cents, note)
-         VALUES(?, ?, ?, 'pending', ?, ?)`
+        `INSERT INTO orders(order_no, client_id, table_no, status, total_cents, note, ip)
+         VALUES(?, ?, ?, 'pending', ?, ?, ?)`
       )
-      .run(orderNo, clientId, table, total, note);
+      .run(orderNo, clientId, table, total, note, ip);
     insertLines(db, Number(info.lastInsertRowid), lines);
     return {
       row: db.prepare('SELECT * FROM orders WHERE id = ?').get(info.lastInsertRowid) as OrderRow,
@@ -347,13 +399,89 @@ export function editOrder(db: DB, orderNo: string, patch: EditOrderInput): Order
 }
 
 /** 一键标记收款/撤销收款 */
-export function payOrder(db: DB, orderNo: string, method: unknown): OrderFullDTO {
+export function payOrder(db: DB, orderNo: string, method: unknown, cardNo?: unknown): OrderFullDTO {
   const row = findByOrderNo(db, orderNo);
   if (!row) throw new HttpError(404, `订单不存在: ${orderNo}`);
-  if (row.status === 'cancelled' || row.status === 'voided') {
-    throw new HttpError(409, '已取消/已作废的订单不能收款');
+  if (row.status === 'cancelled' || row.status === 'voided' || row.status === 'rejected') {
+    throw new HttpError(409, '已取消/已拒绝/已作废的订单不能收款');
   }
   const pay = parsePayMethod(method);
+
+  // 撤销收款：永远放行（会员单撤销=原路退款，全程流水）
+  if (pay === '') {
+    if (row.payment_method === 'member' && row.member_card_no) {
+      const card = row.member_card_no;
+      const tx = db.transaction(() => {
+        const m = db.prepare('SELECT * FROM members WHERE card_no = ?').get(card) as
+          | { id: number; balance_cents: number }
+          | undefined;
+        if (!m) throw new HttpError(400, `会员卡不存在，无法退款: ${card}`);
+        db.prepare('UPDATE members SET balance_cents = balance_cents + ? WHERE id = ?').run(
+          row.total_cents,
+          m.id
+        );
+        const after = (
+          db.prepare('SELECT balance_cents FROM members WHERE id = ?').get(m.id) as { balance_cents: number }
+        ).balance_cents;
+        if (after !== m.balance_cents + row.total_cents) throw new HttpError(500, '退款校验失败，已回滚');
+        db.prepare(
+          `INSERT INTO member_logs(card_no, action, amount_cents, balance_after, order_no, detail)
+           VALUES(?, 'refund', ?, ?, ?, '撤销收款退款')`
+        ).run(card, row.total_cents, after, orderNo);
+      });
+      tx();
+      db.prepare(`UPDATE orders SET payment_method='', member_card_no=NULL, paid_at=NULL WHERE id=?`).run(row.id);
+      logAction(db, orderNo, 'unpay', `会员卡 ${card} 退款 ${formatRM(row.total_cents)}`);
+      return getOrderFull(db, orderNo);
+    }
+    db.prepare(`UPDATE orders SET payment_method='', member_card_no=NULL, paid_at=NULL WHERE id=?`).run(row.id);
+    logAction(db, orderNo, 'pay', '撤销收款标记');
+    return getOrderFull(db, orderNo);
+  }
+
+  // 幂等红线：已收款的单不允许重复收款动作（会员卡尤其不能二次扣款）
+  if (row.paid_at) return getOrderFull(db, orderNo);
+
+  if (pay === 'member') {
+    const card = String(cardNo ?? '').trim();
+    if (!card || card.length < 2 || card.length > 32) throw new HttpError(400, '请填写会员卡号');
+    const tx = db.transaction(() => {
+      const m = db.prepare('SELECT * FROM members WHERE card_no = ?').get(card) as
+        | { id: number; balance_cents: number; is_active: number; name: string }
+        | undefined;
+      if (!m) throw new HttpError(400, `会员卡不存在: ${card}`);
+      if (!m.is_active) throw new HttpError(400, '该会员卡已停用');
+      if (m.balance_cents < row.total_cents) {
+        throw new HttpError(
+          400,
+          `余额不足：卡内 ${formatRM(m.balance_cents)}，本单需 ${formatRM(row.total_cents)}`
+        );
+      }
+      db.prepare(`UPDATE members SET balance_cents = balance_cents - ? WHERE id = ?`).run(
+        row.total_cents,
+        m.id
+      );
+      // 二次验证：扣完重读，余额必须等于 预期值，且不得为负
+      const after = db
+        .prepare('SELECT balance_cents FROM members WHERE id = ?')
+        .get(m.id) as { balance_cents: number };
+      const expected = m.balance_cents - row.total_cents;
+      if (after.balance_cents !== expected || after.balance_cents < 0) {
+        throw new HttpError(500, '扣款校验失败，已回滚'); // 事务内抛出=自动回滚，钱不会错
+      }
+      db.prepare(
+        `INSERT INTO member_logs(card_no, action, amount_cents, balance_after, order_no, detail)
+         VALUES(?, 'consume', ?, ?, ?, ?)`
+      ).run(card, -row.total_cents, after.balance_cents, orderNo, `消费 ${PAY_LABELS.member}`);
+      db.prepare(
+        `UPDATE orders SET payment_method='member', member_card_no=?, paid_at=? WHERE id=?`
+      ).run(card, new Date().toISOString(), row.id);
+    });
+    tx();
+    logAction(db, orderNo, 'pay', `会员卡 ${card} 扣款 ${formatRM(row.total_cents)}`);
+    return getOrderFull(db, orderNo);
+  }
+
   db.prepare(`UPDATE orders SET payment_method=?, paid_at=? WHERE id=?`).run(
     pay,
     pay ? new Date().toISOString() : null,
@@ -361,6 +489,55 @@ export function payOrder(db: DB, orderNo: string, method: unknown): OrderFullDTO
   );
   logAction(db, orderNo, 'pay', pay ? `收款 ${PAY_LABELS[pay]} ${formatRM(row.total_cents)}` : '撤销收款标记');
   return getOrderFull(db, orderNo);
+}
+
+/** 逐菜上桌（KDS行业标准bump）：全勾自动整单上桌 */
+export function serveItem(db: DB, orderNo: string, itemId: number): OrderFullDTO {
+  const row = findByOrderNo(db, orderNo);
+  if (!row) throw new HttpError(404, `订单不存在: ${orderNo}`);
+  if (row.status === 'cancelled' || row.status === 'voided' || row.status === 'rejected') {
+    throw new HttpError(409, '该订单已终止，不能上菜');
+  }
+  const it = db
+    .prepare('SELECT * FROM order_items WHERE id = ? AND order_id = ?')
+    .get(itemId, row.id) as { id: number; dish_name: string; served_at: string | null } | undefined;
+  if (!it) throw new HttpError(404, '菜品行不存在');
+  if (it.served_at) return getOrderFull(db, orderNo); // 幂等：重复勾选无害
+  const now = new Date().toISOString();
+  db.prepare(`UPDATE order_items SET served_at = ? WHERE id = ?`).run(now, itemId);
+  logAction(db, orderNo, 'item_serve', `上菜：${it.dish_name}`);
+  const left = (
+    db
+      .prepare('SELECT COUNT(*) AS n FROM order_items WHERE order_id = ? AND served_at IS NULL')
+      .get(row.id) as { n: number }
+  ).n;
+  if (left === 0 && row.status !== 'served') {
+    db.prepare(`UPDATE orders SET status='served', served_at=? WHERE id=?`).run(now, row.id);
+    logAction(db, orderNo, 'serve', '全部菜品上桌，整单完成');
+  }
+  return getOrderFull(db, orderNo);
+}
+
+/** 菜品当月销量（吉隆坡时区本月，剔除取消/拒绝/作废） */
+export function monthlySold(db: DB, dishId: number, override: number | null | undefined): number {
+  if (override !== null && override !== undefined) return override;
+  const now = new Date();
+  const month = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Kuala_Lumpur',
+    year: 'numeric',
+    month: '2-digit',
+  }).format(now); // YYYY-MM
+  const start = new Date(`${month}-01T00:00:00+08:00`).toISOString();
+  const end = new Date(new Date(`${month}-01T00:00:00+08:00`).getTime() + 31 * 24 * 3600 * 1000).toISOString();
+  const r = db
+    .prepare(
+      `SELECT COALESCE(SUM(oi.qty), 0) AS q FROM order_items oi
+       JOIN orders o ON o.id = oi.order_id
+       WHERE oi.dish_id = ? AND o.created_at >= ? AND o.created_at < ?
+         AND o.status NOT IN ('cancelled', 'rejected', 'voided')`
+    )
+    .get(dishId, start, end) as { q: number };
+  return r.q;
 }
 
 /**

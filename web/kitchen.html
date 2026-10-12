@@ -19,6 +19,22 @@
     --note: #ffd166;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  #alarm-overlay {
+    position: fixed; inset: 0; z-index: 200; pointer-events: none;
+    opacity: 0; transition: opacity .2s;
+    background: rgba(255, 83, 48, 0);
+  }
+  #alarm-overlay.on {
+    opacity: 1; animation: alarmPulse 1.1s infinite;
+    background: repeating-linear-gradient(135deg, rgba(255,83,48,.28) 0 22px, rgba(255,83,48,.10) 22px 44px);
+  }
+  @keyframes alarmPulse { 0%,100% { box-shadow: inset 0 0 0 6px rgba(255,83,48,.85); } 50% { box-shadow: inset 0 0 0 14px rgba(255,83,48,.35); } }
+  #alarm-overlay .al-text {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    background: var(--new); color: #fff; font-size: 17px; font-weight: 700;
+    padding: 10px 22px; border-radius: 999px; letter-spacing: 2px;
+    box-shadow: 0 8px 24px rgba(255,83,48,.5);
+  }
   body {
     font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
     background: var(--bg); color: var(--text);
@@ -124,6 +140,14 @@
   }
   .btn:active { transform: scale(.97); }
   .btn-accept { background: linear-gradient(145deg, #ff6b45, #d43d1c); color: #fff; }
+  .dish-line.done { opacity: .45; text-decoration: line-through; }
+  .bump {
+    flex: none; width: 30px; height: 30px; margin-right: 8px;
+    border-radius: 8px; border: 1.5px solid rgba(63, 174, 106, .55);
+    background: rgba(63, 174, 106, .10); color: var(--ok);
+    font-size: 14px; font-weight: 700; cursor: pointer;
+  }
+  .bump.done { background: var(--ok); color: #fff; border-color: var(--ok); }
   .btn-reject { background: transparent; color: #ff7a5c; border: 1px solid rgba(255, 122, 92, .45); }
   .btn-reject:active { background: rgba(255, 122, 92, .12); }
   .btn-serve { background: var(--ok); color: #fff; }
@@ -149,6 +173,7 @@
 </style>
 </head>
 <body>
+<div id="alarm-overlay" aria-hidden="true"><div class="al-text">📢 新订单 · 点击任意处停止提醒</div></div>
 
 <div class="gate" id="gate">
   <div class="gate-box">
@@ -207,22 +232,43 @@
     return Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 60000));
   }
 
-  // ---------- 提示音：Web Audio 合成"叮-咚"，无需音频文件 ----------
-  function dingdong() {
-    if (mute || !audioCtx) return;
+  // ---------- 提示音：三连高音量"叮-咚-叮"（音量拉满） ----------
+  function dingdongOnce() {
+    if (!audioCtx) return;
     try {
-      [880, 660].forEach(function (f, i) {
+      [[988, 0], [784, 0.16], [988, 0.32], [1319, 0.5]].forEach(function (p) {
+        var f = p[0], delay = p[1];
         var o = audioCtx.createOscillator(), g = audioCtx.createGain();
-        o.type = 'sine'; o.frequency.value = f;
+        o.type = 'triangle'; o.frequency.value = f;
         o.connect(g); g.connect(audioCtx.destination);
-        var t = audioCtx.currentTime + i * 0.28;
+        var t = audioCtx.currentTime + delay;
         g.gain.setValueAtTime(0.0001, t);
-        g.gain.exponentialRampToValueAtTime(0.45, t + 0.02);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.42);
-        o.start(t); o.stop(t + 0.45);
+        g.gain.exponentialRampToValueAtTime(1.0, t + 0.015);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+        o.start(t); o.stop(t + 0.32);
       });
     } catch (e) { /* 静默失败 */ }
   }
+  // 循环报警：每1.6秒一轮，最长40轮；任何人碰一下屏幕立即停（厨师擦手点一下就安静）
+  var alarmTimer = null;
+  function startAlarm() {
+    if (mute) return;
+    stopAlarm();
+    var n = 0;
+    if (navigator.vibrate) { try { navigator.vibrate([400, 200, 400, 200, 800]); } catch (e) {} }
+    alarmTimer = setInterval(function () {
+      dingdongOnce();
+      if (++n >= 40) stopAlarm();
+    }, 1600);
+    dingdongOnce();
+  }
+  function stopAlarm() {
+    if (alarmTimer) { clearInterval(alarmTimer); alarmTimer = null; }
+    var ov = document.getElementById('alarm-overlay');
+    if (ov) ov.classList.remove('on');
+  }
+  document.addEventListener('click', stopAlarm, { capture: true });
+  document.addEventListener('touchstart', stopAlarm, { capture: true, passive: true });
   function flashTitle() {
     var on = true;
     var base = document.title.replace(/^🔔\s*/, '');
@@ -250,7 +296,11 @@
         (phase === 'served' ? '<span class="served-tag">已上桌 ✓</span>' : '') +
       '</div>' +
       o.items.map(function (it) {
-        return '<div class="dish-line"><span>' + esc(it.dish_name) + '</span><span class="q">× ' + it.qty + '</span></div>';
+        var done = it.served ? ' done' : '';
+        var bump = (phase === 'making')
+          ? '<button class="bump' + done + '" data-bump="' + it.id + '" data-no="' + esc(o.order_no) + '" title="上桌了就点它">' + (it.served ? '✓' : '上') + '</button>'
+          : '';
+        return '<div class="dish-line' + done + '">' + bump + '<span>' + esc(it.dish_name) + '</span><span class="q">× ' + it.qty + '</span></div>';
       }).join('') +
       (o.note ? '<div class="note">📝 ' + esc(o.note) + '</div>' : '') +
       (btn ? '<div class="card-actions">' + btn + '</div>' : '') +
@@ -286,6 +336,16 @@
 
   // 事件委托：卡片按钮
   document.addEventListener('click', function (e) {
+    var bump = e.target.closest ? e.target.closest('[data-bump]') : null;
+    if (bump) {
+      var token = localStorage.getItem(KEY) || '';
+      fetch('/api/orders/' + encodeURIComponent(bump.getAttribute('data-no')) + '/items/' + bump.getAttribute('data-bump') + '/serve', {
+        method: 'POST', headers: { Authorization: 'Bearer ' + token }
+      }).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function (o) { applyOrder(o); })
+        .catch(function (err) { alert('上菜标记失败（' + err.message + '）'); });
+      return;
+    }
     var b = e.target.closest ? e.target.closest('[data-act]') : null;
     if (!b) return;
     act(b.getAttribute('data-no'), b.getAttribute('data-act'));
@@ -306,7 +366,10 @@
     orders[o.order_no] = Object.assign(orders[o.order_no] || {}, o);
     render();
     if (isNew) {
-      dingdong(); flashTitle();
+      flashTitle();
+      startAlarm();
+      var ov = document.getElementById('alarm-overlay');
+      if (ov) ov.classList.add('on');
       if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
     }
   }

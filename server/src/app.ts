@@ -8,6 +8,7 @@ import { errorHandler, notFoundHandler } from './middleware/errors.js';
 import dishesRoutes from './routes/dishes.js';
 import ordersRoutes from './routes/orders.js';
 import reportsRoutes from './routes/reports.js';
+import membersRoutes from './routes/members.js';
 import healthRoutes, { VERSION } from './routes/health.js';
 
 /**
@@ -31,6 +32,7 @@ export function buildApp(deps: AppDeps): Express {
   app.use('/api/dishes', dishesRoutes(deps));
   app.use('/api/orders', orderRL, ordersRoutes(deps));
   app.use('/api/reports', reportsRoutes(deps));
+  app.use('/api/members', membersRoutes(deps));
   app.use('/', healthRoutes());
 
   // 顺带让 /healthz 能真查数据库

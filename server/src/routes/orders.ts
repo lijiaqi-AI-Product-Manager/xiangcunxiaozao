@@ -11,6 +11,7 @@ import {
   getOrderLogs,
   listOrders,
   payOrder,
+  serveItem,
   transitionOrder,
 } from '../services/orders.js';
 
@@ -32,9 +33,9 @@ export default function ordersRoutes(deps: AppDeps): Router {
   const { db, bus } = deps;
   const auth = makeAuth(deps.adminToken, deps.kitchenToken);
 
-  // 顾客下单（公开；限流在 app.ts 挂载）
+  // 顾客下单（公开；限流+反滥用五层）
   r.post('/', (req, res) => {
-    const result = createOrder(db, req.body ?? {});
+    const result = createOrder(db, req.body ?? {}, req.ip ?? '');
     if (!result.duplicate) {
       bus.emit('order:new', toEvent('order:new', result));
     }
@@ -78,7 +79,7 @@ export default function ordersRoutes(deps: AppDeps): Router {
 
   // 老板：一键标记收款（body: {method: 'tng'|'cash'|'alipay'|'wechat'|'card'|''}）
   r.post('/:orderNo/pay', auth.admin, (req, res) => {
-    const o = payOrder(db, req.params.orderNo, req.body?.method);
+    const o = payOrder(db, req.params.orderNo, req.body?.method, req.body?.card_no);
     bus.emit('order:status', toEvent('order:status', o));
     res.json(o);
   });
@@ -100,6 +101,13 @@ export default function ordersRoutes(deps: AppDeps): Router {
   // 后厨：拒绝接单（没菜/太忙等，必须留原因）
   r.post('/:orderNo/reject', auth.kitchen, (req, res) => {
     const o = transitionOrder(db, req.params.orderNo, 'rejected', String(req.body?.reason ?? ''));
+    bus.emit('order:status', toEvent('order:status', o));
+    res.json(o);
+  });
+
+  // 后厨/老板：逐菜上桌（全勾自动整单完成）
+  r.post('/:orderNo/items/:itemId/serve', auth.any, (req, res) => {
+    const o = serveItem(db, req.params.orderNo, Number(req.params.itemId));
     bus.emit('order:status', toEvent('order:status', o));
     res.json(o);
   });

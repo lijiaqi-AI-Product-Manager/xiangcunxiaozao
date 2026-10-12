@@ -256,6 +256,31 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 #toast.show{opacity:1;transform:translate(-50%,0)}
 .fly-clone{position:fixed;width:34px;height:28px;z-index:98;pointer-events:none}
 
+/* ================= 菜单2.0：分类点单主页（10-13） ================= */
+.menu-wrap{display:flex;gap:10px;padding:10px 12px 4px;min-height:calc(100vh - 160px)}
+.cat-rail{flex:none;width:82px;position:sticky;top:0;align-self:flex-start;max-height:calc(100vh - 170px);overflow-y:auto;scrollbar-width:none}
+.cat-rail::-webkit-scrollbar{display:none}
+.cat-item{display:block;width:100%;text-align:center;padding:10px 2px;font-size:13px;color:var(--ink2);background:transparent;border:none;border-radius:12px;margin-bottom:6px;cursor:pointer;font-family:var(--font-hand);letter-spacing:1px}
+.cat-item.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow-card);border:1.5px solid var(--line)}
+.dish-scroll{flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:20px}
+.dish-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.dish-card{display:flex;gap:10px;align-items:center;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:10px;box-shadow:var(--shadow-card);text-align:left;cursor:pointer;transition:transform .15s}
+.dish-card:active{transform:scale(.98)}
+.dish-card .dc-thumb{flex:none;width:64px;height:64px;border-radius:10px;background:#F0E9DC;display:flex;align-items:center;justify-content:center;font-family:var(--font-hand);font-size:24px;color:var(--chili)}
+.dish-card .dc-body{flex:1;min-width:0}
+.dish-card .dc-name{font-weight:700;font-size:15.5px}
+.dish-card .dc-desc{font-size:12px;color:var(--ink2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dish-card .dc-foot{display:flex;align-items:baseline;gap:8px;margin-top:4px}
+.dish-card .dc-price{color:var(--chili);font-weight:700;font-size:17px}
+.dish-card .dc-sold{font-size:11.5px;color:var(--ink2)}
+.feat-empty{background:var(--card);border:1.5px dashed var(--line);border-radius:16px;padding:26px 14px;text-align:center;color:var(--ink2);font-size:14px;margin-top:12px}
+.feat-title{font-family:var(--font-hand);font-size:19px;letter-spacing:2px;margin:16px 2px 0;display:flex;align-items:center;gap:8px}
+.feat-title::after{content:'';flex:1;height:1px;background:var(--line)}
+#dish-simple{display:none;padding:8px 4px 4px}
+#dish-simple .ds-plate{width:150px;height:150px;margin:6px auto 10px;border-radius:50%;background:radial-gradient(circle at 50% 42%,#FBF7EE 58%,#F0E9DC 72%,transparent 73%);display:flex;align-items:center;justify-content:center;font-family:var(--font-hand);font-size:44px;color:var(--chili);box-shadow:0 10px 22px rgba(59,47,35,.12)}
+#dish-simple .ds-ing{font-size:13px;color:var(--ink2);line-height:1.8;text-align:center;padding:0 10px}
+.section-gap{height:8px}
+
 /* ================= 桌面：暗色木桌氛围 + 居中菜单卡（10-12 改版） ================= */
 @media (min-width:768px){
   body{background:
@@ -493,35 +518,9 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
       <p class="hero-sub">湖南农家土菜 · 一菜一锅一灶 · 每日鲜做</p>
     </header>
 
-    <!-- 唯一菜品卡 -->
-    <button class="dish-entry" id="dish-entry" aria-label="农家一碗香，RM 39，点击查看详情" style="margin-top:12px">
-      <svg class="thumb" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <ellipse cx="52" cy="66" rx="44" ry="7" fill="#3B2F23" opacity=".08"/>
-        <ellipse cx="52" cy="46" rx="46" ry="17" fill="#F0E9DC"/>
-        <ellipse cx="52" cy="45" rx="38" ry="12.5" fill="#FBF7EE"/>
-        <path d="M8 45 C10 36 26 30 52 30 C78 30 94 36 96 45 C94 55 78 61 52 61 C26 61 10 55 8 45 Z" fill="none" stroke="#3B2F23" stroke-width="1.6" opacity=".7"/>
-        <use href="#sauce-mini" x="22" y="38" width="60" height="15"/>
-        <use href="#pork-a" x="20" y="34" width="30" height="17"/>
-        <use href="#egg-b" x="46" y="28" width="30" height="25"/>
-        <use href="#pepper-b" x="30" y="18" width="24" height="21"/>
-        <use href="#pepper-c" x="58" y="14" width="22" height="18"/>
-        <use href="#chili-a" x="48" y="8" width="13" height="11"/>
-        <use href="#sprout-a" x="66" y="24" width="16" height="8"/>
-        <path d="M40 4 C39 1 41 -1 42 1" stroke="#B9A98F" stroke-width="1.4" fill="none" opacity=".7"/>
-        <path d="M52 2 C51 -1 53 -3 54 -1" stroke="#B9A98F" stroke-width="1.4" fill="none" opacity=".6"/>
-      </svg>
-      <div class="de-body">
-        <div class="de-name">农家一碗香</div>
-        <div class="de-alias">别名"口口吃肉"</div>
-        <div class="de-meta">
-          <span class="de-price">RM 39.00</span>
-          <span class="de-sold">今日已售 38 份</span>
-        </div>
-      </div>
-      <svg class="de-arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true">
-        <path d="M9 5 C9 5 16 10 16 12 C16 14 9 19 9 19" stroke="#7A6A55" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
+    <!-- 招牌菜位（动态，老板后台"招牌"分类即在此展示；空则虚位以待） -->
+    <div class="feat-title">今日招牌</div>
+    <div id="featured-list"></div>
 
     <!-- 信任徽章条（4枚横排） -->
     <div class="badge-row">
@@ -610,6 +609,18 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 </main>
 
 <!-- ================= 视图B · 菜品详情 ================= -->
+<main id="view-menu" class="view">
+  <div class="content" style="padding:0">
+    <div style="padding:14px 16px 0">
+      <p class="hero-title" style="font-size:22px">想吃点什么？</p>
+      <p class="hero-sub" style="font-size:12.5px">左边选分类 · 点菜看细节 · 加车去结算</p>
+    </div>
+    <div class="menu-wrap">
+      <nav class="cat-rail" id="cat-rail" aria-label="菜品分类"></nav>
+      <div class="dish-scroll" id="dish-scroll"><div class="dish-grid" id="dish-grid"></div></div>
+    </div>
+  </div>
+</main>
 <main id="view-dish" class="view">
   <div class="content">
 
@@ -704,7 +715,8 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
         </svg>
 
           <!-- 拆开看看 / 合成一碗香 -->
-          <button class="xbtn breath" id="xbtn">拆开看看</button>
+          <div id="dish-simple"><div class="ds-plate" id="ds-plate">菜</div><p class="ds-ing" id="ds-ing"></p></div>
+    <button class="xbtn breath" id="xbtn">拆开看看</button>
         </div>
       </div>
       <p class="stage-hint">点一下，把这一碗拆开看个明白</p>
@@ -712,12 +724,12 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 
     <!-- B3 菜品信息 -->
     <div class="dish-meta">
-      <span class="dish-name hand">农家一碗香</span>
-      <span class="dish-alias">别名"口口吃肉"</span>
-      <span class="dish-price">RM 39.00</span>
-      <span class="sold-badge">今日已售 38 份</span>
+      <span class="dish-name hand" id="det-name">农家一碗香</span>
+      <span class="dish-alias" id="det-alias"></span>
+      <span class="dish-price" id="det-price">RM 39.00</span>
+      <span class="sold-badge" id="det-sold">月售 0</span>
     </div>
-    <p class="dish-desc">五花肉、土鸡蛋、螺丝椒、木耳猛火合炒——香辣鲜嫩，米饭杀手。本店不供米饭杀手称号的失败案例。</p>
+    <p class="dish-desc" id="det-desc"></p>
 
     <!-- 做法三步 -->
     <div class="cook-steps">
@@ -749,11 +761,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
       <div class="peppers" id="peppers" aria-hidden="true"></div>
       <p class="spice-remember" id="spice-remember">您的辣度已记住，下次来不用再说。</p>
       <div class="avoid-row">
-        <button class="avoid-pill" data-avoid="免葱蒜"><span>免葱蒜</span><svg class="strike" viewBox="0 0 64 32" preserveAspectRatio="none" aria-hidden="true"><path d="M6 22 C22 20 42 16 58 12" pathLength="100"/></svg></button>
-        <button class="avoid-pill" data-avoid="免香菜"><span>免香菜</span><svg class="strike" viewBox="0 0 64 32" preserveAspectRatio="none" aria-hidden="true"><path d="M6 22 C22 20 42 16 58 12" pathLength="100"/></svg></button>
-        <button class="avoid-pill" data-avoid="免味精"><span>免味精</span><svg class="strike" viewBox="0 0 64 32" preserveAspectRatio="none" aria-hidden="true"><path d="M6 22 C22 20 42 16 58 12" pathLength="100"/></svg></button>
-        <button class="avoid-pill" data-avoid="少油"><span>少油</span><svg class="strike" viewBox="0 0 64 32" preserveAspectRatio="none" aria-hidden="true"><path d="M6 22 C22 20 42 16 58 12" pathLength="100"/></svg></button>
-        <button class="avoid-pill" data-avoid="少盐"><span>少盐</span><svg class="strike" viewBox="0 0 64 32" preserveAspectRatio="none" aria-hidden="true"><path d="M6 22 C22 20 42 16 58 12" pathLength="100"/></svg></button>
+        <div id="avoid-box" style="display:flex;flex-wrap:wrap;gap:8px"></div>
       </div>
       <textarea class="note-area" id="note-area" rows="2" placeholder="还想嘱咐后厨一句？（例：给小朋友吃，一点辣都不行）"></textarea>
     </section>
@@ -885,6 +893,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   <div class="cm-sheet">
     <h3 class="cm-title">确认下单</h3>
     <div id="confirm-lines"></div>
+    <input id="hp-field" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;height:0;width:0;opacity:0">
     <div class="cm-total"><span>小计</span><b id="confirm-total">RM 0.00</b></div>
     <div class="cm-btns">
       <button class="btn-cancel" id="btn-cancel-pay">再想想</button>
@@ -998,20 +1007,135 @@ var state = {
 };
 
 /* ================= 真实数据层（10-12 接生产API） ================= */
-var MENU = { id: 1, name: '农家一碗香', price_cents: 3900 }; // 兜底值，API成功后覆盖
+var DISHES = [];   // 全部在售菜品（API）
+var CUR = null;    // 详情页当前菜品
 function fmtRM(cents){ return 'RM ' + (cents / 100).toFixed(2); }
-function initMenu(){
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+function initMenuData(){
   fetch('/api/dishes').then(function(r){ return r.json(); }).then(function(list){
-    if(list && list.length){
-      MENU.id = list[0].id;
-      MENU.name = list[0].name;
-      MENU.price_cents = list[0].price_cents;
-      var els = document.querySelectorAll('.de-price, .dish-price');
-      for(var i=0;i<els.length;i++) els[i].textContent = fmtRM(MENU.price_cents);
-    }
-  }).catch(function(){ /* API不通时用兜底值，页面照常可看 */ });
+    DISHES = Array.isArray(list) ? list : [];
+  }).catch(function(){ DISHES = []; }).then(function(){
+    renderFeatured();
+    renderMenu();
+  });
 }
-initMenu();
+function dishCardHtml(d){
+  return '<button class="dish-entry" data-dish="' + d.id + '" style="margin-top:12px">'
+    + '<svg class="thumb" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+    + '<ellipse cx="52" cy="66" rx="44" ry="7" fill="#3B2F23" opacity=".08"/>'
+    + '<ellipse cx="52" cy="46" rx="46" ry="17" fill="#F0E9DC"/>'
+    + '<ellipse cx="52" cy="45" rx="38" ry="12.5" fill="#FBF7EE"/>'
+    + '<path d="M8 45 C10 36 26 30 52 30 C78 30 94 36 96 45 C94 55 78 61 52 61 C26 61 10 55 8 45 Z" fill="none" stroke="#3B2F23" stroke-width="1.6" opacity=".7"/>'
+    + '</svg>'
+    + '<div class="de-body"><div class="de-name">' + esc(d.name) + '</div>'
+    + '<div class="de-alias">' + esc((d.description||'').slice(0,18)) + '</div>'
+    + '<div class="de-meta"><span class="de-price">' + fmtRM(d.price_cents) + '</span>'
+    + '<span class="de-sold">月售 ' + (d.monthly_sold||0) + '</span></div></div>'
+    + '<svg class="de-arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><path d="M9 5 L16 12 L9 19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    + '</button>';
+}
+function renderFeatured(){
+  var box = $('featured-list');
+  if(!box) return;
+  var feat = DISHES.filter(function(d){ return d.category === '招牌'; });
+  if(!feat.length) feat = DISHES.slice(0, 3);
+  box.innerHTML = feat.length
+    ? feat.slice(0, 3).map(dishCardHtml).join('')
+    : '<div class="feat-empty">招牌位虚位以待<br><small>老板后台把菜品分类设为「招牌」即在此展示</small></div>';
+}
+function renderMenu(){
+  var rail = $('cat-rail'), grid = $('dish-grid');
+  if(!rail || !grid) return;
+  var cats = [];
+  for(var i=0;i<DISHES.length;i++){
+    var c = DISHES[i].category || '其他';
+    if(cats.indexOf(c) < 0) cats.push(c);
+  }
+  rail.innerHTML = cats.map(function(c, i){
+    return '<button class="cat-item' + (i===0?' on':'') + '" data-cat="' + esc(c) + '">' + esc(c) + '</button>';
+  }).join('') || '<div class="feat-empty">菜单整理中</div>';
+  grid.innerHTML = DISHES.length ? DISHES.map(function(d){
+    return '<button class="dish-card" data-dish="' + d.id + '">'
+      + '<div class="dc-thumb">' + esc(d.name.slice(0,1)) + '</div>'
+      + '<div class="dc-body"><div class="dc-name">' + esc(d.name) + '</div>'
+      + '<div class="dc-desc">' + esc(d.description||'') + '</div>'
+      + '<div class="dc-foot"><span class="dc-price">' + fmtRM(d.price_cents) + '</span>'
+      + '<span class="dc-sold">月售 ' + (d.monthly_sold||0) + '</span></div></div></button>';
+  }).join('') : '<div class="feat-empty">今天菜单还没上齐，稍后再来看看</div>';
+}
+/* 分类点击：过滤网格 */
+document.addEventListener('click', function(e){
+  var cat = e.target.closest ? e.target.closest('[data-cat]') : null;
+  if(cat){
+    var c = cat.getAttribute('data-cat');
+    var items = document.querySelectorAll('.cat-item');
+    for(var i=0;i<items.length;i++) items[i].classList.toggle('on', items[i]===cat);
+    var cards = document.querySelectorAll('#dish-grid .dish-card');
+    for(var j=0;j<cards.length;j++){
+      var d = DISHES.filter(function(x){ return String(x.id)===cards[j].getAttribute('data-dish'); })[0];
+      cards[j].style.display = (!d || d.category===c) ? '' : 'none';
+    }
+    return;
+  }
+  var entry = e.target.closest ? e.target.closest('[data-dish]') : null;
+  if(entry){
+    var id = Number(entry.getAttribute('data-dish'));
+    var dish = DISHES.filter(function(x){ return x.id===id; })[0];
+    if(dish) openDish(dish);
+  }
+});
+initMenuData();
+
+/* ================= 详情页填充（菜单2.0） ================= */
+function fillAvoid(d){
+  var box = $('avoid-box');
+  var opts = (d.avoid_options && d.avoid_options.length) ? d.avoid_options
+           : ['免葱蒜','免香菜','免味精','少油','少盐'];
+  box.innerHTML = opts.map(function(o){
+    return '<button class="avoid-pill" data-avoid="' + esc(o) + '"><span>' + esc(o) + '</span>'
+      + '<svg class="strike" viewBox="0 0 64 32" preserveAspectRatio="none" aria-hidden="true"><path d="M6 22 C22 20 42 16 58 12" pathLength="100"/></svg></button>';
+  }).join('');
+  var av = box.querySelectorAll('.avoid-pill');
+  for(var a=0;a<av.length;a++){
+    (function(btn){
+      btn.addEventListener('click', function(){
+        var on = btn.classList.toggle('on');
+        toggleAvoid(btn.getAttribute('data-avoid'), on);
+      });
+    })(av[a]);
+  }
+}
+function openDish(d){
+  CUR = d;
+  state.dish = { spice:null, avoid:[], note:'', qty:1 };
+  $('qty-num').textContent = '1';
+  $('note-area').value = '';
+  var pills = document.querySelectorAll('.spice-pill');
+  for(var i=0;i<pills.length;i++) pills[i].classList.remove('on');
+  $('det-name').textContent = d.name;
+  $('det-alias').textContent = d.category;
+  $('det-price').textContent = fmtRM(d.price_cents);
+  $('det-sold').textContent = '月售 ' + (d.monthly_sold||0);
+  $('det-desc').textContent = d.description || '';
+  fillAvoid(d);
+  var isSignature = (d.animation_key === 'ywk' || d.name === '农家一碗香');
+  var stageBox = document.querySelector('.stage');
+  if(stageBox) stageBox.style.display = isSignature ? '' : 'none';
+  var xb = $('xbtn');
+  if(xb){
+    xb.style.display = isSignature ? '' : 'none';
+    xb.classList.remove('exploded-tag');
+  }
+  $('dish-simple').style.display = isSignature ? 'none' : 'block';
+  if(!isSignature){
+    $('ds-plate').textContent = d.name.slice(0,1);
+    $('ds-ing').textContent = (d.description || '') + (d.avoid_options && d.avoid_options.length ? '　·　可定制：' + d.avoid_options.join('、') : '');
+    if(stageBox) stageBox.closest('.stage-wrap') && (stageBox.closest('.stage-wrap').style.minHeight = '0');
+  }
+  showView('dish');
+  setTabActive('menu');
+}
 
 /* ================= 舞台：生成食材pieces ================= */
 var stage, pieces = [];
@@ -1077,7 +1201,7 @@ function entrance(){
 
 /* ================= 视图切换 ================= */
 function showView(name){
-  var ids = ['home','dish','archive','success'];
+  var ids = ['home','menu','dish','archive','success'];
   for(var i=0;i<ids.length;i++){
     $('view-'+ids[i]).classList.toggle('active', ids[i]===name);
   }
@@ -1171,7 +1295,7 @@ function loadPref(){
 /* ================= 购物车 ================= */
 function cartTotal(){
   var t = 0;
-  for(var i=0;i<state.cart.length;i++) t += MENU.price_cents * state.cart[i].qty;
+  for(var i=0;i<state.cart.length;i++) t += (state.cart[i].price_cents||0) * state.cart[i].qty;
   return t;
 }
 function updateBadge(){
@@ -1196,7 +1320,7 @@ function renderCart(){
       html += '<div class="cart-row">'
             +  '<svg class="cr-thumb" viewBox="0 0 44 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#pepper-b" x="2" y="1" width="36" height="33"/></svg>'
             +  '<div class="cr-body"><div class="cr-name">'+it.name+' ×'+it.qty+'</div><div class="cr-flavor">'+it.flavor+(it.note?' · 备注：'+it.note:'')+'</div></div>'
-            +  '<div class="cr-right"><span class="cr-price">'+fmtRM(MENU.price_cents*it.qty)+'</span></div>'
+            +  '<div class="cr-right"><span class="cr-price">'+fmtRM((it.price_cents||0)*it.qty)+'</span></div>'
             + '</div>';
     }
     box.innerHTML = html;
@@ -1239,7 +1363,7 @@ function openConfirm(){
   var lines = '';
   for(var i=0;i<state.cart.length;i++){
     var it = state.cart[i];
-    lines += '<div class="confirm-line"><span>'+it.name+' ×'+it.qty+'<br><small>'+it.flavor+(it.note?' · '+it.note:'')+'</small></span><span>'+fmtRM(MENU.price_cents*it.qty)+'</span></div>';
+    lines += '<div class="confirm-line"><span>'+it.name+' ×'+it.qty+'<br><small>'+it.flavor+(it.note?' · '+it.note:'')+'</small></span><span>'+fmtRM((it.price_cents||0)*it.qty)+'</span></div>';
   }
   lines += '<div class="confirm-line" style="align-items:center">'
         +   '<span>桌号 <small>（桌贴上的数字）</small></span>'
@@ -1256,18 +1380,19 @@ function paySuccess(){
   if(!state.cart.length){ showToast('先加点什么吧'); return; }
   var items = [], notes = [];
   for(var i=0;i<state.cart.length;i++){
-    items.push({ dish_id: MENU.id, qty: state.cart[i].qty });
-    var f = state.cart[i].flavor + (state.cart[i].note ? (' · '+state.cart[i].note) : '');
+    items.push({ dish_id: state.cart[i].dish_id, qty: state.cart[i].qty });
+    var f = state.cart[i].name + '：' + state.cart[i].flavor + (state.cart[i].note ? (' · '+state.cart[i].note) : '');
     if(state.cart[i].qty > 1) f += ' ×'+state.cart[i].qty;
     notes.push(f);
   }
+  var hp = ''; try { hp = $('hp-field') ? $('hp-field').value : ''; } catch(_){}
   var btn = $('btn-mock-pay');
   btn.disabled = true; btn.textContent = '提交中…';
   var cid = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (String(Date.now()) + '-' + Math.random().toFixed(8));
   fetch('/api/orders', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ table_no: tno, items: items, note: notes.join('；'), client_id: cid })
+    body: JSON.stringify({ table_no: tno, items: items, note: notes.join('；'), client_id: cid, hp: hp })
   }).then(function(r){
     return r.json().then(function(j){ return { ok: r.ok, j: j }; });
   }).then(function(res){
@@ -1303,7 +1428,7 @@ function bind(){
   buildPeppers();
 
   // 首页
-  $('dish-entry').addEventListener('click', function(){ showView('dish'); setTabActive('menu'); });
+  // 招牌卡/菜单卡点击已由 data-dish 全局委托处理（见数据层）
   var qas = document.querySelectorAll('.qa-q');
   for(var i=0;i<qas.length;i++){
     (function(q){
@@ -1316,7 +1441,7 @@ function bind(){
   }
 
   // 详情
-  $('back-home').addEventListener('click', function(){ showView('home'); setTabActive('home'); });
+  $('back-home').addEventListener('click', function(){ showView('menu'); setTabActive('menu'); });
   $('btn-archive').addEventListener('click', function(){ showView('archive'); });
   $('back-dish').addEventListener('click', function(){ showView('dish'); });
 
@@ -1373,7 +1498,7 @@ function bind(){
       }
     }
     if(!merged){
-      state.cart.push({ name:'农家一碗香', flavor:flavor, note:state.dish.note, qty:state.dish.qty });
+      state.cart.push({ dish_id: CUR ? CUR.id : 0, name: CUR ? CUR.name : '', price_cents: CUR ? CUR.price_cents : 0, flavor:flavor, note:state.dish.note, qty:state.dish.qty });
     }
     updateBadge();
     flyToCart();
@@ -1386,7 +1511,7 @@ function bind(){
       this.classList.remove('shake'); void this.offsetWidth; this.classList.add('shake');
       showToast('先选个辣度吧'); return;
     }
-    state.cart = [{ name:'农家一碗香', flavor:flavorText(), note:state.dish.note, qty:state.dish.qty }];
+    state.cart = [{ dish_id: CUR ? CUR.id : 0, name: CUR ? CUR.name : '', price_cents: CUR ? CUR.price_cents : 0, flavor:flavorText(), note:state.dish.note, qty:state.dish.qty }];
     openConfirm();
   });
 
@@ -1398,7 +1523,7 @@ function bind(){
         var tab = btn.getAttribute('data-tab');
         setTabActive(tab);
         if(tab==='home') showView('home');
-        else if(tab==='menu') showView('dish');
+        else if(tab==='menu') showView('menu');
         else if(tab==='cart') openCart();
         else if(tab==='me') showToast('演示环境 ·「我的」暂未开放');
       });
@@ -1411,7 +1536,7 @@ function bind(){
   $('btn-checkout').addEventListener('click', function(){ closeCart(); openConfirm(); });
   $('btn-cancel-pay').addEventListener('click', function(){ $('confirm-modal').classList.remove('on'); });
   $('btn-mock-pay').addEventListener('click', paySuccess);
-  $('btn-back-home2').addEventListener('click', function(){ showView('home'); setTabActive('home'); });
+  $('btn-back-home2').addEventListener('click', function(){ showView('menu'); setTabActive('menu'); });
 }
 
 document.addEventListener('DOMContentLoaded', function(){

@@ -23,7 +23,10 @@ CREATE TABLE IF NOT EXISTS dishes (
   category TEXT NOT NULL DEFAULT '招牌',
   sort_order INTEGER NOT NULL DEFAULT 0,
   is_active INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1)),
+  is_deleted INTEGER NOT NULL DEFAULT 0 CHECK (is_deleted IN (0, 1)),
   animation_key TEXT NOT NULL DEFAULT '',
+  avoid_options TEXT NOT NULL DEFAULT '[]',
+  monthly_sold_override INTEGER,
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
   updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
 );
@@ -59,7 +62,8 @@ CREATE TABLE IF NOT EXISTS order_items (
   dish_name TEXT NOT NULL,
   unit_price_cents INTEGER NOT NULL CHECK (unit_price_cents >= 0),
   qty INTEGER NOT NULL CHECK (qty > 0 AND qty <= 99),
-  subtotal_cents INTEGER NOT NULL CHECK (subtotal_cents >= 0)
+  subtotal_cents INTEGER NOT NULL CHECK (subtotal_cents >= 0),
+  served_at TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_dish_id ON order_items(dish_id);
@@ -82,6 +86,28 @@ CREATE TABLE IF NOT EXISTS order_logs (
   at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
 );
 CREATE INDEX IF NOT EXISTS idx_order_logs_no ON order_logs(order_no);
+
+CREATE TABLE IF NOT EXISTS members (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  card_no TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL DEFAULT '',
+  balance_cents INTEGER NOT NULL DEFAULT 0 CHECK (balance_cents >= 0),
+  is_active INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1)),
+  note TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+
+CREATE TABLE IF NOT EXISTS member_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  card_no TEXT NOT NULL,
+  action TEXT NOT NULL,
+  amount_cents INTEGER NOT NULL,
+  balance_after INTEGER NOT NULL,
+  order_no TEXT NOT NULL DEFAULT '',
+  detail TEXT NOT NULL DEFAULT '',
+  at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+CREATE INDEX IF NOT EXISTS idx_member_logs_card ON member_logs(card_no);
 `;
 
 /**
@@ -150,6 +176,25 @@ function migrate(db: DB): void {
   add('source', `source TEXT NOT NULL DEFAULT 'customer'`);
   add('rejected_at', `rejected_at TEXT`);
   add('voided_at', `voided_at TEXT`);
+  add('member_card_no', `member_card_no TEXT`);
+  add('ip', `ip TEXT NOT NULL DEFAULT ''`);
+
+  // dishes 增列（10-12 深夜版：定制忌口/月售覆盖/软删除）
+  const dcols = new Set(
+    (db.pragma('table_info(dishes)') as Array<{ name: string }>).map((c) => c.name)
+  );
+  const dadd = (col: string, ddl: string) => {
+    if (!dcols.has(col)) db.exec(`ALTER TABLE dishes ADD COLUMN ${ddl}`);
+  };
+  dadd('is_deleted', `is_deleted INTEGER NOT NULL DEFAULT 0`);
+  dadd('avoid_options', `avoid_options TEXT NOT NULL DEFAULT '[]'`);
+  dadd('monthly_sold_override', `monthly_sold_override INTEGER`);
+
+  // order_items 增列（逐菜上桌）
+  const icols = new Set(
+    (db.pragma('table_info(order_items)') as Array<{ name: string }>).map((c) => c.name)
+  );
+  if (!icols.has('served_at')) db.exec(`ALTER TABLE order_items ADD COLUMN served_at TEXT`);
 }
 
 /** 打开（必要时创建）数据库并初始化表结构 */
