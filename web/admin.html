@@ -554,7 +554,7 @@
         .catch(function (e) { toast('失败：' + e.message); });
     };
   }
-  $('newDishBtn').addEventListener('click', function () { loadDishes().constructor; openDishEdit(null); });
+  $('newDishBtn').addEventListener('click', function () { openDishEdit(null); });
 
   // ---------- 会员管理 ----------
   function loadMembers() {

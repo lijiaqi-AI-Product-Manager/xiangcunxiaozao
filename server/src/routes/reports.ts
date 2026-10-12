@@ -176,23 +176,16 @@ export default function reportsRoutes(deps: AppDeps): Router {
       )
       .get(start, end) as { n: number; rev: number; disc: number };
 
-    const byDay = db
-      .prepare(
-        `SELECT substr(created_at, 1, 10) AS d, COUNT(*) AS n, SUM(total_cents) AS rev
-         FROM orders WHERE created_at >= ? AND created_at < ? AND ${NOT_REVENUE} GROUP BY d ORDER BY d`
-      )
-      .all(start, end) as { d: string; n: number; rev: number }[];
-    // UTC日期转吉隆坡日期（仅显示对齐用）
-    const klByDay = byDay.map((x) => {
-      const d = new Date(x.d + 'T12:00:00Z');
-      const kl = new Intl.DateTimeFormat('en-CA', {
-        timeZone: 'Asia/Kuala_Lumpur',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      }).format(d);
-      return { date: kl, orders: x.n, revenue_cents: x.rev, revenue_rm: formatRM(x.rev) };
-    });
+    // 分桶必须按吉隆坡日界（UTC+8）：SQLite date()+'+8 hours'，杜绝凌晨单归错天
+    const klByDay = (
+      db
+        .prepare(
+          `SELECT date(created_at, '+8 hours') AS date, COUNT(*) AS orders, SUM(total_cents) AS revenue_cents
+           FROM orders WHERE created_at >= ? AND created_at < ? AND ${NOT_REVENUE}
+           GROUP BY date ORDER BY date`
+        )
+        .all(start, end) as Array<{ date: string; orders: number; revenue_cents: number }>
+    ).map((x) => ({ ...x, revenue_rm: formatRM(x.revenue_cents) }));
 
     const topDishes = db
       .prepare(
