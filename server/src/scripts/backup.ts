@@ -1,11 +1,12 @@
 import fs from 'node:fs';
 import type { DB } from '../db.js';
 import { readConfig } from '../config.js';
-import { dbPath } from './dbpath.js';
 
 /**
  * 每日自动备份：VACUUM INTO 出一致性快照 → base64 推到 GitHub 私有仓（Contents API）。
  * - 不依赖容器里有 git
+ * - 临时文件写在库文件同目录（db.name 是 better-sqlite3 暴露的真实路径，
+ *   不依赖 DATA_DIR 环境变量，杜绝目录不存在导致 SQLITE_CANTOPEN）
  * - 只保留最近 N 份，自动清理
  * - 备份时间：每天吉隆坡 03:30（打烊后、日切前）
  */
@@ -33,7 +34,7 @@ export async function backupNow(db: DB): Promise<string> {
   if (!cfg.githubToken || !cfg.githubRepo) throw new Error('未配置备份仓库');
 
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const tmp = `${dbPath()}.bak-${stamp}`;
+  const tmp = `${db.name}.bak-${stamp}`;
   db.prepare('VACUUM INTO ?').run(tmp);
   const content = fs.readFileSync(tmp).toString('base64');
   fs.unlinkSync(tmp);
