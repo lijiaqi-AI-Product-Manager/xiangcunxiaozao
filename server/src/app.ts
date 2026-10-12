@@ -45,7 +45,7 @@ export function buildApp(deps: AppDeps): Express {
 
   // 前端静态资源（顾客点单页 / 后厨页 / 老板后台，D3 起陆续入驻 web/）
   if (fs.existsSync(webDir)) {
-    app.use(express.static(webDir, { maxAge: '1h', index: 'index.html' }));
+    app.use(express.static(webDir, { maxAge: '1h', extensions: ['html'], index: 'index.html' }));
     // SPA 兜底：非 /api 非 /healthz 的 GET 都回首页（二维码路由 /t/12 等用）
     app.get(/^(?!\/api|\/healthz).*/, (_req, res) => {
       res.sendFile(`${webDir}/index.html`);

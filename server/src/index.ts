@@ -1,6 +1,9 @@
+import http from 'node:http';
 import { readConfig, assertConfig } from './config.js';
-import { openDb, } from './db.js';
+import { openDb } from './db.js';
 import { buildApp } from './app.js';
+import { makeBus } from './events.js';
+import { setupWs } from './ws.js';
 import { startBackupScheduler } from './scripts/backup.js';
 
 function main(): void {
@@ -8,13 +11,17 @@ function main(): void {
   assertConfig(config); // 缺令牌直接拒启，防止裸奔上线
 
   const db = openDb();
-  const app = buildApp({ db, adminToken: config.adminToken, kitchenToken: config.kitchenToken });
+  const bus = makeBus();
+  const app = buildApp({ db, bus, adminToken: config.adminToken, kitchenToken: config.kitchenToken });
 
-  const server = app.listen(config.port, () => {
+  const server = http.createServer(app);
+  setupWs(server, bus, config.adminToken, config.kitchenToken); // 后厨实时推送
+
+  server.listen(config.port, () => {
     console.log(
       JSON.stringify({
         t: new Date().toISOString(),
-        msg: `湘村小灶后端已启动 :${config.port}（${config.env}）`,
+        msg: `湘村小灶后端已启动 :${config.port}（${config.env}）WS=/ws`,
         dataDir: config.dataDir,
       })
     );
