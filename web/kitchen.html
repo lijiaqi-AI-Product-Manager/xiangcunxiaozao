@@ -124,6 +124,8 @@
   }
   .btn:active { transform: scale(.97); }
   .btn-accept { background: linear-gradient(145deg, #ff6b45, #d43d1c); color: #fff; }
+  .btn-reject { background: transparent; color: #ff7a5c; border: 1px solid rgba(255, 122, 92, .45); }
+  .btn-reject:active { background: rgba(255, 122, 92, .12); }
   .btn-serve { background: var(--ok); color: #fff; }
   .card.served { opacity: .55; }
   .card.served .tbl { color: var(--done); }
@@ -234,7 +236,8 @@
   function cardHtml(o, phase) {
     var btn = '';
     if (phase === 'pending') {
-      btn = '<button class="btn btn-accept" data-act="confirm" data-no="' + esc(o.order_no) + '">收到，开做</button>';
+      btn = '<button class="btn btn-accept" data-act="confirm" data-no="' + esc(o.order_no) + '">收到，开做</button>'
+          + '<button class="btn btn-reject" data-act="reject" data-no="' + esc(o.order_no) + '">做不了</button>';
     } else if (phase === 'making') {
       btn = '<button class="btn btn-serve" data-act="serve" data-no="' + esc(o.order_no) + '">已上桌</button>';
     }
@@ -310,6 +313,19 @@
 
   function act(no, action) {
     var token = localStorage.getItem(KEY) || '';
+    if (action === 'reject') {
+      var reason = prompt('拒绝原因（老板会看到，改单后重新派单）：\n可直接回车用默认', '没菜了');
+      if (reason === null) return; // 取消
+      if (!reason.trim()) reason = '没菜了';
+      fetch('/api/orders/' + encodeURIComponent(no) + '/reject', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: reason.trim().slice(0, 100) })
+      }).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function (o) { applyOrder(o); })
+        .catch(function (err) { alert('操作失败（' + err.message + '），请检查网络后重试'); });
+      return;
+    }
     fetch('/api/orders/' + encodeURIComponent(no) + '/' + action, {
       method: 'POST',
       headers: { Authorization: 'Bearer ' + token }

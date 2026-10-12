@@ -34,13 +34,19 @@ CREATE TABLE IF NOT EXISTS orders (
   client_id TEXT UNIQUE,
   table_no TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending'
-    CHECK (status IN ('pending', 'confirmed', 'served', 'cancelled')),
+    CHECK (status IN ('pending', 'confirmed', 'served', 'cancelled', 'rejected', 'voided')),
   total_cents INTEGER NOT NULL CHECK (total_cents >= 0),
+  discount_cents INTEGER NOT NULL DEFAULT 0 CHECK (discount_cents >= 0),
+  payment_method TEXT NOT NULL DEFAULT '',
+  paid_at TEXT,
+  source TEXT NOT NULL DEFAULT 'customer',
   note TEXT NOT NULL DEFAULT '',
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
   confirmed_at TEXT,
   served_at TEXT,
+  rejected_at TEXT,
   cancelled_at TEXT,
+  voided_at TEXT,
   cancel_reason TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at);
@@ -67,7 +73,84 @@ CREATE TABLE IF NOT EXISTS settings (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS order_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  order_no TEXT NOT NULL,
+  action TEXT NOT NULL,
+  detail TEXT NOT NULL DEFAULT '',
+  at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+CREATE INDEX IF NOT EXISTS idx_order_logs_no ON order_logs(order_no);
 `;
+
+/**
+ * 在线迁移：幂等，可重复执行。
+ * - 新库：SCHEMA 已是新结构，全部跳过
+ * - 老库（无 discount_cents，status CHECK 只认4态）：按 SQLite 官方重建表流程迁移，
+ *   数据/索引无损，order_items 的外键按表名自动指向新表
+ */
+function migrate(db: DB): void {
+  const cols = new Set(
+    (db.pragma('table_info(orders)') as Array<{ name: string }>).map((c) => c.name)
+  );
+
+  if (!cols.has('discount_cents')) {
+    // 老结构 → 重建（FK 必须在事务外关）
+    db.pragma('foreign_keys = OFF');
+    db.exec('BEGIN');
+    try {
+      db.exec(`
+        CREATE TABLE orders_new (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          order_no TEXT NOT NULL UNIQUE,
+          client_id TEXT UNIQUE,
+          table_no TEXT NOT NULL,
+          status TEXT NOT NULL DEFAULT 'pending'
+            CHECK (status IN ('pending', 'confirmed', 'served', 'cancelled', 'rejected', 'voided')),
+          total_cents INTEGER NOT NULL CHECK (total_cents >= 0),
+          discount_cents INTEGER NOT NULL DEFAULT 0 CHECK (discount_cents >= 0),
+          payment_method TEXT NOT NULL DEFAULT '',
+          paid_at TEXT,
+          source TEXT NOT NULL DEFAULT 'customer',
+          note TEXT NOT NULL DEFAULT '',
+          created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+          confirmed_at TEXT,
+          served_at TEXT,
+          rejected_at TEXT,
+          cancelled_at TEXT,
+          voided_at TEXT,
+          cancel_reason TEXT NOT NULL DEFAULT ''
+        );
+        INSERT INTO orders_new (id, order_no, client_id, table_no, status, total_cents, note,
+          created_at, confirmed_at, served_at, cancelled_at, cancel_reason)
+          SELECT id, order_no, client_id, table_no, status, total_cents, note,
+          created_at, confirmed_at, served_at, cancelled_at, cancel_reason FROM orders;
+        DROP TABLE orders;
+        ALTER TABLE orders_new RENAME TO orders;
+        CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at);
+        CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+      `);
+      db.exec('COMMIT');
+    } catch (e) {
+      db.exec('ROLLBACK');
+      throw e;
+    } finally {
+      db.pragma('foreign_keys = ON');
+    }
+    return;
+  }
+
+  // 中间版本库：缺哪列补哪列
+  const add = (col: string, ddl: string) => {
+    if (!cols.has(col)) db.exec(`ALTER TABLE orders ADD COLUMN ${ddl}`);
+  };
+  add('payment_method', `payment_method TEXT NOT NULL DEFAULT ''`);
+  add('paid_at', `paid_at TEXT`);
+  add('source', `source TEXT NOT NULL DEFAULT 'customer'`);
+  add('rejected_at', `rejected_at TEXT`);
+  add('voided_at', `voided_at TEXT`);
+}
 
 /** 打开（必要时创建）数据库并初始化表结构 */
 export function openDb(dbPath?: string): DB {
@@ -79,5 +162,6 @@ export function openDb(dbPath?: string): DB {
   db.pragma('foreign_keys = ON');
   db.pragma('busy_timeout = 5000');
   db.exec(SCHEMA);
+  migrate(db);
   return db;
 }

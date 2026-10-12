@@ -272,6 +272,13 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
     font-family:var(--font-hand);font-size:58px;color:rgba(217,83,30,.14);pointer-events:none;z-index:0;user-select:none}
   .phone-shell{max-width:420px;margin:0 auto}
   .app{border-radius:22px;box-shadow:0 36px 90px rgba(0,0,0,.50),0 6px 20px rgba(0,0,0,.35);overflow:hidden;margin:30px auto 44px}
+  /* 浮空修复（10-12晚回归）：底部操作栏/导航/抽屉改锚定菜单卡内部，不再钉死浏览器视口 */
+  #tabbar{position:absolute;bottom:0;left:0;right:0;transform:none;width:100%;max-width:none;border-radius:0}
+  #dish-cta{position:absolute;bottom:56px;left:0;right:0;transform:none;width:100%;max-width:none}
+  #cart-drawer{position:absolute;bottom:0;left:0;right:0;width:100%;max-width:none;transform:translateY(105%)}
+  #cart-drawer.open{transform:translateY(0)}
+  #cart-mask,#confirm-modal{position:absolute}
+  #toast{position:absolute}
 }
 /* ================= 降级：reduced-motion（≤150ms直接切换） ================= */
 @media (prefers-reduced-motion:reduce){
