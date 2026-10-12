@@ -22,7 +22,9 @@ COPY web ./web
 
 # SQLite 数据库与上传图片都落在 /data，Zeabur 上把持久卷挂到这个路径
 ENV DATA_DIR=/data
-EXPOSE 3000
+# Zeabur 网络端口配置为 8080，容器监听对齐（本地开发不受影响：无env时默认3000）
+ENV PORT=8080
+EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/healthz').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
