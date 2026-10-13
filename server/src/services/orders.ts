@@ -540,6 +540,11 @@ export function monthlySold(db: DB, dishId: number, override: number | null | un
   return r.q;
 }
 
+/** 顾客端会员卡扣款（下单时选"会员卡支付"）：逻辑与管理端收款完全同源，仅鉴权层不同 */
+export function memberPayOrder(db: DB, orderNo: string, cardNo: string): OrderFullDTO {
+  return payOrder(db, orderNo, 'member', cardNo);
+}
+
 /**
  * 状态机（全图）：
  * pending   → confirmed（后厨接）/ cancelled（老板取消）/ rejected（后厨拒）/ voided（老板作废）

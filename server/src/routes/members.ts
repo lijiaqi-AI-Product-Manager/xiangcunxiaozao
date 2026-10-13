@@ -34,6 +34,34 @@ export default function membersRoutes(deps: AppDeps): Router {
   const { db } = deps;
   const auth = makeAuth(deps.adminToken, deps.kitchenToken).admin;
 
+  // 公开：按卡号查余额+近期记录（顾客端"我的"页绑定用；卡号由老板发放，随机性即凭证）
+  r.get('/lookup', (_req, res) => {
+    const card = String(_req.query.card_no ?? '').trim();
+    if (!card || card.length < 2 || card.length > 32) throw new HttpError(400, '卡号格式不对');
+    const m = db.prepare('SELECT card_no, name, balance_cents, is_active FROM members WHERE card_no = ?').get(card) as
+      | { card_no: string; name: string; balance_cents: number; is_active: number }
+      | undefined;
+    if (!m) throw new HttpError(404, '没有这张卡，请找老板确认卡号');
+    const recent = db
+      .prepare(`SELECT action, amount_cents, balance_after, order_no, at FROM member_logs WHERE card_no = ? ORDER BY id DESC LIMIT 5`)
+      .all(card) as { action: string; amount_cents: number; balance_after: number; order_no: string; at: string }[];
+    res.json({
+      card_no: m.card_no,
+      name: m.name,
+      balance_cents: m.balance_cents,
+      balance_rm: formatRM(m.balance_cents),
+      is_active: m.is_active === 1,
+      recent: recent.map((r) => ({
+        action: r.action,
+        amount_cents: r.amount_cents,
+        amount_rm: formatRM(Math.abs(r.amount_cents)),
+        sign: r.amount_cents >= 0 ? '+' : '-',
+        order_no: r.order_no,
+        at: r.at,
+      })),
+    });
+  });
+
   r.get('/', auth, (_req, res) => {
     const rows = db
       .prepare(`SELECT * FROM members ORDER BY id DESC LIMIT 500`)

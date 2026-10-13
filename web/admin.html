@@ -167,11 +167,25 @@
     </div>
     <div id="dailyBox"></div>
     <div class="toolbar" style="margin-top:16px">
+      <button class="btn amber" id="adjBtn">✎ 调账（人工修正当日）</button>
+      <small style="color:var(--dim)">漏记/多记不改订单，加修正项，留痕可查</small>
+    </div>
+    <div id="adjBox"></div>
+    <div class="toolbar" style="margin-top:16px">
       <input type="month" id="repMonth">
       <button class="btn" id="monBtn">查月报</button>
       <button class="btn ghost" id="expMonthly">导出月度分析CSV</button>
     </div>
     <div id="monthlyBox"></div>
+    <h2 class="sec" style="margin-top:22px">区间流水账单</h2>
+    <div class="toolbar">
+      <button class="btn chip on" data-preset="last7">近7天</button>
+      <button class="btn chip" data-preset="last30">近30天</button>
+      <button class="btn chip" data-preset="this_week">本周</button>
+      <button class="btn chip" data-preset="this_month">本月</button>
+      <button class="btn ghost" id="expRange">导出区间CSV</button>
+    </div>
+    <div id="rangeBox"></div>
   </section>
 
   <!-- ============ 菜单页 ============ -->
@@ -214,7 +228,10 @@
   function fmtRM(c) { return 'RM ' + (Number(c || 0) / 100).toFixed(2); }
   function klTime(iso) { try { return new Date(iso).toLocaleTimeString('zh-CN', { timeZone: 'Asia/Kuala_Lumpur', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } }
   function api(path, opts) {
-    return fetch(path, Object.assign({ headers: { Authorization: 'Bearer ' + token } }, opts)).then(function (r) {
+    opts = opts || {};
+    // 关键修复（10-13）：headers必须合并而不是覆盖——否则带Content-Type的写操作会丢掉Authorization→401令牌错误
+    opts.headers = Object.assign({ Authorization: 'Bearer ' + token }, opts.headers || {});
+    return fetch(path, opts).then(function (r) {
       return r.json().then(function (j) {
         if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
         return j;
@@ -227,6 +244,7 @@
     b.addEventListener('click', function () {
       document.querySelectorAll('nav.tabs button').forEach(function (x) { x.classList.remove('on'); });
       b.classList.add('on');
+      if (b.dataset.page === 'stats' && !$('rangeBox').innerHTML) loadRange();
       ['live', 'stats', 'menu', 'member'].forEach(function (p) {
         $('page-' + p).style.display = (b.getAttribute('data-page') === p) ? '' : 'none';
       });
@@ -450,7 +468,9 @@
         + '<h2 class="sec">菜品销量 TOP</h2>' + (r.top_dishes.length ? r.top_dishes.map(function (x) {
             return '<div class="bar-row"><span class="bl">' + esc(x.dish_name) + '</span><div class="bar" style="width:' + Math.round(x.qty / maxQty * 220) + 'px"></div><span class="bv">' + x.qty + ' 份 · ' + x.amount_rm + '</span></div>';
           }).join('') : '<div class="empty">当天无销量</div>')
+        + '<table class="tb" style="margin-top:8px"><tr><td>最终营收（含调账 ' + r.adjustment_rm + '）</td><td><b style="color:var(--red);font-size:18px">' + r.final_revenue_rm + '</b></td></tr></table>'
         + '</div>';
+      renderAdj(r);
     }).catch(function (e) { $('dailyBox').innerHTML = '<div class="card"><div class="empty">查询失败：' + esc(e.message) + '</div></div>'; });
   }
   function loadMonthly() {
@@ -459,7 +479,8 @@
       var maxRev = Math.max.apply(null, [1].concat(r.by_day.map(function (x) { return x.revenue_cents; })));
       $('monthlyBox').innerHTML = '<div class="card">'
         + '<h2 class="sec" style="margin-top:0">月报 · ' + r.month + '</h2>'
-        + '<table class="tb"><tr><td>营收</td><td><b style="color:var(--red)">' + r.revenue_rm + '</b></td><td>订单</td><td><b>' + r.orders + '</b></td><td>客单价</td><td><b>' + r.avg_order_rm + '</b></td></tr></table>'
+        + '<table class="tb"><tr><td>营收</td><td><b style="color:var(--red)">' + r.revenue_rm + '</b></td><td>订单</td><td><b>' + r.orders + '</b></td><td>客单价</td><td><b>' + r.avg_order_rm + '</b></td></tr>'
+        + '<tr><td>调账净额</td><td><b>' + r.adjustment_rm + '</b></td><td>最终营收</td><td colspan="3"><b style="color:var(--red);font-size:17px">' + r.final_revenue_rm + '</b></td></tr></table>'
         + '<h2 class="sec">每日营收走势</h2>' + (r.by_day.length ? r.by_day.map(function (x) {
             return '<div class="bar-row"><span class="bl">' + x.date.slice(5) + '日</span><div class="bar" style="width:' + Math.max(2, Math.round(x.revenue_cents / maxRev * 260)) + 'px"></div><span class="bv">' + x.revenue_rm + ' · ' + x.orders + '单</span></div>';
           }).join('') : '<div class="empty">当月无数据</div>')
@@ -470,6 +491,82 @@
         + '</div>';
     }).catch(function (e) { $('monthlyBox').innerHTML = '<div class="card"><div class="empty">查询失败：' + esc(e.message) + '</div></div>'; });
   }
+  // ---------- 调账（人工修正） ----------
+  var lastDaily = null;
+  function renderAdj(r) {
+    lastDaily = r;
+    var h = '<div class="card"><h2 class="sec" style="margin-top:0">当日调账明细 · ' + r.date + '</h2>';
+    if (!r.adjustments.length) h += '<div class="empty">无调账记录</div>';
+    else {
+      h += '<table class="tb"><tr><th>金额</th><th>原因</th><th>时间</th><th></th></tr>';
+      r.adjustments.forEach(function (a) {
+        h += '<tr><td><b style="color:' + (a.amount_cents >= 0 ? 'var(--green)' : 'var(--red)') + '">' + a.amount_rm + '</b></td><td>' + esc(a.reason) + '</td><td><small>' + a.at.slice(11, 19) + ' UTC</small></td>'
+          + '<td><button class="btn ghost" style="padding:3px 10px;font-size:12px" data-deladj="' + a.id + '">删</button></td></tr>';
+      });
+      h += '</table>';
+    }
+    h += '</div>';
+    $('adjBox').innerHTML = h;
+  }
+  $('adjBox').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-deladj]') : null;
+    if (!b) return;
+    if (!confirm('删除这条调账？日报/月报将重新计算')) return;
+    api('/api/reports/adjust/' + b.getAttribute('data-deladj'), { method: 'DELETE' })
+      .then(function () { toast('已删除'); loadReport(); loadMonthly(); })
+      .catch(function (er) { toast('失败：' + er.message); });
+  });
+  $('adjBtn').addEventListener('click', function () {
+    var date = $('repDate').value || new Date().toISOString().slice(0, 10);
+    var amt = prompt('调账金额（RM，正数=补记收入，负数=冲减）：\n例如漏记一杯水 +3.5，多记一份 -12');
+    if (amt === null) return;
+    var v = Number(amt);
+    if (!Number.isFinite(v) || v === 0) { toast('金额无效'); return; }
+    var why = prompt('原因（必填，留痕）：', '');
+    if (why === null || !why.trim()) { toast('必须写原因'); return; }
+    api('/api/reports/adjust', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: date, amount_cents: Math.round(v * 100), reason: why.trim() }) })
+      .then(function () { toast('调账成功，报表已更新'); loadReport(); loadMonthly(); })
+      .catch(function (er) { toast('失败：' + er.message); });
+  });
+
+  // ---------- 区间流水 ----------
+  var curPreset = 'last7';
+  function loadRange() {
+    api('/api/reports/range?preset=' + curPreset).then(function (r) {
+      var h = '<div class="card"><h2 class="sec" style="margin-top:0">' + r.label + '流水 · ' + r.from + ' ~ ' + r.to + '</h2>'
+        + '<table class="tb"><tr><td>订单</td><td><b>' + r.orders + '</b></td><td>营收</td><td><b style="color:var(--red)">' + r.revenue_rm + '</b></td><td>未收款</td><td><b>' + r.unpaid_n + ' 单 / ' + r.unpaid_rm + '</b></td></tr>'
+        + '<tr><td>调账净额</td><td><b>' + r.adjustment_rm + '</b></td><td>最终营收</td><td colspan="3"><b style="color:var(--red);font-size:17px">' + r.final_revenue_rm + '</b></td></tr></table>'
+        + '<h2 class="sec">逐日</h2><div class="empty" style="display:' + (r.by_day.length ? 'none' : 'block') + '">区间无数据</div>';
+      var maxRev = Math.max.apply(null, [1].concat(r.by_day.map(function (x) { return Number(x.revenue_rm.replace(/[^0-9.]/g, '')) * 100 || 1; })));
+      h += r.by_day.map(function (x) {
+        var c = Math.round((Number(x.revenue_rm.replace(/[^0-9.]/g, '')) * 100 || 0) / maxRev * 240);
+        return '<div class="bar-row"><span class="bl">' + x.date.slice(5) + '</span><div class="bar" style="width:' + Math.max(2, c) + 'px"></div><span class="bv">' + x.revenue_rm + ' · ' + x.orders + '单</span></div>';
+      }).join('');
+      h += '<h2 class="sec">流水明细（' + r.list.length + ' 条）</h2>';
+      if (!r.list.length) h += '<div class="empty">无订单</div>';
+      else {
+        h += '<div style="max-height:420px;overflow:auto"><table class="tb"><tr><th>单号</th><th>桌</th><th>金额</th><th>支付</th><th>状态</th><th>已收</th></tr>';
+        r.list.forEach(function (o) {
+          var payL = { tng: 'TnG', cash: '现金', alipay: '支付宝', wechat: '微信', card: '银行卡', member: '会员卡' }[o.pay] || (o.pay || '—');
+          var stL = { pending: '待接', confirmed: '制作', served: '上桌', cancelled: '取消', rejected: '拒单', voided: '作废' }[o.status] || o.status;
+          h += '<tr><td><small>' + o.order_no.slice(5) + '</small></td><td>' + esc(o.table_no) + '</td><td><b>' + o.total_rm + '</b></td><td>' + payL + '</td><td>' + stL + '</td><td>' + (o.paid ? '✓' : '○') + '</td></tr>';
+        });
+        h += '</table></div>';
+      }
+      h += '</div>';
+      $('rangeBox').innerHTML = h;
+    }).catch(function (e) { $('rangeBox').innerHTML = '<div class="card"><div class="empty">查询失败：' + esc(e.message) + '</div></div>'; });
+  }
+  document.querySelectorAll('[data-preset]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('[data-preset]').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on');
+      curPreset = b.getAttribute('data-preset');
+      loadRange();
+    });
+  });
+  $('expRange').addEventListener('click', function () { dlCSV('?scope=range&preset=' + curPreset); });
+
   $('repBtn').addEventListener('click', loadReport);
   $('monBtn').addEventListener('click', loadMonthly);
   $('repDate').addEventListener('change', loadReport);

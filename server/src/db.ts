@@ -108,6 +108,15 @@ CREATE TABLE IF NOT EXISTS member_logs (
   at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
 );
 CREATE INDEX IF NOT EXISTS idx_member_logs_card ON member_logs(card_no);
+
+CREATE TABLE IF NOT EXISTS day_adjustments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  adj_date TEXT NOT NULL,
+  amount_cents INTEGER NOT NULL,
+  reason TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+CREATE INDEX IF NOT EXISTS idx_day_adj_date ON day_adjustments(adj_date);
 `;
 
 /**

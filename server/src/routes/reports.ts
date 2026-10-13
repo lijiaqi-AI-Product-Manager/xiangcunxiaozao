@@ -1,11 +1,19 @@
 import { Router } from 'express';
 import type { AppDeps } from '../types.js';
 import { makeAuth } from '../middleware/auth.js';
+import { HttpError } from '../middleware/errors.js';
 import { klDate, klDayRangeUtc } from '../utils/time.js';
 import { formatRM } from '../utils/money.js';
 import { PAY_LABELS } from '../services/orders.js';
 
 const NOT_REVENUE = `status NOT IN ('cancelled', 'rejected', 'voided')`;
+
+
+function monthEndNext(month: string): string {
+  const d = new Date(`${month}-01T00:00:00+08:00`);
+  d.setUTCMonth(d.getUTCMonth() + 1);
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kuala_Lumpur', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+}
 
 function monthRange(month: string): { start: string; end: string; days: number } {
   if (!/^\d{4}-\d{2}$/.test(month)) throw new Error(`月份格式应为 YYYY-MM，收到: ${month}`);
@@ -122,12 +130,23 @@ export default function reportsRoutes(deps: AppDeps): Router {
       )
       .all(start, end) as { dish_name: string; qty: number; amount: number }[];
 
+    // 调账（人工修正）：当日净调账 + 明细，最终营收 = 订单营收 + 净调账
+    const adjRows = db
+      .prepare(`SELECT id, amount_cents, reason, created_at FROM day_adjustments WHERE adj_date = ? ORDER BY id`)
+      .all(date) as { id: number; amount_cents: number; reason: string; created_at: string }[];
+    const adjNet = adjRows.reduce((s2, a) => s2 + a.amount_cents, 0);
+
     const avg = totals.n > 0 ? Math.round(totals.rev / totals.n) : 0;
     res.json({
       date,
       orders: totals.n,
       revenue_cents: totals.rev,
       revenue_rm: formatRM(totals.rev),
+      adjustments: adjRows.map((a) => ({ id: a.id, amount_cents: a.amount_cents, amount_rm: (a.amount_cents >= 0 ? '+' : '-') + formatRM(Math.abs(a.amount_cents)), reason: a.reason, at: a.created_at })),
+      adjustment_cents: adjNet,
+      adjustment_rm: (adjNet >= 0 ? '+' : '-') + formatRM(Math.abs(adjNet)),
+      final_revenue_cents: totals.rev + adjNet,
+      final_revenue_rm: totals.rev + adjNet >= 0 ? formatRM(totals.rev + adjNet) : '-' + formatRM(Math.abs(totals.rev + adjNet)),
       avg_order_cents: avg,
       avg_order_rm: formatRM(avg),
       discount_cents: totals.disc,
@@ -197,12 +216,21 @@ export default function reportsRoutes(deps: AppDeps): Router {
       .all(start, end) as { dish_name: string; qty: number; amount: number }[];
 
     const pairs = coOccurrence(db, start, end);
+    const mAdj = (
+      db
+        .prepare(`SELECT COALESCE(SUM(amount_cents), 0) AS n FROM day_adjustments WHERE adj_date >= ? AND adj_date < ?`)
+        .get(month.slice(0, 8) + '01', monthEndNext(month)) as { n: number }
+    ).n;
 
     res.json({
       month,
       orders: totals.n,
       revenue_cents: totals.rev,
       revenue_rm: formatRM(totals.rev),
+      adjustment_cents: mAdj,
+      adjustment_rm: (mAdj >= 0 ? '+' : '-') + formatRM(Math.abs(mAdj)),
+      final_revenue_cents: totals.rev + mAdj,
+      final_revenue_rm: totals.rev + mAdj >= 0 ? formatRM(totals.rev + mAdj) : '-' + formatRM(Math.abs(totals.rev + mAdj)),
       discount_rm: formatRM(totals.disc),
       avg_order_rm: formatRM(totals.n > 0 ? Math.round(totals.rev / totals.n) : 0),
       by_day: klByDay,
@@ -215,8 +243,116 @@ export default function reportsRoutes(deps: AppDeps): Router {
     });
   });
 
+  // ========== 区间流水：近7天/近30天/本周/本月（10-13 高斯令） ==========
+  const PRESETS = ['last7', 'last30', 'this_week', 'this_month'] as const;
+  function presetRange(preset: string, ref: string): { label: string; from: string; to: string } {
+    const base = new Date(`${ref}T12:00:00Z`);
+    const ymd = (d: Date) =>
+      new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kuala_Lumpur', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+    const addDays = (d: Date, n: number) => new Date(d.getTime() + n * 86400000);
+    const dowMon = (d: Date) => (d.getUTCDay() + 6) % 7;
+    let from: Date, to: Date, label: string;
+    if (preset === 'last7') { from = addDays(base, -6); to = base; label = '近7天'; }
+    else if (preset === 'last30') { from = addDays(base, -29); to = base; label = '近30天'; }
+    else if (preset === 'this_week') { from = addDays(base, -dowMon(base)); to = addDays(from, 6); label = '本周'; }
+    else { const m0 = new Date(`${ref.slice(0, 7)}-01T12:00:00Z`); from = m0; to = addDays(new Date(m0.getTime() + 31 * 86400000), -1); label = '本月'; }
+    return { label, from: ymd(from), to: ymd(to) };
+  }
+
+  r.get('/range', auth, (req, res) => {
+    const preset = (PRESETS as readonly string[]).includes(String(req.query.preset)) ? String(req.query.preset) : 'last7';
+    const ref = typeof req.query.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(req.query.date) ? req.query.date : klDate();
+    const { label, from, to } = presetRange(preset, ref);
+    const start = klDayRangeUtc(from).start;
+    const end = klDayRangeUtc(to).end;
+
+    const totals = db
+      .prepare(
+        `SELECT COUNT(*) AS n, COALESCE(SUM(total_cents), 0) AS rev, COALESCE(SUM(discount_cents), 0) AS disc
+         FROM orders WHERE created_at >= ? AND created_at < ? AND ${NOT_REVENUE}`
+      )
+      .get(start, end) as { n: number; rev: number; disc: number };
+    const unpaid = db
+      .prepare(
+        `SELECT COUNT(*) AS n, COALESCE(SUM(total_cents), 0) AS a FROM orders
+         WHERE created_at >= ? AND created_at < ? AND ${NOT_REVENUE} AND paid_at IS NULL`
+      )
+      .get(start, end) as { n: number; a: number };
+    const adjNet = (
+      db.prepare(`SELECT COALESCE(SUM(amount_cents), 0) AS n FROM day_adjustments WHERE adj_date >= ? AND adj_date <= ?`).get(from, to) as { n: number }
+    ).n;
+    const byDay = db
+      .prepare(
+        `SELECT date(created_at, '+8 hours') AS date, COUNT(*) AS n, SUM(total_cents) AS rev
+         FROM orders WHERE created_at >= ? AND created_at < ? AND ${NOT_REVENUE} GROUP BY date ORDER BY date`
+      )
+      .all(start, end) as { date: string; n: number; rev: number }[];
+    const list = db
+      .prepare(
+        `SELECT order_no, created_at, table_no, total_cents, payment_method, paid_at, status, source, note
+         FROM orders WHERE created_at >= ? AND created_at < ? ORDER BY id DESC LIMIT 500`
+      )
+      .all(start, end) as Array<{ order_no: string; created_at: string; table_no: string; total_cents: number; payment_method: string; paid_at: string | null; status: string; source: string; note: string }>;
+
+    res.json({
+      preset, label, from, to,
+      orders: totals.n,
+      revenue_cents: totals.rev,
+      revenue_rm: formatRM(totals.rev),
+      discount_rm: formatRM(totals.disc),
+      unpaid_n: unpaid.n,
+      unpaid_rm: formatRM(unpaid.a),
+      adjustment_cents: adjNet,
+      adjustment_rm: (adjNet >= 0 ? '+' : '-') + formatRM(Math.abs(adjNet)),
+      final_revenue_cents: totals.rev + adjNet,
+      final_revenue_rm: totals.rev + adjNet >= 0 ? formatRM(totals.rev + adjNet) : '-' + formatRM(Math.abs(totals.rev + adjNet)),
+      by_day: byDay.map((d) => ({ date: d.date, orders: d.n, revenue_rm: formatRM(d.rev) })),
+      list: list.map((o) => ({
+        order_no: o.order_no, time: o.created_at, table_no: o.table_no, total_rm: formatRM(o.total_cents),
+        pay: o.payment_method, paid: !!o.paid_at, status: o.status, source: o.source, note: o.note.slice(0, 40),
+      })),
+    });
+  });
+
+  // ========== 调账 CRUD（人工修正日报/月报：不改订单，加修正项，全程留痕） ==========
+  r.post('/adjust', auth, (req, res) => {
+    const date = String(req.body?.date ?? '');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new HttpError(400, '日期格式应为 YYYY-MM-DD');
+    const amount = Math.round(Number(req.body?.amount_cents));
+    if (!Number.isFinite(amount) || amount === 0 || Math.abs(amount) > 10_000_000) {
+      throw new HttpError(400, '调账金额非法（非零，±RM 10万以内）');
+    }
+    const reason = String(req.body?.reason ?? '').trim().slice(0, 120);
+    if (!reason) throw new HttpError(400, '调账必须写原因（对账留痕红线）');
+    db.prepare(`INSERT INTO day_adjustments(adj_date, amount_cents, reason) VALUES(?, ?, ?)`).run(date, amount, reason);
+    res.status(201).json({ ok: true });
+  });
+
+  r.delete('/adjust/:id', auth, (req, res) => {
+    const info = db.prepare(`DELETE FROM day_adjustments WHERE id = ?`).run(Number(req.params.id));
+    if (info.changes === 0) throw new HttpError(404, '调账记录不存在');
+    res.json({ ok: true });
+  });
+
   // CSV导出（带BOM，Excel直接开）：scope=daily|monthly
   r.get('/export', auth, (req, res) => {
+    if (req.query.scope === 'range') {
+      const preset = (PRESETS as readonly string[]).includes(String(req.query.preset)) ? String(req.query.preset) : 'last7';
+      const ref = typeof req.query.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(req.query.date) ? req.query.date : klDate();
+      const { label, from, to } = presetRange(preset, ref);
+      const start = klDayRangeUtc(from).start;
+      const end = klDayRangeUtc(to).end;
+      const list = db
+        .prepare(`SELECT order_no, created_at, table_no, total_cents, payment_method, paid_at, status, source, note
+           FROM orders WHERE created_at >= ? AND created_at < ? ORDER BY id`)
+        .all(start, end) as Array<{ order_no: string; created_at: string; table_no: string; total_cents: number; payment_method: string; paid_at: string | null; status: string; source: string; note: string }>;
+      const csvR: string[] = [`# 湘村小灶区间流水（${label} ${from}~${to}）`, '单号,时间(UTC),桌号,金额(分),支付,已收,状态,来源,备注'];
+      for (const o of list) csvR.push(`"${o.order_no}","${o.created_at}","${o.table_no}",${o.total_cents},"${o.payment_method}",${o.paid_at ? '是' : '否'},${o.status},${o.source},"${o.note.replace(/"/g, '""').slice(0, 60)}"`);
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', `attachment; filename="xcz-range-${preset}.csv"`);
+      res.send('\ufeff' + csvR.join('\n'));
+      return;
+    }
     const scope = String(req.query.scope ?? 'daily');
     const csv: string[] = [];
     if (scope === 'daily') {

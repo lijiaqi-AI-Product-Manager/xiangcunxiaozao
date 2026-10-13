@@ -3,6 +3,7 @@ import type { AppDeps } from '../types.js';
 import type { OrderEvent } from '../events.js';
 import type { OrderFullDTO } from '../services/orders.js';
 import { makeAuth } from '../middleware/auth.js';
+import { HttpError } from '../middleware/errors.js';
 import {
   createOrder,
   createManualOrder,
@@ -10,6 +11,7 @@ import {
   getOrderFull,
   getOrderLogs,
   listOrders,
+  memberPayOrder,
   payOrder,
   serveItem,
   transitionOrder,
@@ -102,6 +104,14 @@ export default function ordersRoutes(deps: AppDeps): Router {
   r.post('/:orderNo/reject', auth.kitchen, (req, res) => {
     const o = transitionOrder(db, req.params.orderNo, 'rejected', String(req.body?.reason ?? ''));
     bus.emit('order:status', toEvent('order:status', o));
+    res.json(o);
+  });
+
+  // 顾客端：会员卡在线扣款（下单时选择；与管理端收款同源逻辑，幂等安全）
+  r.post('/:orderNo/customer-pay', (req, res) => {
+    const card = String(req.body?.card_no ?? '').trim();
+    if (!card || card.length < 2 || card.length > 32) throw new HttpError(400, '请填写会员卡号');
+    const o = memberPayOrder(db, req.params.orderNo, card);
     res.json(o);
   });
 
