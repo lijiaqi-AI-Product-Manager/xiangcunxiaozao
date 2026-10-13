@@ -8,4 +8,6 @@ export interface AppDeps {
   kitchenToken: string;
   bus: EventEmitter;
   limits?: { orderPerMin?: number; globalPerMin?: number };
+  /** 持久数据目录（SQLite库+上传图片），生产=/data */
+  dataDir?: string;
 }

@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import express from 'express';
 import type { Express } from 'express';
 import type { AppDeps } from './types.js';
@@ -44,6 +45,11 @@ export function buildApp(deps: AppDeps): Express {
       return false;
     }
   };
+
+  // 菜品图上传目录（持久卷，与SQLite同目录；D3实拍图入驻）
+  const uploadsDir = path.join(deps.dataDir ?? path.join(process.cwd(), 'data'), 'uploads');
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  app.use('/uploads', express.static(uploadsDir, { maxAge: '7d' }));
 
   // 前端静态资源（顾客点单页 / 后厨页 / 老板后台，D3 起陆续入驻 web/）
   if (fs.existsSync(webDir)) {

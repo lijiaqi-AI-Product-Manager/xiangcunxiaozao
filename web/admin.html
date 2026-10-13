@@ -86,6 +86,7 @@
   table.tb { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   table.tb th { text-align: left; color: var(--dim); font-weight: 600; padding: 6px 8px; border-bottom: 1.5px solid var(--edge); font-size: 12.5px; }
   table.tb td { padding: 7px 8px; border-bottom: 1px solid var(--edge); }
+  table.tb th.num, table.tb td.num { text-align: right; font-variant-numeric: tabular-nums; }
   .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12.5px; }
   .bar-row .bl { width: 76px; color: var(--dim); flex: none; }
   .bar-row .bar { height: 14px; border-radius: 4px; background: linear-gradient(90deg, #d9531e, #b3261e); min-width: 2px; }
@@ -226,7 +227,14 @@
   function toast(m) { var t = $('toast'); t.textContent = m; t.classList.add('show'); setTimeout(function () { t.classList.remove('show'); }, 2600); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function fmtRM(c) { return 'RM ' + (Number(c || 0) / 100).toFixed(2); }
-  function klTime(iso) { try { return new Date(iso).toLocaleTimeString('zh-CN', { timeZone: 'Asia/Kuala_Lumpur', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } }
+  function klTime(iso) {
+    try {
+      var d = new Date(iso);
+      if (!iso || isNaN(d.getTime())) return '--:--';
+      return d.toLocaleTimeString('zh-CN', { timeZone: 'Asia/Kuala_Lumpur', hour: '2-digit', minute: '2-digit' });
+    } catch (e) { return '--:--'; }
+  }
+  function tbl(o) { return (o && o.table_no) ? esc(o.table_no) : '—'; }
   function api(path, opts) {
     opts = opts || {};
     // 关键修复（10-13）：headers必须合并而不是覆盖——否则带Content-Type的写操作会丢掉Authorization→401令牌错误
@@ -289,11 +297,11 @@
     }
     if (o.status !== 'cancelled' && o.status !== 'voided' && o.status !== 'rejected') {
       acts += '<button data-a="edit">编辑</button>';
-      acts += o.paid ? '<button data-a="unpay">撤销收款</button>' : '<button class="gold" data-a="pay">收款</button>';
+      acts += o.paid ? '<button data-a="unpay">撤销收款</button>' : '<button class="green" data-a="pay">收款</button>';
     }
     if (o.status !== 'voided' && o.status !== 'cancelled') acts += '<button data-a="void">作废</button>';
     return '<div class="card">'
-      + '<div class="ohead"><span class="tbl">' + esc(o.table_no) + '桌</span>'
+      + '<div class="ohead"><span class="tbl">' + tbl(o) + '桌</span>'
       + '<span class="tag ' + o.status + '">' + STATUS_LABEL[o.status] + '</span>'
       + '<span class="ono">' + esc(o.order_no) + (o.source === 'manual' ? ' · 手动' : '') + '</span>'
       + '<span class="time">' + klTime(o.created_at) + '</span></div>'
@@ -335,7 +343,7 @@
   function openPay(no) {
     var o = orders[no];
     var sheet = $('editSheet');
-    sheet.innerHTML = '<h3>收款 · ' + esc(o.table_no) + '桌 · ' + fmtRM(o.total_cents) + '</h3>'
+    sheet.innerHTML = '<h3>收款 · ' + tbl(o) + '桌 · ' + fmtRM(o.total_cents) + '</h3>'
       + '<div class="payopts" id="payOpts">'
       + ['tng|TnG', 'cash|现金', 'alipay|支付宝', 'wechat|微信', 'card|银行卡', 'member|会员卡'].map(function (x, i) {
           var kv = x.split('|');
@@ -363,7 +371,7 @@
     var o = orders[no];
     var sheet = $('editSheet');
     sheet.innerHTML = '<h3>编辑订单 ' + esc(o.order_no) + '</h3>'
-      + '<div class="frow"><label>桌号<input id="edTable" value="' + esc(o.table_no) + '"></label></div>'
+      + '<div class="frow"><label>桌号<input id="edTable" value="' + tbl(o) + '"></label></div>'
       + '<div id="edLines">' + (o.items || []).map(function (it, i) {
           return '<div class="frow" style="align-items:flex-end"><label>菜品' + (i + 1) + '<input data-di="' + it.dish_id + '" value="' + esc(it.dish_name) + '" disabled></label>'
             + '<label style="max-width:90px">数量<input data-qty="' + it.id + '" type="number" min="1" max="99" value="' + it.qty + '"></label>'
@@ -464,7 +472,7 @@
         + '<table class="tb"><tr><td>营收</td><td><b style="color:var(--red)">' + r.revenue_rm + '</b></td><td>订单</td><td><b>' + r.orders + '</b></td></tr>'
         + '<tr><td>客单价</td><td><b>' + r.avg_order_rm + '</b></td><td>优惠合计</td><td><b>' + r.discount_rm + '</b></td></tr>'
         + '<tr><td>未收款</td><td><b style="color:' + (r.unpaid_n ? 'var(--red)' : 'var(--green)') + '">' + r.unpaid_n + ' 单 / ' + r.unpaid_rm + '</b></td><td>取消/拒绝/作废</td><td><b>' + r.cancelled + ' / ' + r.rejected + ' / ' + r.voided + '</b></td></tr></table>'
-        + (r.payments.length ? '<h2 class="sec">收款方式</h2><table class="tb"><tr><th>方式</th><th>单数</th><th>金额</th></tr>' + r.payments.map(function (p) { return '<tr><td>' + esc(p.label) + '</td><td>' + p.n + '</td><td>' + p.amount_rm + '</td></tr>'; }).join('') + '</table>' : '')
+        + (r.payments.length ? '<h2 class="sec">收款方式</h2><table class="tb"><tr><th>方式</th><th>单数</th><th>金额</th></tr>' + r.payments.map(function (p) { return '<tr><td>' + esc(p.label) + '</td><td class="num">' + p.n + '</td><td class="num"><b>' + p.amount_rm + '</b></td></tr>'; }).join('') + '</table>' : '')
         + '<h2 class="sec">菜品销量 TOP</h2>' + (r.top_dishes.length ? r.top_dishes.map(function (x) {
             return '<div class="bar-row"><span class="bl">' + esc(x.dish_name) + '</span><div class="bar" style="width:' + Math.round(x.qty / maxQty * 220) + 'px"></div><span class="bv">' + x.qty + ' 份 · ' + x.amount_rm + '</span></div>';
           }).join('') : '<div class="empty">当天无销量</div>')
@@ -549,7 +557,7 @@
         r.list.forEach(function (o) {
           var payL = { tng: 'TnG', cash: '现金', alipay: '支付宝', wechat: '微信', card: '银行卡', member: '会员卡' }[o.pay] || (o.pay || '—');
           var stL = { pending: '待接', confirmed: '制作', served: '上桌', cancelled: '取消', rejected: '拒单', voided: '作废' }[o.status] || o.status;
-          h += '<tr><td><small>' + o.order_no.slice(5) + '</small></td><td>' + esc(o.table_no) + '</td><td><b>' + o.total_rm + '</b></td><td>' + payL + '</td><td>' + stL + '</td><td>' + (o.paid ? '✓' : '○') + '</td></tr>';
+          h += '<tr><td><small>' + o.order_no.slice(5) + '</small></td><td>' + tbl(o) + '</td><td><b>' + o.total_rm + '</b></td><td>' + payL + '</td><td>' + stL + '</td><td>' + (o.paid ? '✓' : '○') + '</td></tr>';
         });
         h += '</table></div>';
       }
@@ -618,6 +626,7 @@
   function openDishEdit(id) {
     var d = dishes.filter(function (x) { return x.id === id; })[0] || { name: '', price_cents: 0, category: '招牌', description: '', avoid_options: [], animation_key: '', sort_order: 0, is_active: 1 };
     var isNew = !id;
+    var clearedImg = false;
     var sheet = $('editSheet');
     sheet.innerHTML = '<h3>' + (isNew ? '新增菜品' : '编辑 ' + esc(d.name)) + '</h3>'
       + '<div class="frow"><label>菜名<input id="deName" value="' + esc(d.name) + '" placeholder="如 农家一碗香"></label>'
@@ -625,12 +634,37 @@
       + '<div class="frow"><label>分类<input id="deCat" value="' + esc(d.category) + '" placeholder="招牌/热菜/主食/饮品…（招牌会进首页）"></label>'
       + '<label style="max-width:110px">排序<input id="deSort" type="number" value="' + (d.sort_order || 0) + '"></label></div>'
       + '<div class="frow"><label>简介<textarea id="deDesc" placeholder="食材与卖点，一句到位">' + esc(d.description) + '</textarea></label></div>'
+      + '<div class="frow"><label>菜品图（列表页小图展示）<div style="display:flex;gap:10px;align-items:center">'
+      + '<div id="deThumb" style="width:64px;height:64px;border-radius:10px;border:1.5px solid var(--edge);display:flex;align-items:center;justify-content:center;font-family:var(--font-hand);font-size:26px;color:var(--dim);background:#FDFBF6;overflow:hidden;flex:none">' + (d.image_path ? '<img src="' + esc(d.image_path) + '" style="width:100%;height:100%;object-fit:cover" alt="">' : esc((d.name || '菜').slice(0, 1))) + '</div>'
+      + '<div><input type="file" id="deImg" accept="image/jpeg,image/png,image/webp" style="font-size:12px">'
+      + '<small style="display:block;color:var(--dim);margin-top:4px">jpg/png/webp · ≤2MB · 建议正方形</small>'
+      + '<button class="btn sm ghost" id="deImgClear" style="margin-top:6px">移除图片</button></div></div></label></div>'
       + '<div class="frow"><label>定制忌口（逗号分隔）<input id="deAvoid" value="' + esc((d.avoid_options || []).join('，').replace(/，/g, ', ')) + '" placeholder="免葱, 免香菜, 不放味精, 不放土豆"></label></div>'
       + '<div class="frow"><label style="max-width:170px">月售显示（留空=真实统计）<input id="deSold" type="number" min="0" value="' + (d.monthly_sold_override == null ? '' : d.monthly_sold_override) + '" placeholder="自动"></label>'
       + '<label style="max-width:150px">动画标记<input id="deAnim" value="' + esc(d.animation_key || '') + '" placeholder="ywk=一碗香动画"></label></div>'
       + '<div class="btns"><button class="btn ghost" id="deCancel">取消</button><button class="btn" id="deSave">' + (isNew ? '创建' : '保存') + '</button></div>';
     $('editModal').classList.add('on');
     $('deCancel').onclick = function () { $('editModal').classList.remove('on'); };
+    // 菜品图：选择即传（选完自动预览，保存菜品时不重复传）
+    var imgPending = null;
+    $('deImg').onchange = function () {
+      var f = this.files && this.files[0];
+      if (!f) return;
+      if (f.size > 2 * 1024 * 1024) { toast('图片超过2MB，请压缩'); this.value = ''; return; }
+      var rd = new FileReader();
+      rd.onload = function () {
+        var b64 = String(rd.result || '');
+        imgPending = b64;
+        $('deThumb').innerHTML = '<img src="' + b64 + '" style="width:100%;height:100%;object-fit:cover" alt="">';
+        toast('图片已就绪，点「保存」生效');
+      };
+      rd.readAsDataURL(f);
+    };
+    $('deImgClear').onclick = function () {
+      imgPending = null;
+      $('deThumb').innerHTML = esc((d.name || '菜').slice(0, 1));
+      clearedImg = !isNew;
+    };
     $('deSave').onclick = function () {
       var body = {
         name: $('deName').value.trim(),
@@ -647,8 +681,16 @@
       var pr = isNew
         ? api('/api/dishes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
         : api('/api/dishes/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-      pr.then(function () { $('editModal').classList.remove('on'); toast(isNew ? '已新增' : '已保存'); loadDishes(); })
-        .catch(function (e) { toast('失败：' + e.message); });
+      pr.then(function (r) {
+        var targetId = isNew ? r.id : id;
+        var chain = Promise.resolve();
+        if (imgPending) {
+          chain = api('/api/dishes/' + targetId + '/image', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image: imgPending }) });
+        } else if (clearedImg) {
+          chain = api('/api/dishes/' + targetId, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image_path: '' }) });
+        }
+        return chain.then(function () { $('editModal').classList.remove('on'); toast(isNew ? '已新增' : '已保存' + (imgPending ? '（含图片）' : '')); loadDishes(); });
+      }).catch(function (e) { toast('失败：' + e.message); });
     };
   }
   $('newDishBtn').addEventListener('click', function () { openDishEdit(null); });

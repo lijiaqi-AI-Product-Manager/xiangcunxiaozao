@@ -1,7 +1,10 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { Router } from 'express';
 import type { AppDeps } from '../types.js';
 import { makeAuth } from '../middleware/auth.js';
 import { HttpError } from '../middleware/errors.js';
+import { MENU_SEED } from '../data/menu-seed.js';
 import { parsePriceToCents } from '../utils/money.js';
 import { monthlySold } from '../services/orders.js';
 
@@ -71,6 +74,38 @@ export default function dishesRoutes(deps: AppDeps): Router {
   });
 
   // 老板：新增菜品
+  // 全菜单种子（04文案库v1.0唯一权威源）：按菜名精确upsert + 清理名单外菜品（软删保账）
+  r.post('/seed', auth.admin, (req, res) => {
+    if (req.body?.confirm !== 'SEED_V1') throw new HttpError(400, '请传 confirm=SEED_V1 防误触');
+    let inserted = 0, updated = 0;
+    for (const d of MENU_SEED) {
+      const exist = (
+        db.prepare('SELECT id FROM dishes WHERE name = ? AND is_deleted = 0').get(d.name) as { id: number } | undefined
+      );
+      if (exist) {
+        db.prepare(
+          `UPDATE dishes SET description=?, price_cents=?, category=?, animation_key=?,
+           avoid_options=?, is_active=1, updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=?`
+        ).run(d.desc, d.price_cents, d.category, d.code, JSON.stringify(d.avoid), exist.id);
+        updated++;
+      } else {
+        db.prepare(
+          `INSERT INTO dishes(name, description, price_cents, category, animation_key, avoid_options, sort_order)
+           VALUES(?,?,?,?,?,?,?)`
+        ).run(d.name, d.desc, d.price_cents, d.category, d.code, JSON.stringify(d.avoid), MENU_SEED.indexOf(d));
+        inserted++;
+      }
+    }
+    // 名单外的在售菜品全部软删（测试菜清场，账目不动）
+    const names = MENU_SEED.map((d) => d.name);
+    const placeholders = names.map(() => '?').join(',');
+    const hid = db
+      .prepare(`UPDATE dishes SET is_deleted=1, is_active=0, updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now')
+                WHERE is_deleted=0 AND name NOT IN (${placeholders})`)
+      .run(...names).changes;
+    res.json({ ok: true, total: MENU_SEED.length, inserted, updated, hidden: hid });
+  });
+
   r.post('/', auth.admin, (req, res) => {
     const name = clean(req.body?.name, 50);
     if (!name) throw new HttpError(400, '菜名不能为空');
@@ -115,6 +150,7 @@ export default function dishesRoutes(deps: AppDeps): Router {
       const raw = Array.isArray(req.body.avoid_options) ? req.body.avoid_options : [];
       avoid = raw.map((x: unknown) => String(x).trim().slice(0, 12)).filter(Boolean).slice(0, 12);
     }
+    const imagePath = req.body?.image_path !== undefined ? clean(req.body.image_path, 200) : row.image_path;
     let override: number | null = row.monthly_sold_override;
     if (req.body && req.body.monthly_sold_override !== undefined) {
       const v = req.body.monthly_sold_override;
@@ -129,9 +165,9 @@ export default function dishesRoutes(deps: AppDeps): Router {
 
     db.prepare(
       `UPDATE dishes SET name=?, description=?, price_cents=?, category=?, animation_key=?,
-       sort_order=?, is_active=?, avoid_options=?, monthly_sold_override=?,
+       sort_order=?, is_active=?, avoid_options=?, monthly_sold_override=?, image_path=?,
        updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=?`
-    ).run(name, description, price, category, animationKey, sortOrder, isActive, JSON.stringify(avoid), override, id);
+    ).run(name, description, price, category, animationKey, sortOrder, isActive, JSON.stringify(avoid), override, imagePath, id);
     res.json(adminView(db.prepare('SELECT * FROM dishes WHERE id = ?').get(id) as DishRow));
   });
 
@@ -152,6 +188,33 @@ export default function dishesRoutes(deps: AppDeps): Router {
     }
     db.prepare('DELETE FROM dishes WHERE id = ?').run(id);
     res.json({ deleted: true, soft: false });
+  });
+
+  // 老板：上传菜品图（base64 JSON，存持久卷 /data/uploads，列表页+详情页展示）
+  r.post('/:id/image', auth.admin, (req, res) => {
+    const id = Number(req.params.id);
+    const row = db.prepare('SELECT id FROM dishes WHERE id = ?').get(id) as { id: number } | undefined;
+    if (!row) throw new HttpError(404, '菜品不存在');
+    const b64 = String(req.body?.image ?? '');
+    const m = /^data:image\/(jpeg|png|webp);base64,(.+)$/.exec(b64);
+    if (!m) throw new HttpError(400, '图片格式应为 jpeg/png/webp 的 base64 dataURL');
+    const buf = Buffer.from(m[2], 'base64');
+    if (buf.length < 32) throw new HttpError(400, '图片内容为空');
+    if (buf.length > 2 * 1024 * 1024) throw new HttpError(413, '图片超过 2MB，请压缩后再传');
+    // 魔数校验（防伪图片名上传任意文件）
+    const hex = buf.subarray(0, 4).toString('hex');
+    const ok = (m[1] === 'jpeg' && hex.startsWith('ffd8')) || (m[1] === 'png' && hex === '89504e47') || (m[1] === 'webp' && hex.startsWith('5249'));
+    if (!ok) throw new HttpError(400, '图片内容与格式不符');
+    const ext = m[1] === 'jpeg' ? 'jpg' : m[1];
+    const dir = path.join(deps.dataDir ?? path.join(process.cwd(), 'data'), 'uploads');
+    fs.mkdirSync(dir, { recursive: true });
+    const fname = `dish-${id}-${Date.now()}.${ext}`;
+    fs.writeFileSync(path.join(dir, fname), buf);
+    const rel = `/uploads/${fname}`;
+    db.prepare(
+      `UPDATE dishes SET image_path=?, updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=?`
+    ).run(rel, id);
+    res.status(201).json({ ok: true, image_path: rel });
   });
 
   // 老板：上下架切换

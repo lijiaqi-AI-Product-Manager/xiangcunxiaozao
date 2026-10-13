@@ -12,7 +12,7 @@ function main(): void {
 
   const db = openDb();
   const bus = makeBus();
-  const app = buildApp({ db, bus, adminToken: config.adminToken, kitchenToken: config.kitchenToken });
+  const app = buildApp({ db, bus, adminToken: config.adminToken, kitchenToken: config.kitchenToken, dataDir: config.dataDir });
 
   const server = http.createServer(app);
   setupWs(server, bus, config.adminToken, config.kitchenToken); // 后厨实时推送

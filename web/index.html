@@ -96,6 +96,9 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .stage.exploded{height:760px;transition-delay:0ms}
 #canvas{position:absolute;left:0;right:0;bottom:0;height:760px}
 .plate{position:absolute;left:21.5px;top:540px;width:300px;height:170px;z-index:1;transition:transform .4s ease-out}
+.plate.cup{top:410px;height:300px}
+.stage.hascup .plate-front{display:none}
+.stage.hascup .steam{display:none}
 .plate-front{position:absolute;left:21.5px;top:616px;width:300px;height:84px;z-index:40;transition:transform .4s ease-out}
 .stage.exploded .plate,.stage.exploded .plate-front{transform:translateY(2px)}
 .piece{position:absolute;transition:transform 600ms cubic-bezier(.34,1.3,.5,1);will-change:transform;pointer-events:none}
@@ -313,6 +316,10 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .skel{border-radius:14px;background:linear-gradient(100deg,#EFE7DA 40%,#F7F1E6 50%,#EFE7DA 60%);background-size:200% 100%;animation:sk 1.1s infinite;height:86px}
 @keyframes sk{to{background-position:-200% 0}}
 .badge-sign{display:inline-block;background:var(--chili);color:#fff;font-size:10.5px;padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:2px}
+
+/* ================= 菜品图（10-14 D3实拍图入驻） ================= */
+.dc-thumb.dc-img{padding:0;overflow:hidden;background:#EFE7DA}
+.dc-thumb.dc-img img{width:100%;height:100%;object-fit:cover;display:block}
 
 /* ================= 桌面：暗色木桌氛围 + 居中菜单卡（10-12 改版） ================= */
 @media (min-width:768px){
@@ -539,6 +546,1064 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 
 
 <!-- ================= 视图A · 首页 ================= -->
+
+<!-- ============ 第一批新食材符号（10-13 v3：D/E/F区，语法对齐v2） ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- 蛙腿肉块：蒜瓣纹理+奶白 -->
+  <symbol id="frog-a" viewBox="0 0 62 48">
+    <path d="M6 18 C5 10 13 4 23 3 C34 2 48 5 55 12 C60 17 59 27 54 34 C48 42 36 46 25 45 C15 44 7 39 5 31 C4 26 5 22 6 18 Z" fill="#F2E8DA" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M20 6 C27 4 38 6 45 11 C40 15 31 17 24 15 C21 14 19 11 20 6 Z" fill="#FAF4EA"/>
+    <path d="M22 8 C30 6 40 8 48 13" fill="none" stroke="#D9BFA8" stroke-width="1.6" opacity=".9"/>
+    <path d="M12 34 C18 40 30 43 41 41 C47 40 51 37 53 33 C50 39 42 43 31 43 C21 43 14 39 12 34 Z" fill="#DFCBB6" opacity=".85"/>
+    <path d="M18 20 C24 18 32 19 38 23" fill="none" stroke="#D9BFA8" stroke-width="1.4" opacity=".8"/>
+    <path d="M24 28 C29 27 35 28 39 31" fill="none" stroke="#E8C8B4" stroke-width="1.6" opacity=".7"/>
+    <ellipse cx="14" cy="24" rx="5" ry="3" fill="#F0C8B8" opacity=".55"/>
+  </symbol>
+  <symbol id="frog-b" viewBox="0 0 58 44">
+    <path d="M8 10 C14 3 26 1 36 3 C46 5 54 11 55 19 C56 27 50 35 41 39 C31 43 17 42 11 36 C5 30 3 22 5 15 C5 13 6 11 8 10 Z" fill="#F2E8DA" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M34 5 C42 7 49 12 51 18 C46 20 39 19 35 15 C32 12 32 8 34 5 Z" fill="#FAF4EA"/>
+    <path d="M14 32 C20 37 30 39 39 37 C44 36 48 33 50 30 C47 35 39 39 29 38 C20 37 15 35 14 32 Z" fill="#DFCBB6" opacity=".85"/>
+    <path d="M16 16 C22 13 30 14 36 18" fill="none" stroke="#D9BFA8" stroke-width="1.5" opacity=".85"/>
+    <path d="M20 25 C26 23 33 24 38 27" fill="none" stroke="#E8C8B4" stroke-width="1.5" opacity=".7"/>
+    <ellipse cx="12" cy="22" rx="4.5" ry="2.8" fill="#F0C8B8" opacity=".55"/>
+  </symbol>
+  <symbol id="frog-c" viewBox="0 0 52 50">
+    <path d="M10 8 C18 2 32 2 41 7 C48 11 51 19 49 27 C47 36 38 44 27 46 C17 48 8 43 5 34 C2 26 4 15 10 8 Z" fill="#F2E8DA" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M20 5 C28 4 36 8 40 13 C34 16 26 16 21 12 C18 10 18 7 20 5 Z" fill="#FAF4EA"/>
+    <path d="M12 36 C18 42 28 45 37 42 C41 41 44 38 46 35 C43 40 35 44 26 43 C18 42 14 39 12 36 Z" fill="#DFCBB6" opacity=".85"/>
+    <path d="M17 19 C23 17 30 18 35 22" fill="none" stroke="#D9BFA8" stroke-width="1.5" opacity=".85"/>
+    <path d="M19 28 C25 26 31 27 36 30" fill="none" stroke="#E8C8B4" stroke-width="1.5" opacity=".7"/>
+  </symbol>
+  <!-- 干辣椒：褶皱细长+蒂 -->
+  <symbol id="dchili-a" viewBox="0 0 26 48">
+    <path d="M14 6 C15 4 17 4 18 6 C17 10 16 14 16 18 C17 26 16 36 13 43 C11 47 8 47 7 43 C5 36 6 26 8 19 C9 14 11 9 14 6 Z" fill="#A62A1E" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M11 4 C13 3 16 3 18 4 C17 6 15 7 13 7 C11 7 10 5 11 4 Z" fill="#6E4A26" stroke="#3B2F23" stroke-width="1.6"/>
+    <path d="M9 22 C11 21 13 22 14 24" fill="none" stroke="#7E1E12" stroke-width="1.4" opacity=".9"/>
+    <path d="M8 30 C10 29 12 30 13 32" fill="none" stroke="#7E1E12" stroke-width="1.4" opacity=".9"/>
+    <path d="M9 38 C11 37 12 38 13 40" fill="none" stroke="#7E1E12" stroke-width="1.3" opacity=".85"/>
+    <path d="M12 10 C13 14 13 20 12 26" fill="none" stroke="#C4452E" stroke-width="1.5" opacity=".8"/>
+    <circle cx="15.5" cy="14" r="1" fill="#F5E9D8" opacity=".7"/>
+    <circle cx="12" cy="33" r=".9" fill="#F5E9D8" opacity=".6"/>
+  </symbol>
+  <symbol id="dchili-b" viewBox="0 0 34 44">
+    <path d="M8 5 C9 3 11 3 12 5 C12 9 13 13 15 17 C19 24 24 31 27 37 C29 42 26 45 23 43 C17 39 11 31 8 24 C6 18 6 10 8 5 Z" fill="#A62A1E" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M6 3 C8 2 10 2 12 3 C11 5 9 6 7 6 C5 5 5 4 6 3 Z" fill="#6E4A26" stroke="#3B2F23" stroke-width="1.6"/>
+    <path d="M13 14 C15 13 17 15 18 17" fill="none" stroke="#7E1E12" stroke-width="1.4" opacity=".9"/>
+    <path d="M17 22 C19 21 21 23 22 25" fill="none" stroke="#7E1E12" stroke-width="1.4" opacity=".9"/>
+    <path d="M21 30 C23 29 24 31 25 33" fill="none" stroke="#7E1E12" stroke-width="1.3" opacity=".85"/>
+    <path d="M10 9 C11 13 13 18 16 23" fill="none" stroke="#C4452E" stroke-width="1.5" opacity=".8"/>
+    <circle cx="17" cy="12" r="1" fill="#F5E9D8" opacity=".7"/>
+  </symbol>
+  <symbol id="dchili-c" viewBox="0 0 24 46">
+    <path d="M10 6 C11 4 13 4 14 6 C14 11 13 16 13 22 C13 30 13 38 11 43 C9 46 6 45 6 42 C5 35 6 27 7 21 C8 15 8 10 10 6 Z" fill="#A62A1E" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M8 5 C9 3 12 3 13 4 C12 6 10 7 9 7 C7 6 7 5 8 5 Z" fill="#6E4A26" stroke="#3B2F23" stroke-width="1.5"/>
+    <path d="M8 20 C10 19 11 20 11 22" fill="none" stroke="#7E1E12" stroke-width="1.3" opacity=".9"/>
+    <path d="M8 29 C10 28 11 29 11 31" fill="none" stroke="#7E1E12" stroke-width="1.3" opacity=".9"/>
+    <path d="M9 12 C10 16 10 22 10 28" fill="none" stroke="#C4452E" stroke-width="1.4" opacity=".8"/>
+    <circle cx="12" cy="16" r=".9" fill="#F5E9D8" opacity=".7"/>
+  </symbol>
+  <!-- 花椒：粒簇 -->
+  <symbol id="pepperc-a" viewBox="0 0 28 22">
+    <ellipse cx="9" cy="11" rx="4.6" ry="4.2" fill="#8E3B2A" stroke="#3B2F23" stroke-width="1.8"/>
+    <ellipse cx="17" cy="8" rx="4" ry="3.7" fill="#8E3B2A" stroke="#3B2F23" stroke-width="1.8"/>
+    <ellipse cx="20" cy="15" rx="4.4" ry="4" fill="#7E3223" stroke="#3B2F23" stroke-width="1.8"/>
+    <circle cx="8" cy="10" r="1.2" fill="#F5E9D8" opacity=".85"/>
+    <circle cx="16" cy="7" r="1" fill="#F5E9D8" opacity=".85"/>
+    <circle cx="19" cy="14" r="1.1" fill="#F5E9D8" opacity=".75"/>
+    <path d="M4 15 C6 17 9 18 12 18" fill="none" stroke="#5E2418" stroke-width="1.2" opacity=".6"/>
+  </symbol>
+  <symbol id="pepperc-b" viewBox="0 0 24 24">
+    <ellipse cx="8" cy="16" rx="4.2" ry="3.8" fill="#8E3B2A" stroke="#3B2F23" stroke-width="1.8"/>
+    <ellipse cx="14" cy="10" rx="4.5" ry="4.1" fill="#7E3223" stroke="#3B2F23" stroke-width="1.8"/>
+    <ellipse cx="17" cy="17" rx="3.8" ry="3.5" fill="#8E3B2A" stroke="#3B2F23" stroke-width="1.8"/>
+    <circle cx="7" cy="15" r="1.1" fill="#F5E9D8" opacity=".85"/>
+    <circle cx="13" cy="9" r="1.1" fill="#F5E9D8" opacity=".8"/>
+    <circle cx="16.5" cy="16" r="1" fill="#F5E9D8" opacity=".75"/>
+  </symbol>
+  <!-- 牛肉片：深红大理石纹+油光 -->
+  <symbol id="beef-a" viewBox="0 0 64 40">
+    <path d="M6 14 C6 8 14 4 24 4 C36 4 50 6 57 11 C61 14 61 20 58 25 C53 32 42 37 30 37 C19 37 10 34 7 28 C5 24 5 18 6 14 Z" fill="#9C2E24" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M14 8 C22 5 36 6 46 10 C40 13 30 14 22 12 C17 11 14 10 14 8 Z" fill="#B8483A"/>
+    <path d="M16 16 C24 13 36 14 44 18 C38 21 28 22 21 20 C17 19 15 18 16 16 Z" fill="#C05840" opacity=".9"/>
+    <path d="M12 30 C18 34 28 36 38 34 C45 33 51 30 54 26 C51 32 42 35 31 35 C21 35 15 33 12 30 Z" fill="#7A1E14" opacity=".85"/>
+    <path d="M20 24 C26 22 33 23 39 26" fill="none" stroke="#E8B098" stroke-width="1.5" opacity=".55"/>
+    <path d="M24 29 C29 28 34 29 38 31" fill="none" stroke="#E8B098" stroke-width="1.3" opacity=".5"/>
+    <path d="M18 9 C24 7 32 8 38 11" fill="none" stroke="#FFF" stroke-width="1.8" stroke-linecap="round" opacity=".4"/>
+  </symbol>
+  <symbol id="beef-b" viewBox="0 0 60 38">
+    <path d="M4 12 C4 7 10 3 19 3 C30 3 44 5 52 10 C57 13 58 19 55 24 C50 31 39 36 27 35 C16 34 7 30 5 24 C3 19 3 15 4 12 Z" fill="#9C2E24" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M10 7 C18 4 30 5 40 9 C34 12 24 13 16 11 C12 10 10 9 10 7 Z" fill="#B8483A"/>
+    <path d="M18 18 C25 15 35 16 42 20 C36 23 27 24 21 22 C18 21 17 20 18 18 Z" fill="#C05840" opacity=".9"/>
+    <path d="M10 27 C16 31 25 33 34 31 C41 30 47 27 50 23 C47 29 38 32 28 32 C18 32 13 30 10 27 Z" fill="#7A1E14" opacity=".85"/>
+    <path d="M20 26 C26 24 32 25 37 28" fill="none" stroke="#E8B098" stroke-width="1.4" opacity=".55"/>
+    <path d="M14 10 C20 8 27 9 33 12" fill="none" stroke="#FFF" stroke-width="1.7" stroke-linecap="round" opacity=".4"/>
+  </symbol>
+  <symbol id="beef-c" viewBox="0 0 56 40">
+    <path d="M8 16 C7 9 15 4 25 4 C36 4 47 7 52 13 C56 18 55 25 50 30 C44 36 33 39 23 38 C14 37 8 32 6 26 C5 22 6 19 8 16 Z" fill="#9C2E24" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M16 8 C24 5 35 7 43 11 C37 14 28 15 21 13 C17 12 15 10 16 8 Z" fill="#B8483A"/>
+    <path d="M14 22 C21 19 30 20 37 24 C31 27 22 28 17 26 C14 25 13 24 14 22 Z" fill="#C05840" opacity=".9"/>
+    <path d="M12 32 C18 36 27 37 36 35 C42 34 47 31 50 27 C47 33 38 36 28 36 C19 36 14 34 12 32 Z" fill="#7A1E14" opacity=".85"/>
+    <path d="M20 28 C25 27 30 28 34 30" fill="none" stroke="#E8B098" stroke-width="1.4" opacity=".55"/>
+    <path d="M20 11 C26 9 33 10 38 13" fill="none" stroke="#FFF" stroke-width="1.7" stroke-linecap="round" opacity=".4"/>
+  </symbol>
+  <!-- 辣椒面：红颗粒堆 -->
+  <symbol id="cpowder-a" viewBox="0 0 40 30">
+    <path d="M4 23 C3 16 10 10 20 9 C30 8 37 12 37 18 C37 24 29 27 20 27 C11 27 5 26 4 23 Z" fill="#C04028" stroke="#3B2F23" stroke-width="1.9"/>
+    <path d="M8 20 C12 16 20 14 28 16 C32 17 34 19 34 21 C30 19 24 18 18 19 C13 20 10 21 8 20 Z" fill="#D95840" opacity=".9"/>
+    <circle cx="12" cy="18" r="1.1" fill="#8E2418"/><circle cx="16" cy="14" r="1" fill="#8E2418"/><circle cx="20" cy="17" r="1.1" fill="#8E2418"/>
+    <circle cx="24" cy="13" r="1" fill="#8E2418"/><circle cx="27" cy="17" r="1.1" fill="#8E2418"/><circle cx="31" cy="19" r="1" fill="#8E2418"/>
+    <circle cx="14" cy="22" r=".9" fill="#F5E9D8" opacity=".75"/><circle cx="22" cy="21" r=".9" fill="#F5E9D8" opacity=".7"/><circle cx="26" cy="22" r=".8" fill="#F5E9D8" opacity=".7"/>
+    <path d="M33 6 C34 4 36 4 37 6 C36.6 9 35.6 12 34.4 14 C33.2 12 32.6 9 33 6 Z" fill="#A62A1E" stroke="#3B2F23" stroke-width="1.5"/>
+    <path d="M6 7 C6.8 5 8.6 4.8 9.6 6.4 C9 8.8 8 11 7 12.6 C6.2 10.6 5.6 8.6 6 7 Z" fill="#A62A1E" stroke="#3B2F23" stroke-width="1.4"/>
+  </symbol>
+  <symbol id="cpowder-b" viewBox="0 0 30 24">
+    <path d="M4 18 C3 12 8 7 15 6 C22 5 27 9 27 14 C27 19 21 22 15 22 C9 22 5 21 4 18 Z" fill="#B8382A" stroke="#3B2F23" stroke-width="1.8" opacity=".95"/>
+    <circle cx="10" cy="14" r="1.4" fill="#D95840"/><circle cx="14" cy="11" r="1.2" fill="#8E2418"/><circle cx="18" cy="15" r="1.4" fill="#D95840"/>
+    <circle cx="21" cy="11" r="1.1" fill="#8E2418"/><circle cx="23" cy="16" r="1.3" fill="#C0382A"/><circle cx="13" cy="17" r="1.1" fill="#C0382A"/>
+    <circle cx="16" cy="13" r=".9" fill="#F5E9D8" opacity=".8"/>
+  </symbol>
+  <!-- 蒜末：白碎粒 -->
+  <symbol id="gbit-a" viewBox="0 0 36 28">
+    <path d="M14 4 C19 6 23 12 23 18 C23 23 19 26 14.5 26 C10 26 6 23 6 18 C6 12 10 6 14 4 Z" fill="#F7F1DE" stroke="#3B2F23" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M11 8 C13 6.5 16 6.5 18 8 C16 9.5 13 9.8 11 8 Z" fill="#FDF9EC"/>
+    <path d="M12 14 C12 18 12 22 13 25" fill="none" stroke="#E0D4BC" stroke-width="1.3" opacity=".9"/>
+    <path d="M17 14 C17 18 17 22 16 25" fill="none" stroke="#E0D4BC" stroke-width="1.3" opacity=".9"/>
+    <circle cx="14.5" cy="26.5" r="1.6" fill="#B09468"/>
+    <circle cx="28" cy="10" r="2.6" fill="#F7F1DE" stroke="#3B2F23" stroke-width="1.5"/>
+    <circle cx="32" cy="15" r="2.1" fill="#F2EAD6" stroke="#3B2F23" stroke-width="1.4"/>
+    <circle cx="27" cy="19" r="1.8" fill="#F7F1DE" stroke="#3B2F23" stroke-width="1.3"/>
+    <circle cx="31.5" cy="22" r="1.5" fill="#EDE4CC" stroke="#3B2F23" stroke-width="1.2"/>
+    <circle cx="27.5" cy="7.5" r="1.3" fill="#EDE4CC" stroke="#3B2F23" stroke-width="1.1"/>
+  </symbol>
+  <symbol id="gbit-b" viewBox="0 0 28 22">
+    <path d="M4 12 C4 9 7 6 11 6 C14 6 16 8 16 11 C16 14 13 16 10 16 C6 16 4 15 4 12 Z" fill="#F5EFDC" stroke="#3B2F23" stroke-width="1.7"/>
+    <path d="M17 8 C17 5 20 4 22 5 C24 6 24 8 23 10 C22 12 19 12 18 11 C17 10 17 9 17 8 Z" fill="#F5EFDC" stroke="#3B2F23" stroke-width="1.6"/>
+    <path d="M9 17 C9 15 11 15 12 16 C13 17 12 18 11 18 C10 18 9 18 9 17 Z" fill="#EDE4CC" stroke="#3B2F23" stroke-width="1.4"/>
+  </symbol>
+  <!-- 肥肠段：油亮卷边+截面环 -->
+  <symbol id="intest-a" viewBox="0 0 58 40">
+    <path d="M8 22 C8 12 18 6 30 6 C42 6 51 12 51 21 C51 30 43 35 32 35 C24 35 18 32 15 28" fill="none" stroke="#3B2F23" stroke-width="2.4"/>
+    <path d="M8 22 C8 13 18 7 30 7 C41 7 50 13 50 21 C50 29 42 34 32 34 C24 34 18 31 15 27 C13 24 13 22 15 20 C17 18 21 18 24 20" fill="none" stroke="#E3B988" stroke-width="7.5" stroke-linecap="round"/>
+    <ellipse cx="15" cy="24" rx="5.5" ry="6.5" fill="#C99468" stroke="#3B2F23" stroke-width="2"/>
+    <ellipse cx="15" cy="24" rx="2.6" ry="3.2" fill="#B08050"/>
+    <path d="M22 10 C28 8 36 9 42 13" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round" opacity=".45"/>
+    <path d="M26 28 C32 30 40 29 45 25" fill="none" stroke="#CCA070" stroke-width="1.6" opacity=".8"/>
+    <path d="M20 13 C24 11 29 12 33 14" fill="none" stroke="#D9A870" stroke-width="1.3" opacity=".8"/>
+  </symbol>
+  <symbol id="intest-b" viewBox="0 0 54 38">
+    <path d="M6 26 C5 16 14 8 26 8 C38 8 47 15 46 24 C45 32 36 36 26 35 C19 34 13 31 11 27" fill="none" stroke="#3B2F23" stroke-width="2.4"/>
+    <path d="M6 26 C5 17 14 9 26 9 C37 9 46 16 45 24 C44 31 36 35 26 34 C19 33 13 30 11 26 C10 24 11 22 13 21 C16 19 20 20 23 22" fill="none" stroke="#E3B988" stroke-width="7.5" stroke-linecap="round"/>
+    <ellipse cx="44" cy="22" rx="5.5" ry="6" fill="#C99468" stroke="#3B2F23" stroke-width="2"/>
+    <ellipse cx="44" cy="22" rx="2.5" ry="3" fill="#B08050"/>
+    <path d="M16 12 C22 10 30 11 36 14" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round" opacity=".45"/>
+    <path d="M18 27 C24 30 32 29 38 26" fill="none" stroke="#CCA070" stroke-width="1.5" opacity=".8"/>
+  </symbol>
+  <symbol id="intest-c" viewBox="0 0 50 36">
+    <path d="M8 20 C7 11 16 5 27 5 C38 5 46 11 45 19 C44 27 35 32 25 31 C18 30 12 27 10 23" fill="none" stroke="#3B2F23" stroke-width="2.3"/>
+    <path d="M8 20 C7 12 16 6 27 6 C37 6 45 12 44 19 C43 26 35 31 25 30 C18 29 12 26 10 22 C9 20 10 18 12 17 C15 15 19 16 22 18" fill="none" stroke="#E3B988" stroke-width="7" stroke-linecap="round"/>
+    <ellipse cx="43" cy="17" rx="5" ry="5.5" fill="#C99468" stroke="#3B2F23" stroke-width="2"/>
+    <ellipse cx="43" cy="17" rx="2.3" ry="2.7" fill="#B08050"/>
+    <path d="M16 10 C22 8 29 9 35 12" fill="none" stroke="#FFF" stroke-width="1.9" stroke-linecap="round" opacity=".45"/>
+    <path d="M15 25 C21 28 28 27 34 24" fill="none" stroke="#CCA070" stroke-width="1.4" opacity=".8"/>
+  </symbol>
+  <!-- 蒜瓣：胖瓣+根点 -->
+  <symbol id="gclove-a" viewBox="0 0 30 32">
+    <path d="M15 3 C21 6 26 13 26 20 C26 26 21 30 15 30 C9 30 4 26 4 20 C4 13 9 6 15 3 Z" fill="#F5EDDC" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M11 8 C13 6 17 6 19 8 C17 10 13 10 11 8 Z" fill="#FAF5E8"/>
+    <path d="M12 14 C12 19 12 24 13 27" fill="none" stroke="#E0D4BC" stroke-width="1.5" opacity=".9"/>
+    <path d="M18 14 C18 19 18 24 17 27" fill="none" stroke="#E0D4BC" stroke-width="1.5" opacity=".9"/>
+    <path d="M8 24 C10 28 14 29 17 28" fill="none" stroke="#E2D5BC" stroke-width="1.6" opacity=".85"/>
+    <circle cx="15" cy="30.5" r="1.6" fill="#B09468"/>
+  </symbol>
+  <symbol id="gclove-b" viewBox="0 0 28 30">
+    <path d="M14 2 C20 5 25 12 24 19 C23 25 18 29 13 28 C8 27 4 22 4 16 C4 9 9 5 14 2 Z" fill="#F5EDDC" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M10 7 C12 5 16 5 18 7 C16 9 12 9 10 7 Z" fill="#FAF5E8"/>
+    <path d="M11 13 C11 18 12 22 13 25" fill="none" stroke="#E0D4BC" stroke-width="1.4" opacity=".9"/>
+    <path d="M8 22 C10 25 13 26 16 25" fill="none" stroke="#E2D5BC" stroke-width="1.5" opacity=".85"/>
+    <circle cx="13.5" cy="28" r="1.5" fill="#B09468"/>
+  </symbol>
+  <symbol id="brisket-a" viewBox="0 0 58 42">
+    <path d="M7 14 C6 8 13 4 22 3 C32 2 44 4 51 9 C55 12 56 18 53 24 C49 31 39 37 28 38 C18 39 10 35 7 29 C5 24 5 18 7 14 Z" fill="#8E3A26" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M14 7 C21 4 32 5 41 9 C35 12 25 13 18 11 C15 10 13 9 14 7 Z" fill="#A84C34"/>
+    <path d="M13 17 C20 14 30 15 38 19 C32 22 23 23 17 21 C14 20 12 19 13 17 Z" fill="#B85838" opacity=".9"/>
+    <path d="M11 31 C17 35 26 37 36 35 C43 34 49 31 52 27 C49 33 40 36 29 36 C19 36 14 34 11 31 Z" fill="#6E2A18" opacity=".85"/>
+    <path d="M18 24 C24 22 31 23 37 26" fill="none" stroke="#D9A98A" stroke-width="1.5" opacity=".6"/>
+    <path d="M22 29 C27 28 32 29 36 31" fill="none" stroke="#D9A98A" stroke-width="1.3" opacity=".55"/>
+    <path d="M18 8 C24 6 31 7 36 10" fill="none" stroke="#FFF" stroke-width="1.8" stroke-linecap="round" opacity=".35"/>
+  </symbol>
+  <symbol id="brisket-b" viewBox="0 0 54 40">
+    <path d="M6 16 C5 10 12 5 21 4 C30 3 40 5 46 10 C50 13 51 19 48 24 C44 31 35 36 25 37 C16 38 9 34 6 28 C4 24 4 20 6 16 Z" fill="#8E3A26" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M12 8 C19 5 28 6 36 10 C30 13 21 14 15 12 C12 11 11 10 12 8 Z" fill="#A84C34"/>
+    <path d="M14 20 C20 17 28 18 35 21 C29 24 21 25 16 23 C13 22 13 21 14 20 Z" fill="#B85838" opacity=".9"/>
+    <path d="M10 30 C16 34 24 35 33 33 C40 32 45 29 47 25 C45 31 36 34 26 34 C17 34 12 32 10 30 Z" fill="#6E2A18" opacity=".85"/>
+    <path d="M18 27 C23 25 29 26 33 28" fill="none" stroke="#D9A98A" stroke-width="1.4" opacity=".6"/>
+  </symbol>
+  <symbol id="brisket-c" viewBox="0 0 56 38">
+    <path d="M8 14 C7 8 14 4 23 3 C33 2 44 5 50 10 C54 13 54 19 51 24 C47 30 38 35 28 35 C19 35 11 31 8 25 C6 21 6 17 8 14 Z" fill="#8E3A26" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M15 7 C22 4 32 5 40 9 C34 12 25 13 19 11 C16 10 14 9 15 7 Z" fill="#A84C34"/>
+    <path d="M16 17 C22 14 30 15 37 18 C31 21 23 22 18 20 C15 19 15 18 16 17 Z" fill="#B85838" opacity=".9"/>
+    <path d="M12 28 C18 32 27 33 36 31 C42 30 47 27 50 24 C47 29 39 32 30 32 C21 32 15 30 12 28 Z" fill="#6E2A18" opacity=".85"/>
+    <path d="M20 24 C25 22 31 23 35 25" fill="none" stroke="#D9A98A" stroke-width="1.4" opacity=".6"/>
+    <path d="M19 8 C25 6 31 7 36 10" fill="none" stroke="#FFF" stroke-width="1.7" stroke-linecap="round" opacity=".35"/>
+  </symbol>
+  <symbol id="tomato-a" viewBox="0 0 52 42">
+    <path d="M6 24 C5 14 14 6 26 5 C37 4 46 10 47 20 C48 30 40 38 28 39 C17 40 8 34 6 24 Z" fill="#E8603C" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M12 17 C16 11 24 8 32 9 C39 10 44 14 45 19 C40 15 33 13 26 14 C19 15 14 16 12 17 Z" fill="#F08060" opacity=".9"/>
+    <path d="M14 28 C20 33 30 34 38 31 C42 29 45 26 46 23 C44 29 37 33 28 33 C20 33 16 31 14 28 Z" fill="#C84828" opacity=".85"/>
+    <path d="M17 20 C22 17 29 17 34 20 C29 23 22 23 17 20 Z" fill="#F3D9B8" opacity=".85"/>
+    <circle cx="22" cy="20" r="1.3" fill="#E8A03C"/><circle cx="26" cy="19" r="1.3" fill="#E8A03C"/><circle cx="30" cy="20" r="1.2" fill="#E8A03C"/>
+    <path d="M9 22 C9 26 11 30 14 32" fill="none" stroke="#C8402A" stroke-width="2" opacity=".7"/>
+  </symbol>
+  <symbol id="tomato-b" viewBox="0 0 46 40">
+    <path d="M5 20 C5 11 12 5 21 4 C31 3 40 8 41 17 C42 26 35 34 25 35 C16 36 6 30 5 20 Z" fill="#E8603C" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M10 14 C14 9 20 7 27 8 C33 9 37 12 38 16 C34 13 28 11 22 12 C17 13 12 13 10 14 Z" fill="#F08060" opacity=".9"/>
+    <path d="M11 27 C16 32 24 33 31 30 C35 28 38 25 39 22 C37 27 31 31 24 31 C17 31 13 29 11 27 Z" fill="#C84828" opacity=".85"/>
+    <path d="M14 20 C18 17 24 17 28 20 C24 22 18 22 14 20 Z" fill="#F3D9B8" opacity=".85"/>
+    <circle cx="19" cy="20" r="1.2" fill="#E8A03C"/><circle cx="23" cy="19" r="1.2" fill="#E8A03C"/><circle cx="26" cy="21" r="1.1" fill="#E8A03C"/>
+  </symbol>
+  <symbol id="tomato-c" viewBox="0 0 44 36">
+    <path d="M5 18 C5 10 12 5 20 4 C29 3 37 8 38 16 C39 24 32 31 23 31 C15 31 6 26 5 18 Z" fill="#E8603C" stroke="#3B2F23" stroke-width="2.3" stroke-linejoin="round"/>
+    <path d="M10 12 C14 8 20 6 26 7 C31 8 34 11 35 14 C31 11 26 10 21 11 C16 12 12 12 10 12 Z" fill="#F08060" opacity=".9"/>
+    <path d="M10 25 C15 29 22 30 28 27 C32 25 34 23 35 20 C33 25 27 28 21 28 C15 28 12 27 10 25 Z" fill="#C84828" opacity=".85"/>
+    <path d="M13 18 C17 16 22 16 26 18 C22 20 17 20 13 18 Z" fill="#F3D9B8" opacity=".85"/>
+    <circle cx="18" cy="18" r="1.1" fill="#E8A03C"/><circle cx="22" cy="17" r="1.1" fill="#E8A03C"/><circle cx="24" cy="19" r="1" fill="#E8A03C"/>
+  </symbol>
+  <symbol id="fillet-a" viewBox="0 0 64 44">
+    <path d="M6 24 C6 16 14 9 25 7 C37 5 50 8 56 15 C60 19 59 26 54 31 C47 38 34 41 23 39 C13 37 6 31 6 24 Z" fill="#F8F4EA" stroke="#3B2F23" stroke-width="2.3" stroke-linejoin="round"/>
+    <path d="M13 15 C19 10 29 8 38 10 C33 14 24 16 17 15 C15 15 14 15 13 15 Z" fill="#FDFBF4"/>
+    <path d="M16 22 C24 18 36 18 45 22 C38 26 26 27 19 25 C17 24 16 23 16 22 Z" fill="#E4DAC6" opacity=".8"/>
+    <path d="M14 31 C20 36 30 38 40 36 C46 35 51 32 54 28 C51 34 43 37 33 37 C23 37 17 34 14 31 Z" fill="#D9CCB2" opacity=".8"/>
+    <path d="M22 14 C28 12 36 13 42 16" fill="none" stroke="#D9CCB2" stroke-width="1.3" opacity=".8"/>
+    <path d="M24 29 C30 27 37 28 42 30" fill="none" stroke="#D9CCB2" stroke-width="1.3" opacity=".7"/>
+    <path d="M18 18 C24 15 32 16 38 19" fill="none" stroke="#FFF" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>
+  </symbol>
+  <symbol id="fillet-b" viewBox="0 0 58 40">
+    <path d="M5 22 C5 15 12 9 22 7 C32 5 44 8 50 14 C54 18 53 24 49 28 C43 34 31 37 21 35 C12 33 5 28 5 22 Z" fill="#F8F4EA" stroke="#3B2F23" stroke-width="2.3" stroke-linejoin="round"/>
+    <path d="M11 14 C17 10 25 8 33 10 C28 13 20 15 14 14 C12 14 11 14 11 14 Z" fill="#FDFBF4"/>
+    <path d="M14 20 C21 17 30 17 38 20 C32 23 23 24 17 22 C15 21 14 21 14 20 Z" fill="#E4DAC6" opacity=".8"/>
+    <path d="M12 28 C18 32 26 34 35 32 C40 31 45 28 47 25 C45 30 38 33 29 33 C20 33 15 31 12 28 Z" fill="#D9CCB2" opacity=".8"/>
+    <path d="M20 13 C26 11 32 12 37 15" fill="none" stroke="#D9CCB2" stroke-width="1.2" opacity=".8"/>
+    <path d="M20 26 C25 24 31 25 35 27" fill="none" stroke="#D9CCB2" stroke-width="1.2" opacity=".7"/>
+  </symbol>
+  <symbol id="fillet-c" viewBox="0 0 52 42">
+    <path d="M6 21 C6 14 13 8 22 6 C32 4 42 8 47 14 C50 18 49 24 45 28 C39 34 28 37 19 35 C11 33 6 27 6 21 Z" fill="#F8F4EA" stroke="#3B2F23" stroke-width="2.3" stroke-linejoin="round"/>
+    <path d="M12 13 C18 9 26 8 33 10 C28 13 21 14 15 13 C13 13 12 13 12 13 Z" fill="#FDFBF4"/>
+    <path d="M14 19 C20 16 28 16 34 19 C29 22 21 23 16 21 C15 20 14 20 14 19 Z" fill="#E4DAC6" opacity=".8"/>
+    <path d="M13 28 C18 32 26 33 33 31 C38 30 42 27 44 24 C42 29 36 32 28 32 C20 32 16 30 13 28 Z" fill="#D9CCB2" opacity=".8"/>
+    <path d="M20 25 C25 23 30 24 34 26" fill="none" stroke="#D9CCB2" stroke-width="1.2" opacity=".7"/>
+    <path d="M18 15 C23 13 29 14 33 17" fill="none" stroke="#FFF" stroke-width="1.5" stroke-linecap="round" opacity=".6"/>
+  </symbol>
+  <symbol id="pickle-a" viewBox="0 0 54 28">
+    <path d="M3 13 C3 8 10 4 20 3 C31 2 44 4 49 9 C52 13 49 18 41 21 C32 25 18 26 10 23 C5 21 3 17 3 13 Z" fill="#B8B850" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M8 9 C14 6 24 5 33 7 C27 10 17 11 11 10 C9 10 8 9 8 9 Z" fill="#D4D886" opacity=".95"/>
+    <path d="M10 20 C17 23 28 23 37 20 C41 19 44 17 46 15 C44 19 37 22 28 22 C19 22 13 21 10 20 Z" fill="#8A9034" opacity=".9"/>
+    <path d="M13 14 C19 12 27 12 33 14" fill="none" stroke="#7A8030" stroke-width="1.4" opacity=".85"/>
+    <path d="M20 6 C21 10 21 16 19 21" fill="none" stroke="#9AA03C" stroke-width="1.2" opacity=".8"/>
+    <path d="M31 6 C33 9 33 15 31 19" fill="none" stroke="#9AA03C" stroke-width="1.2" opacity=".8"/>
+    <path d="M42 9 C44 11 44 15 42 18" fill="none" stroke="#C8CC72" stroke-width="1.1" opacity=".8"/>
+    <path d="M14 15 C17 13.6 21 13.4 24 14.6 C21 16.4 17 16.6 14 15 Z" fill="#EDEBC0" stroke="#B8B878" stroke-width="1" opacity=".95"/>
+    <path d="M28 16 C31 14.8 34 14.8 36.6 16 C34 17.6 30.6 17.6 28 16 Z" fill="#EDEBC0" stroke="#B8B878" stroke-width="1" opacity=".9"/>
+    <path d="M38 12 C40 11 42 11 43.6 12 C42 13.4 39.6 13.4 38 12 Z" fill="#EDEBC0" stroke="#B8B878" stroke-width=".9" opacity=".85"/>
+  </symbol>
+  <symbol id="pickle-b" viewBox="0 0 48 24">
+    <path d="M3 11 C3 7 9 3 18 2 C27 1 38 3 42 7 C45 11 43 16 36 19 C28 22 16 23 9 20 C5 18 3 14 3 11 Z" fill="#B5B84E" stroke="#3B2F23" stroke-width="2.1" stroke-linejoin="round"/>
+    <path d="M7 7 C13 4 21 4 29 5 C24 8 15 9 10 8 C8 8 7 7 7 7 Z" fill="#CDD07A" opacity=".9"/>
+    <path d="M9 17 C15 20 24 20 32 17 C36 16 39 14 40 12 C38 16 32 18 24 18 C16 18 12 18 9 17 Z" fill="#8E9238" opacity=".85"/>
+    <path d="M11 12 C17 10 24 10 29 12" fill="none" stroke="#8E9238" stroke-width="1.2" opacity=".8"/>
+    <path d="M17 6 C19 9 19 14 17 16" fill="none" stroke="#9AA03C" stroke-width="1.1" opacity=".7"/>
+    <path d="M27 5 C29 8 29 12 27 15" fill="none" stroke="#9AA03C" stroke-width="1.1" opacity=".7"/>
+  </symbol>
+  <symbol id="pickle-c" viewBox="0 0 44 22">
+    <path d="M3 10 C3 6 8 3 16 2 C24 1 34 3 38 6 C41 9 39 14 33 17 C26 20 15 21 9 18 C5 16 3 13 3 10 Z" fill="#B5B84E" stroke="#3B2F23" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M6 7 C11 4 18 4 25 5 C21 8 13 9 9 8 C7 8 6 7 6 7 Z" fill="#CDD07A" opacity=".9"/>
+    <path d="M8 15 C13 18 21 18 28 16 C31 15 34 13 35 11 C33 15 27 17 20 17 C14 17 10 16 8 15 Z" fill="#8E9238" opacity=".85"/>
+    <path d="M10 11 C15 9 21 9 26 11" fill="none" stroke="#8E9238" stroke-width="1.1" opacity=".8"/>
+    <path d="M15 6 C17 8 17 13 15 15" fill="none" stroke="#9AA03C" stroke-width="1" opacity=".7"/>
+  </symbol>
+  <symbol id="shred-a" viewBox="0 0 56 34">
+    <path d="M4 8 C10 5 20 4 30 6 C40 8 48 12 51 16" fill="none" stroke="#3B2F23" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M4 8 C10 5 20 4 30 6 C40 8 48 12 51 16" fill="none" stroke="#F0DCB0" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M8 18 C16 15 28 15 38 18 C44 20 48 23 50 26" fill="none" stroke="#3B2F23" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M8 18 C16 15 28 15 38 18 C44 20 48 23 50 26" fill="none" stroke="#EAD5A8" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M12 27 C18 25 26 25 33 27" fill="none" stroke="#3B2F23" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M12 27 C18 25 26 25 33 27" fill="none" stroke="#F0DCB0" stroke-width="4" stroke-linecap="round"/>
+    <path d="M10 7 C18 5 30 6 40 10" fill="none" stroke="#FFF" stroke-width="1.2" stroke-linecap="round" opacity=".55"/>
+    <path d="M14 17 C20 15 28 15 35 17" fill="none" stroke="#DCC494" stroke-width="1" opacity=".7"/>
+    <path d="M16 26 C21 24 27 24 31 26" fill="none" stroke="#DCC494" stroke-width=".9" opacity=".7"/>
+  </symbol>
+  <symbol id="shred-b" viewBox="0 0 52 32">
+    <path d="M4 20 C12 16 24 15 34 18 C40 20 45 23 48 26" fill="none" stroke="#3B2F23" stroke-width="1.7" stroke-linecap="round"/>
+    <path d="M4 20 C12 16 24 15 34 18 C40 20 45 23 48 26" fill="none" stroke="#EAD5A8" stroke-width="4.2" stroke-linecap="round"/>
+    <path d="M8 9 C16 6 28 7 38 11 C43 13 46 15 48 18" fill="none" stroke="#3B2F23" stroke-width="1.7" stroke-linecap="round"/>
+    <path d="M8 9 C16 6 28 7 38 11 C43 13 46 15 48 18" fill="none" stroke="#F0DCB0" stroke-width="4.2" stroke-linecap="round"/>
+    <path d="M10 27 C16 25 24 25 30 27" fill="none" stroke="#3B2F23" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M10 27 C16 25 24 25 30 27" fill="none" stroke="#F0DCB0" stroke-width="3.8" stroke-linecap="round"/>
+    <path d="M12 8 C20 6 30 8 38 12" fill="none" stroke="#FFF" stroke-width="1.1" stroke-linecap="round" opacity=".55"/>
+    <path d="M12 19 C20 17 28 17 34 19" fill="none" stroke="#DCC494" stroke-width=".9" opacity=".7"/>
+  </symbol>
+  <symbol id="shred-c" viewBox="0 0 50 30">
+    <path d="M3 14 C11 10 23 10 33 13 C39 15 44 18 47 21" fill="none" stroke="#3B2F23" stroke-width="1.7" stroke-linecap="round"/>
+    <path d="M3 14 C11 10 23 10 33 13 C39 15 44 18 47 21" fill="none" stroke="#F0DCB0" stroke-width="4" stroke-linecap="round"/>
+    <path d="M6 24 C14 21 24 21 32 24" fill="none" stroke="#3B2F23" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M6 24 C14 21 24 21 32 24" fill="none" stroke="#EAD5A8" stroke-width="3.6" stroke-linecap="round"/>
+    <path d="M10 6 C18 4 28 5 36 8" fill="none" stroke="#3B2F23" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M10 6 C18 4 28 5 36 8" fill="none" stroke="#F0DCB0" stroke-width="3.8" stroke-linecap="round"/>
+    <path d="M9 13 C17 11 27 12 34 14" fill="none" stroke="#FFF" stroke-width="1" stroke-linecap="round" opacity=".55"/>
+    <path d="M12 23 C18 21 25 21 30 23" fill="none" stroke="#DCC494" stroke-width=".9" opacity=".7"/>
+  </symbol>
+  <symbol id="ginger-a" viewBox="0 0 40 36">
+    <path d="M20 3 C29 3 36 10 36 18 C36 26 29 33 20 33 C11 33 4 26 4 18 C4 10 11 3 20 3 Z" fill="#E8B858" stroke="#3B2F23" stroke-width="2.2"/>
+    <circle cx="20" cy="18" r="11.5" fill="none" stroke="#D0A048" stroke-width="1.6" opacity=".85"/>
+    <circle cx="20" cy="18" r="7" fill="none" stroke="#D0A048" stroke-width="1.3" opacity=".7"/>
+    <circle cx="20" cy="18" r="2.8" fill="#D0A048" opacity=".5"/>
+    <path d="M12 10 C16 8 24 8 28 10" fill="none" stroke="#F5DC9A" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>
+    <path d="M10 24 C14 28 26 28 30 24" fill="none" stroke="#C89838" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+    <path d="M16 5 C17 13 17 23 16 31" fill="none" stroke="#D0A048" stroke-width="1.1" opacity=".55"/>
+    <path d="M24 5 C25 13 25 23 24 31" fill="none" stroke="#D0A048" stroke-width="1.1" opacity=".55"/>
+    <path d="M8 13 C10 12 12 12 14 12.6" fill="none" stroke="#FFF" stroke-width="1.3" stroke-linecap="round" opacity=".5"/>
+    <ellipse cx="30" cy="26" rx="3.2" ry="1.8" fill="#E8C878" stroke="#B89038" stroke-width="1" transform="rotate(18 30 26)"/>
+  </symbol>
+  <symbol id="ginger-b" viewBox="0 0 32 32">
+    <path d="M5 16 C4 9 10 4 17 4 C24 4 29 9 29 16 C29 22 24 28 16 28 C9 28 5 23 5 16 Z" fill="#DCA850" stroke="#3B2F23" stroke-width="2.1" stroke-linejoin="round"/>
+    <path d="M10 8 C14 6 19 6 23 8 C19 10 14 11 11 10 C10 10 9 9 10 8 Z" fill="#E8C068" opacity=".9"/>
+    <path d="M9 22 C13 26 19 26 24 24 C27 22 28 20 28 18 C27 22 22 25 16 25 C11 25 10 24 9 22 Z" fill="#C49640" opacity=".85"/>
+    <circle cx="13" cy="14" r=".9" fill="#B89038"/><circle cx="18" cy="13" r=".9" fill="#B89038"/><circle cx="22" cy="15" r=".9" fill="#B89038"/><circle cx="16" cy="19" r=".9" fill="#B89038"/>
+  </symbol>
+  <symbol id="rbelly-a" viewBox="0 0 60 44">
+    <path d="M7 12 C6 6 14 2 24 2 C36 2 48 4 54 9 C58 12 58 18 55 23 C50 31 39 37 27 38 C17 39 9 35 7 29 C5 24 5 16 7 12 Z" fill="#A0522D" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M9 10 C15 6 26 5 36 7 C44 9 50 12 52 16 C47 13 40 11 32 11 C23 11 14 12 9 10 Z" fill="#C87F3A"/>
+    <path d="M10 16 C18 13 32 13 42 17 C36 20 24 21 16 19 C12 18 10 17 10 16 Z" fill="#EBD5AE"/>
+    <path d="M12 23 C20 20 33 20 43 24 C37 27 25 28 18 26 C14 25 12 24 12 23 Z" fill="#A0522D"/>
+    <path d="M11 31 C17 35 26 37 36 35 C44 33 50 30 53 26 C51 32 43 36 32 36 C21 36 14 34 11 31 Z" fill="#7E3E1E" opacity=".85"/>
+    <path d="M14 9 C22 6 34 7 42 11" fill="none" stroke="#FFF" stroke-width="1.8" stroke-linecap="round" opacity=".45"/>
+    <path d="M16 17 C24 15 33 15 40 18" fill="none" stroke="#F5EBD8" stroke-width="1.2" opacity=".6"/>
+    <circle cx="46" cy="28" r="2.2" fill="#B8722E" opacity=".8"/>
+  </symbol>
+  <symbol id="rbelly-b" viewBox="0 0 56 42">
+    <path d="M6 14 C5 8 12 3 22 3 C33 3 45 5 51 10 C55 13 55 19 52 24 C47 31 37 37 26 38 C16 39 8 34 6 28 C4 23 4 18 6 14 Z" fill="#A0522D" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M8 11 C14 7 24 6 33 8 C40 10 46 13 48 17 C43 14 36 12 29 12 C21 12 13 13 8 11 Z" fill="#C87F3A"/>
+    <path d="M9 18 C16 15 28 15 37 18 C31 21 21 22 14 20 C11 19 9 19 9 18 Z" fill="#EBD5AE"/>
+    <path d="M11 25 C18 22 29 22 38 25 C32 28 23 29 17 27 C14 26 11 26 11 25 Z" fill="#A0522D"/>
+    <path d="M10 32 C16 36 24 37 33 35 C41 34 47 30 50 27 C48 32 41 36 31 36 C21 36 14 35 10 32 Z" fill="#7E3E1E" opacity=".85"/>
+    <path d="M12 10 C20 7 30 8 38 12" fill="none" stroke="#FFF" stroke-width="1.7" stroke-linecap="round" opacity=".45"/>
+    <circle cx="44" cy="30" r="2" fill="#B8722E" opacity=".8"/>
+  </symbol>
+  <symbol id="rbelly-c" viewBox="0 0 54 40">
+    <path d="M6 13 C5 7 12 3 21 3 C31 3 43 5 49 10 C52 13 53 19 50 23 C45 30 36 35 25 36 C16 37 8 33 6 27 C4 22 4 17 6 13 Z" fill="#A0522D" stroke="#3B2F23" stroke-width="2.3" stroke-linejoin="round"/>
+    <path d="M8 10 C14 6 23 5 31 7 C38 9 43 12 45 15 C41 13 34 11 28 11 C20 11 12 12 8 10 Z" fill="#C87F3A"/>
+    <path d="M9 17 C16 14 26 14 34 17 C28 20 19 21 13 19 C10 18 9 18 9 17 Z" fill="#EBD5AE"/>
+    <path d="M10 24 C17 21 27 21 35 24 C29 27 21 28 15 26 C12 25 10 25 10 24 Z" fill="#A0522D"/>
+    <path d="M10 30 C15 34 23 35 31 33 C38 32 44 29 47 26 C45 31 38 34 29 34 C20 34 14 33 10 30 Z" fill="#7E3E1E" opacity=".85"/>
+    <path d="M12 9 C19 6 28 7 35 11" fill="none" stroke="#FFF" stroke-width="1.6" stroke-linecap="round" opacity=".45"/>
+  </symbol>
+  <symbol id="tofu-a" viewBox="0 0 46 42">
+    <rect x="6" y="7" width="36" height="30" rx="7" fill="#E8A83B" stroke="#3B2F23" stroke-width="2.3" stroke-linejoin="round"/>
+    <path d="M12 9 C17 6 25 6 31 8 C27 11 19 12 14 11 C12 10 11 10 12 9 Z" fill="#F5CC68" opacity=".95"/>
+    <path d="M11 25 C16 30 24 31 31 28 C35 26 37 23 38 21 C36 26 30 29 23 29 C16 29 12 27 11 25 Z" fill="#C08818" opacity=".9"/>
+    <ellipse cx="17" cy="17" rx="2.2" ry="1.7" fill="#B8801E" opacity=".8"/>
+    <ellipse cx="24" cy="14" r="2" fill="#B8801E" opacity=".75"/>
+    <ellipse cx="30" cy="19" rx="2.1" ry="1.6" fill="#B8801E" opacity=".8"/>
+    <ellipse cx="20" cy="23" rx="1.9" ry="1.4" fill="#C08818" opacity=".8"/>
+    <ellipse cx="27" cy="25" rx="1.8" ry="1.3" fill="#C08818" opacity=".75"/>
+    <path d="M20 12 C22 12 25 13 27 15 C24 16 21 16 20 15 C19 14 19 12 20 12 Z" fill="#FAE8B0" opacity=".95"/>
+    <path d="M10 13 C14 10 22 9.5 28 11" fill="none" stroke="#FFF" stroke-width="1.7" stroke-linecap="round" opacity=".5"/>
+    <path d="M30 8 C33 10 35 13 36 16" fill="none" stroke="#A87814" stroke-width="1.6" opacity=".75"/>
+  </symbol>
+  <symbol id="tofu-b" viewBox="0 0 42 40">
+    <path d="M6 14 C6 8 12 4 20 4 C29 4 36 8 36 14 C36 21 30 28 22 30 C14 32 7 28 6 22 C5 19 5 17 6 14 Z" fill="#E8B84B" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M10 9 C15 6 22 6 28 8 C24 10 17 11 12 10 C10 10 10 10 10 9 Z" fill="#F0CC78" opacity=".9"/>
+    <path d="M10 24 C14 28 21 30 27 27 C31 25 33 23 34 20 C32 25 26 28 20 28 C14 28 11 26 10 24 Z" fill="#C99426" opacity=".85"/>
+    <path d="M18 12 C20 12 22 12 24 14 C22 15 19 15 18 14 C17 13 17 12 18 12 Z" fill="#F5E0A0" opacity=".9"/>
+    <path d="M12 17 C16 15 22 15 27 17" fill="none" stroke="#D9A838" stroke-width="1.1" opacity=".8"/>
+  </symbol>
+  <symbol id="tofu-c" viewBox="0 0 44 38">
+    <path d="M6 13 C6 7 12 4 20 3 C28 3 35 7 35 13 C35 19 29 26 21 28 C14 30 7 26 6 21 C5 18 5 15 6 13 Z" fill="#E8B84B" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M10 8 C15 5 22 5 27 7 C23 9 17 10 12 9 C11 9 10 9 10 8 Z" fill="#F0CC78" opacity=".9"/>
+    <path d="M10 22 C14 26 21 27 27 25 C30 23 32 21 33 19 C31 23 25 26 19 26 C13 26 11 24 10 22 Z" fill="#C99426" opacity=".85"/>
+    <path d="M17 11 C19 11 21 11 23 13 C21 14 18 14 17 13 C16 12 16 11 17 11 Z" fill="#F5E0A0" opacity=".9"/>
+  </symbol>
+  <symbol id="litsea-a" viewBox="0 0 28 24">
+    <path d="M5 6 C7 4 10 3 13 4" fill="none" stroke="#8E6E30" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="7" cy="13" r="5.4" fill="#CCAA56" stroke="#3B2F23" stroke-width="1.9"/>
+    <circle cx="17" cy="9" r="5" fill="#CCAA56" stroke="#3B2F23" stroke-width="1.9"/>
+    <circle cx="20" cy="17" r="5.2" fill="#B8913E" stroke="#3B2F23" stroke-width="1.9"/>
+    <path d="M5 6 L7 8" fill="none" stroke="#8E6E30" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M5 6 L17 4" fill="none" stroke="#8E6E30" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+    <circle cx="5.6" cy="11.4" r="1.5" fill="#F8F0DC" opacity=".95"/>
+    <circle cx="15.6" cy="7.6" r="1.3" fill="#F8F0DC" opacity=".95"/>
+    <circle cx="18.6" cy="15.6" r="1.4" fill="#F8F0DC" opacity=".85"/>
+    <path d="M9 17 C10.5 18.5 12 19 13.5 18.5" fill="none" stroke="#8E6E30" stroke-width="1" opacity=".5"/>
+  </symbol>
+  <symbol id="litsea-b" viewBox="0 0 22 20">
+    <circle cx="7" cy="13" r="4.4" fill="#C9A052" stroke="#3B2F23" stroke-width="1.8"/>
+    <circle cx="13" cy="8" r="4.6" fill="#B8913E" stroke="#3B2F23" stroke-width="1.8"/>
+    <circle cx="15" cy="14" r="4" fill="#C9A052" stroke="#3B2F23" stroke-width="1.8"/>
+    <circle cx="6" cy="12" r="1.1" fill="#F5E9D8" opacity=".9"/>
+    <circle cx="12" cy="7" r="1.1" fill="#F5E9D8" opacity=".8"/>
+    <circle cx="14" cy="13" r="1" fill="#F5E9D8" opacity=".8"/>
+  </symbol>
+  <symbol id="rockcandy-a" viewBox="0 0 36 32">
+    <path d="M5 20 L10 7 L22 5 L31 13 L28 26 L13 28 Z" fill="#F2E8D0" stroke="#3B2F23" stroke-width="2.1" stroke-linejoin="round"/>
+    <path d="M10 7 L22 5 L19 15 Z" fill="#FBF6E6"/>
+    <path d="M10 7 L19 15 L13 28 Z" fill="#E8DAB8" opacity=".95"/>
+    <path d="M19 15 L28 26 L13 28 Z" fill="#E0CF9E" opacity=".9"/>
+    <path d="M22 5 L26 8.5 L23.5 14 Z" fill="#F8EED2"/>
+    <path d="M15 8 L18 6.6 L19 8.4 L16 9.6 Z" fill="#FFF" opacity=".95"/>
+    <path d="M11 13 L13 12 L13.8 13.6 L11.8 14.4 Z" fill="#FFF" opacity=".8"/>
+    <path d="M23 18 L25.5 17 L26.2 18.8 L23.8 19.6 Z" fill="#FFF" opacity=".75"/>
+    <path d="M16 22 L18 21.2 L18.6 22.8 L16.6 23.4 Z" fill="#FFF" opacity=".65"/>
+    <path d="M8 18 C10 21 14 24 18 24.5" fill="none" stroke="#D9B868" stroke-width="1.2" opacity=".5"/>
+  </symbol>
+  <symbol id="rockcandy-b" viewBox="0 0 26 24">
+    <path d="M4 15 L7 6 L17 4 L23 10 L20 20 L9 21 Z" fill="#F2E8D0" stroke="#3B2F23" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M7 6 L17 4 L15 12 Z" fill="#FBF6E6"/>
+    <path d="M15 12 L20 20 L9 21 Z" fill="#E0CF9E" opacity=".9"/>
+    <path d="M10 8 L12 7 L12.8 8.6 L10.8 9.2 Z" fill="#FFF" opacity=".9"/>
+    <path d="M18 14 L20 13.2 L20.6 15 L18.6 15.6 Z" fill="#FFF" opacity=".75"/>
+  </symbol>
+  <symbol id="soupdrop-g" viewBox="0 0 30 26">
+    <path d="M15 3 C21 8 25 13 25 17 C25 22 20 25 15 25 C10 25 5 22 5 17 C5 13 9 8 15 3 Z" fill="#E8C860" stroke="#3B2F23" stroke-width="2"/>
+    <path d="M10 12 C12 9 16 8 19 10 C17 12 13 13 10 12 Z" fill="#F5E0A0" opacity=".9"/>
+    <path d="M9 20 C12 23 18 23 21 20 C19 23 14 24 11 22 C10 21 9 21 9 20 Z" fill="#C9A238" opacity=".8"/>
+    <ellipse cx="12" cy="17" rx="2.4" ry="1.6" fill="#FFF" opacity=".5"/>
+  </symbol>
+  <symbol id="soupdrop-r" viewBox="0 0 30 26">
+    <path d="M15 3 C21 8 25 13 25 17 C25 22 20 25 15 25 C10 25 5 22 5 17 C5 13 9 8 15 3 Z" fill="#D0402A" stroke="#3B2F23" stroke-width="2"/>
+    <path d="M10 12 C12 9 16 8 19 10 C17 12 13 13 10 12 Z" fill="#E8684C" opacity=".9"/>
+    <path d="M9 20 C12 23 18 23 21 20 C19 23 14 24 11 22 C10 21 9 21 9 20 Z" fill="#A82E1C" opacity=".8"/>
+    <ellipse cx="12" cy="17" rx="2.4" ry="1.6" fill="#FFF" opacity=".5"/>
+  </symbol>
+  <symbol id="soupdrop-t" viewBox="0 0 30 26">
+    <path d="M15 3 C21 8 25 13 25 17 C25 22 20 25 15 25 C10 25 5 22 5 17 C5 13 9 8 15 3 Z" fill="#C86838" stroke="#3B2F23" stroke-width="2"/>
+    <path d="M10 12 C12 9 16 8 19 10 C17 12 13 13 10 12 Z" fill="#E09058" opacity=".9"/>
+    <path d="M9 20 C12 23 18 23 21 20 C19 23 14 24 11 22 C10 21 9 21 9 20 Z" fill="#A04E24" opacity=".8"/>
+    <path d="M12 15 C13.6 13.6 16.4 13.6 18 15 C16.4 16.6 13.6 16.6 12 15 Z" fill="#D97838"/>
+    <path d="M14 19 C15 18.2 17 18.2 18 19 C17 20 15 20 14 19 Z" fill="#E8A060" opacity=".85"/>
+    <ellipse cx="12" cy="17" rx="2.4" ry="1.6" fill="#FFF" opacity=".5"/>
+    <circle cx="19" cy="21" r="1.2" fill="#E8A060" opacity=".8"/>
+  </symbol>
+  <symbol id="crisp-a" viewBox="0 0 26 22">
+    <path d="M4 15 C3 9 8 4 14 4 C19 4 23 8 23 13 C23 17 19 20 13 20 C8 20 5 18 4 15 Z" fill="#C88A3E" stroke="#3B2F23" stroke-width="1.9" stroke-linejoin="round"/>
+    <path d="M8 8 C11 6 15 6 18 8 C15 10 11 10 8 8 Z" fill="#E0A84E" opacity=".9"/>
+    <circle cx="10" cy="14" r="1" fill="#6E4A1E"/><circle cx="14" cy="12" r=".9" fill="#6E4A1E"/><circle cx="17" cy="15" r="1" fill="#6E4A1E"/>
+  </symbol>
+  <symbol id="crisp-b" viewBox="0 0 24 20">
+    <path d="M4 13 C3 8 8 4 13 4 C17 4 21 7 21 12 C21 16 17 19 12 19 C8 19 5 17 4 13 Z" fill="#C88A3E" stroke="#3B2F23" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M7 8 C10 6 14 6 17 8 C14 9 10 10 7 8 Z" fill="#E0A84E" opacity=".9"/>
+    <circle cx="10" cy="13" r=".9" fill="#6E4A1E"/><circle cx="14" cy="12" r=".9" fill="#6E4A1E"/>
+  </symbol>
+  <symbol id="sprout2-a" viewBox="0 0 30 40">
+    <path d="M13 38 C11 30 10 20 12 12" fill="none" stroke="#3B2F23" stroke-width="2" stroke-linecap="round"/>
+    <path d="M13 38 C11 30 10 20 12 12" fill="none" stroke="#FAF6EC" stroke-width="4.6" stroke-linecap="round"/>
+    <path d="M13 34 C11 27 11 19 12 14" fill="none" stroke="#FFF" stroke-width="1.3" stroke-linecap="round" opacity=".7"/>
+    <ellipse cx="13.5" cy="8" rx="5.6" ry="6.6" fill="#E8C848" stroke="#3B2F23" stroke-width="2" transform="rotate(-14 13.5 8)"/>
+    <path d="M10 5 C11.5 3 14 2.6 15.8 3.8 C14.6 5.8 12 6.6 10 5 Z" fill="#F5DC80"/>
+    <path d="M11 11.5 C12.5 12.8 14.5 13 16 12.2" fill="none" stroke="#C8A028" stroke-width="1.2" opacity=".7"/>
+    <path d="M12 6.5 C13.5 5 15.5 4.6 17 5.4" fill="none" stroke="#FFF" stroke-width="1.1" opacity=".6"/>
+  </symbol>
+  <symbol id="sprout2-b" viewBox="0 0 26 36">
+    <path d="M11 34 C11 26 11 17 13 10" fill="none" stroke="#3B2F23" stroke-width="1.9" stroke-linecap="round"/>
+    <path d="M11 34 C11 26 11 17 13 10" fill="none" stroke="#FAF6EC" stroke-width="4.2" stroke-linecap="round"/>
+    <ellipse cx="14" cy="6.5" rx="5" ry="5.8" fill="#EDD060" stroke="#3B2F23" stroke-width="1.9" transform="rotate(12 14 6.5)"/>
+    <path d="M11.5 4 C12.8 2.4 14.8 2.2 16.4 3.2 C15.2 4.8 13 5.4 11.5 4 Z" fill="#F5DC80"/>
+    <path d="M12 9.5 C13.2 10.6 14.8 10.8 16 10.2" fill="none" stroke="#C8A028" stroke-width="1.1" opacity=".7"/>
+  </symbol>
+  <symbol id="lotus-a" viewBox="0 0 38 34">
+    <circle cx="19" cy="17" r="15" fill="#F5EEDC" stroke="#3B2F23" stroke-width="2.3"/>
+    <circle cx="19" cy="17" r="15" fill="none" stroke="#E2D4B8" stroke-width="1.2"/>
+    <circle cx="13" cy="11.5" r="2.6" fill="#E8DECC" stroke="#C8B896" stroke-width="1.1"/>
+    <circle cx="20" cy="9.8" r="2.7" fill="#E8DECC" stroke="#C8B896" stroke-width="1.1"/>
+    <circle cx="26" cy="13.5" r="2.5" fill="#E8DECC" stroke="#C8B896" stroke-width="1.1"/>
+    <circle cx="27.5" cy="20" r="2.5" fill="#E8DECC" stroke="#C8B896" stroke-width="1.1"/>
+    <circle cx="21.5" cy="24.5" r="2.4" fill="#E8DECC" stroke="#C8B896" stroke-width="1.1"/>
+    <circle cx="14" cy="24" r="2.4" fill="#E8DECC" stroke="#C8B896" stroke-width="1.1"/>
+    <circle cx="10" cy="17.5" r="2.3" fill="#E8DECC" stroke="#C8B896" stroke-width="1.1"/>
+    <circle cx="19" cy="16.8" r="2.6" fill="#EFE6D2" stroke="#C8B896" stroke-width="1"/>
+    <path d="M8 9 C10.5 6 14 4.2 17 3.8" fill="none" stroke="#FFF" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>
+    <path d="M11 26 C13 28 16 29 19 29" fill="none" stroke="#FFF" stroke-width="1.3" stroke-linecap="round" opacity=".4"/>
+  </symbol>
+  <symbol id="wfish" viewBox="0 0 240 104">
+    <ellipse cx="118" cy="88" rx="98" ry="7" fill="#3B2F23" opacity=".12"/>
+    <path d="M18 52 C22 30 46 16 78 14 C118 11 168 20 198 38 C210 45 216 52 216 54 C216 56 210 63 198 70 C168 88 118 97 78 94 C46 92 22 78 18 56 Z" fill="#C88A3E" stroke="#3B2F23" stroke-width="2.8" stroke-linejoin="round"/>
+    <path d="M20 50 C26 34 48 22 78 20 C116 17 164 26 192 42 C198 46 202 50 203 53 C198 48 190 43 180 40 C150 30 108 27 76 32 C50 36 30 43 20 50 Z" fill="#DCA45C"/>
+    <path d="M28 60 C34 74 52 84 80 87 C116 90 162 83 190 68 C198 64 204 59 206 56 C202 63 192 70 178 76 C148 90 106 94 74 89 C48 85 32 74 28 60 Z" fill="#A86E2C" opacity=".85"/>
+    <path d="M52 26 C48 34 46 44 48 54 C50 66 56 76 64 82" fill="none" stroke="#6E4A1E" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+    <path d="M84 20 C80 30 79 42 81 54 C83 68 88 80 95 87" fill="none" stroke="#6E4A1E" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+    <path d="M120 20 C116 30 115 44 117 58 C119 72 124 82 130 88" fill="none" stroke="#6E4A1E" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+    <path d="M156 24 C152 33 151 45 153 57 C155 70 159 79 165 85" fill="none" stroke="#6E4A1E" stroke-width="2.8" stroke-linecap="round" opacity=".7"/>
+    <path d="M30 48 C34 38 42 31 52 27" fill="none" stroke="#4E3212" stroke-width="2.4" stroke-linecap="round" opacity=".8"/>
+    <path d="M18 52 C14 50 10 46 8 41" fill="none" stroke="#3B2F23" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M216 54 C224 48 232 40 236 32 C237 42 235 54 230 62 C226 68 220 68 216 62 Z" fill="#B87E34" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M96 8 C100 4 106 3 112 4 C110 10 106 14 100 15 C97 13 95 11 96 8 Z" fill="#B87E34" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M116 6 C120 2 126 1 132 2 C130 8 126 12 120 13 C117 11 115 9 116 6 Z" fill="#B87E34" stroke="#3B2F23" stroke-width="2.1" stroke-linejoin="round"/>
+    <circle cx="42" cy="46" r="3" fill="#3B2F23"/>
+    <circle cx="41" cy="45" r="1" fill="#FFF" opacity=".85"/>
+    <path d="M36 56 C38 58 41 59 44 58" fill="none" stroke="#3B2F23" stroke-width="1.8" stroke-linecap="round" opacity=".7"/>
+    <path d="M62 34 C70 30 82 29 92 31" fill="none" stroke="#FFF" stroke-width="2.2" stroke-linecap="round" opacity=".3"/>
+  </symbol>
+</svg>
+
+
+<!-- ============ 第二批新食材符号（10-14 v3：C区+B区，语法对齐v2） ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="tripe-a" viewBox="0 0 60 44">
+    <path d="M6 16 C6 9 14 4 24 3 C35 2 47 5 53 11 C57 15 56 21 52 26 C46 33 35 38 24 38 C14 38 7 33 5 27 C4 23 5 19 6 16 Z" fill="#F2EDE2" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M12 8 C18 5 28 5 36 8 C31 11 22 12 16 11 C13 10 12 9 12 8 Z" fill="#FAF7EE"/>
+    <path d="M10 14 C18 12 30 12 40 15 C34 18 24 19 17 17 C13 16 11 15 10 14 Z" fill="#E2DACA" opacity=".9"/>
+    <path d="M12 22 C20 20 32 20 42 23 C36 26 26 27 19 25 C15 24 13 23 12 22 Z" fill="#E8E0D2" opacity=".85"/>
+    <path d="M11 30 C17 34 26 36 36 34 C42 33 47 30 50 27 C47 32 39 35 29 35 C19 35 14 33 11 30 Z" fill="#D5CBB8" opacity=".85"/>
+    <path d="M16 12 C24 10 34 11 42 14" fill="none" stroke="#C8BCA4" stroke-width="1.2" opacity=".7"/>
+    <ellipse cx="22" cy="20" rx="3" ry="1.6" fill="#DAD2C0" opacity=".8"/>
+    <ellipse cx="34" cy="27" rx="3.4" ry="1.7" fill="#DAD2C0" opacity=".8"/>
+  </symbol>
+  <symbol id="tripe-b" viewBox="0 0 54 40">
+    <path d="M5 14 C5 8 12 4 21 3 C30 2 41 5 47 10 C50 13 50 19 46 24 C41 30 31 35 21 35 C12 35 6 30 4 25 C3 21 4 17 5 14 Z" fill="#F2EDE2" stroke="#3B2F23" stroke-width="2.3" stroke-linejoin="round"/>
+    <path d="M10 8 C16 5 24 5 31 7 C27 10 19 11 14 10 C11 9 10 9 10 8 Z" fill="#FAF7EE"/>
+    <path d="M9 15 C16 13 26 13 34 16 C29 19 21 20 15 18 C12 17 10 16 9 15 Z" fill="#E2DACA" opacity=".9"/>
+    <path d="M10 23 C17 21 27 21 36 24 C31 27 23 28 17 26 C13 25 11 24 10 23 Z" fill="#E8E0D2" opacity=".85"/>
+    <path d="M10 30 C15 33 23 35 32 33 C38 32 42 29 45 26 C42 31 35 34 26 34 C17 34 13 32 10 30 Z" fill="#D5CBB8" opacity=".85"/>
+    <ellipse cx="20" cy="19" rx="2.8" ry="1.5" fill="#DAD2C0" opacity=".8"/>
+  </symbol>
+  <symbol id="tshred-a" viewBox="0 0 52 36">
+    <path d="M4 10 C12 7 22 7 30 10 C36 12 42 15 46 18" fill="none" stroke="#3B2F23" stroke-width="1.7" stroke-linecap="round"/>
+    <path d="M4 10 C12 7 22 7 30 10 C36 12 42 15 46 18" fill="none" stroke="#F0EBE0" stroke-width="4.4" stroke-linecap="round"/>
+    <path d="M6 22 C14 19 24 19 32 22 C38 24 44 26 48 28" fill="none" stroke="#3B2F23" stroke-width="1.7" stroke-linecap="round"/>
+    <path d="M6 22 C14 19 24 19 32 22 C38 24 44 26 48 28" fill="none" stroke="#EAE4D6" stroke-width="4.2" stroke-linecap="round"/>
+    <path d="M12 31 C18 29 26 29 34 31" fill="none" stroke="#3B2F23" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M12 31 C18 29 26 29 34 31" fill="none" stroke="#F0EBE0" stroke-width="3.8" stroke-linecap="round"/>
+    <path d="M10 9 C18 7 28 8 36 12" fill="none" stroke="#FFF" stroke-width="1.1" stroke-linecap="round" opacity=".55"/>
+    <path d="M12 21 C20 19 28 19 34 21" fill="none" stroke="#D8D0BE" stroke-width=".9" opacity=".7"/>
+  </symbol>
+  <symbol id="tshred-b" viewBox="0 0 48 34">
+    <path d="M3 20 C11 17 21 17 29 20 C35 22 41 24 45 26" fill="none" stroke="#3B2F23" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M3 20 C11 17 21 17 29 20 C35 22 41 24 45 26" fill="none" stroke="#EAE4D6" stroke-width="4" stroke-linecap="round"/>
+    <path d="M6 9 C14 6 24 7 32 10" fill="none" stroke="#3B2F23" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M6 9 C14 6 24 7 32 10" fill="none" stroke="#F0EBE0" stroke-width="4" stroke-linecap="round"/>
+    <path d="M10 28 C17 26 25 26 32 28" fill="none" stroke="#3B2F23" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M10 28 C17 26 25 26 32 28" fill="none" stroke="#F0EBE0" stroke-width="3.6" stroke-linecap="round"/>
+    <path d="M9 19 C17 17 26 18 33 20" fill="none" stroke="#FFF" stroke-width="1" stroke-linecap="round" opacity=".55"/>
+  </symbol>
+  <symbol id="cilantro-a" viewBox="0 0 44 40">
+    <path d="M22 38 C21 32 21 26 22 20" fill="none" stroke="#3B2F23" stroke-width="1.7" stroke-linecap="round"/>
+    <path d="M22 38 C21 32 21 26 22 20" fill="none" stroke="#8E9238" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M22 20 C18 18 15 14 15 10 C19 10 22 13 23 17" fill="#5FA344" stroke="#3B2F23" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M22 19 C25 16 29 14 33 15 C32 19 28 22 24 22" fill="#6FB852" stroke="#3B2F23" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M22 26 C19 24 16 21 16 18 C19.5 18.5 22 21 22.6 24" fill="#548F3C" stroke="#3B2F23" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M22 25 C25 23 28 21 31 21.6 C30 25 27 27 23.6 27" fill="#7AB862" stroke="#3B2F23" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M18 13 C19 11 21 10 22.5 10.5" fill="none" stroke="#C8E0B4" stroke-width="1.2" opacity=".8"/>
+  </symbol>
+  <symbol id="cilantro-b" viewBox="0 0 40 38">
+    <path d="M20 36 C19 30 19 25 20 19" fill="none" stroke="#3B2F23" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M20 36 C19 30 19 25 20 19" fill="none" stroke="#8E9238" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M20 19 C17 17 14 13 14 9 C18 9 20.5 12 21 16" fill="#5FA344" stroke="#3B2F23" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M20 18 C23 15 27 13 30 14 C29 18 26 20 22 20.6" fill="#6FB852" stroke="#3B2F23" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M20 25 C17.6 23.4 15 20.6 15 18 C18 18.4 20.2 20.6 20.8 23.4" fill="#548F3C" stroke="#3B2F23" stroke-width="1.6" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="gizzard-a" viewBox="0 0 46 40">
+    <path d="M8 18 C6 10 14 4 23 3 C32 2 41 6 43 13 C45 20 40 28 32 33 C24 38 13 37 9 31 C6 26 7 22 8 18 Z" fill="#B86A6E" stroke="#3B2F23" stroke-width="2.3" stroke-linejoin="round"/>
+    <path d="M14 9 C19 6 27 6 33 9 C29 12 22 13 17 12 C15 11 14 10 14 9 Z" fill="#CE888C"/>
+    <path d="M12 16 C19 13 29 13 37 16 C31 19 22 20 16 18 C13 17 12 17 12 16 Z" fill="#9E5458" opacity=".85"/>
+    <path d="M13 27 C18 32 27 33 35 30 C39 28 42 25 43 22 C41 28 34 32 25 32 C17 32 14 30 13 27 Z" fill="#8A464A" opacity=".85"/>
+    <path d="M20 22 C25 20 31 21 35 24" fill="none" stroke="#D9A8AA" stroke-width="1.4" opacity=".7"/>
+    <path d="M17 13 C23 11 30 12 35 15" fill="none" stroke="#FFF" stroke-width="1.5" stroke-linecap="round" opacity=".3"/>
+    <ellipse cx="24" cy="27" rx="2.6" ry="1.4" fill="#C89094" opacity=".7"/>
+  </symbol>
+  <symbol id="gizzard-b" viewBox="0 0 42 38">
+    <path d="M7 17 C5 9 12 4 20 3 C28 2 36 6 38 12 C40 18 36 26 28 31 C21 35 11 34 8 28 C5 24 6 21 7 17 Z" fill="#B86A6E" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M12 8 C17 5 24 6 29 8 C26 11 20 12 15 11 C13 10 12 9 12 8 Z" fill="#CE888C"/>
+    <path d="M11 15 C17 12 26 12 33 15 C28 18 20 19 15 17 C12 16 11 16 11 15 Z" fill="#9E5458" opacity=".85"/>
+    <path d="M12 25 C17 29 24 30 31 28 C35 26 37 23 38 21 C36 26 30 29 23 29 C16 29 13 27 12 25 Z" fill="#8A464A" opacity=".85"/>
+  </symbol>
+  <symbol id="eggplant-a" viewBox="0 0 30 56">
+    <path d="M15 4 C20 8 24 16 25 26 C26 38 22 48 15 52 C8 48 4 38 5 26 C6 16 10 8 15 4 Z" fill="#5E3A6E" stroke="#3B2F23" stroke-width="2.3" stroke-linejoin="round"/>
+    <path d="M15 6 C19 10 22 17 23 26 C23 36 20 44 15 48 C10 44 7 36 7 26 C8 17 11 10 15 6 Z" fill="#754A88" opacity=".9"/>
+    <path d="M12 18 C13 26 13 36 12 44" fill="none" stroke="#E8D8F0" stroke-width="2.2" opacity=".8"/>
+    <path d="M17 14 C18 22 18 32 17 42" fill="none" stroke="#E8D8F0" stroke-width="1.6" opacity=".55"/>
+    <path d="M13 7 C14 6 16 6 17 7" fill="none" stroke="#FFF" stroke-width="1.4" stroke-linecap="round" opacity=".35"/>
+    <ellipse cx="15" cy="26" rx="1.6" ry="4" fill="#8E5EA0" opacity=".6"/>
+  </symbol>
+  <symbol id="eggplant-b" viewBox="0 0 26 50">
+    <path d="M13 3 C17 7 21 14 22 23 C23 34 19 43 13 47 C7 43 3 34 4 23 C5 14 9 7 13 3 Z" fill="#5E3A6E" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M13 5 C16 9 19 15 20 23 C20 32 17 39 13 43 C9 39 6 32 6 23 C7 15 10 9 13 5 Z" fill="#754A88" opacity=".9"/>
+    <path d="M10 16 C11 24 11 32 10 39" fill="none" stroke="#E8D8F0" stroke-width="2" opacity=".8"/>
+    <path d="M15 12 C16 20 16 28 15 37" fill="none" stroke="#E8D8F0" stroke-width="1.4" opacity=".55"/>
+  </symbol>
+  <symbol id="feet-a" viewBox="0 0 40 54">
+    <path d="M12 6 C12 3 15 2 17 3 L18 8 C24 9 30 13 33 19 C36 25 36 33 33 39 C30 45 24 49 18 50 L17 51 C15 52 12 51 12 48 L12 40 C9 37 8 33 9 29 C7 26 7 22 9 19 C7 16 8 11 12 10 Z" fill="#F0E0C0" stroke="#3B2F23" stroke-width="2.3" stroke-linejoin="round"/>
+    <path d="M14 8 C14 5 16 4 17.5 5 L18 9 C16.6 8.4 14.8 8 14 8 Z" fill="#E8D0A8"/>
+    <circle cx="15" cy="30" r="2.6" fill="#E0C8A0" stroke="#3B2F23" stroke-width="1.3"/>
+    <circle cx="15" cy="39" r="2.4" fill="#E0C8A0" stroke="#3B2F23" stroke-width="1.2"/>
+    <circle cx="27" cy="26" r="2.6" fill="#E0C8A0" stroke="#3B2F23" stroke-width="1.3"/>
+    <path d="M20 12 C25 13 29 16 31 21" fill="none" stroke="#FFF" stroke-width="1.6" stroke-linecap="round" opacity=".4"/>
+    <path d="M22 44 C26 42 29 38 30 34" fill="none" stroke="#D9C098" stroke-width="1.4" opacity=".7"/>
+    <path d="M13 24 C12 27 12 31 13 34" fill="none" stroke="#D9C098" stroke-width="1.2" opacity=".6"/>
+  </symbol>
+  <symbol id="feet-b" viewBox="0 0 36 50">
+    <path d="M10 5 C10 2 13 1 15 2 L16 7 C21 8 26 12 29 17 C32 23 32 30 29 36 C26 42 20 46 15 47 L14 48 C12 49 10 48 10 45 L10 37 C7 34 7 30 8 27 C6 24 6 20 8 17 C6 14 7 10 10 9 Z" fill="#F0E0C0" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <circle cx="13" cy="27" r="2.4" fill="#E0C8A0" stroke="#3B2F23" stroke-width="1.2"/>
+    <circle cx="13" cy="36" r="2.2" fill="#E0C8A0" stroke="#3B2F23" stroke-width="1.1"/>
+    <circle cx="24" cy="24" r="2.4" fill="#E0C8A0" stroke="#3B2F23" stroke-width="1.2"/>
+    <path d="M18 11 C22 12 26 15 28 19" fill="none" stroke="#FFF" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
+    <path d="M19 41 C23 39 26 35 27 31" fill="none" stroke="#D9C098" stroke-width="1.3" opacity=".7"/>
+  </symbol>
+  <symbol id="porkmince-a" viewBox="0 0 34 26">
+    <path d="M4 19 C3 13 9 8 17 7 C25 6 31 10 31 15 C31 20 25 23 17 23 C10 23 5 22 4 19 Z" fill="#B06848" stroke="#3B2F23" stroke-width="1.8"/>
+    <circle cx="11" cy="15" r="1.7" fill="#C88868"/><circle cx="15" cy="11" r="1.4" fill="#8E5038"/><circle cx="19" cy="15" r="1.6" fill="#C88868"/>
+    <circle cx="23" cy="11" r="1.3" fill="#8E5038"/><circle cx="26" cy="16" r="1.5" fill="#A86048"/><circle cx="14" cy="18" r="1.3" fill="#A86048"/>
+    <circle cx="20" cy="19" r="1.2" fill="#8E5038"/><circle cx="8" cy="16" r="1.3" fill="#C88868"/><circle cx="17" cy="14" r=".9" fill="#E8C0A8" opacity=".8"/>
+  </symbol>
+  <symbol id="porkmince-b" viewBox="0 0 30 24">
+    <path d="M4 17 C3 12 8 7 15 6 C22 5 27 9 27 13 C27 18 22 21 15 21 C9 21 5 20 4 17 Z" fill="#B06848" stroke="#3B2F23" stroke-width="1.7"/>
+    <circle cx="10" cy="13" r="1.5" fill="#C88868"/><circle cx="14" cy="10" r="1.2" fill="#8E5038"/><circle cx="17" cy="13" r="1.4" fill="#C88868"/>
+    <circle cx="21" cy="10" r="1.1" fill="#8E5038"/><circle cx="23" cy="15" r="1.3" fill="#A86048"/><circle cx="13" cy="16" r="1.1" fill="#A86048"/>
+  </symbol>
+  <symbol id="pigear-a" viewBox="0 0 58 40">
+    <path d="M6 18 C5 10 14 4 26 3 C38 2 50 6 53 12 C56 18 51 25 42 30 C32 35 17 36 10 31 C5 27 6 22 6 18 Z" fill="#F5EFE4" stroke="#3B2F23" stroke-width="2.3" stroke-linejoin="round"/>
+    <path d="M12 9 C19 6 31 6 40 9 C35 12 26 13 19 12 C15 11 13 10 12 9 Z" fill="#FBF8F0"/>
+    <path d="M10 15 C20 12 34 12 45 16 C38 19 26 20 18 18 C13 17 11 16 10 15 Z" fill="#FFF" opacity=".85"/>
+    <path d="M11 21 C21 19 34 19 44 22 C38 25 27 26 19 24 C14 23 12 22 11 21 Z" fill="#EDE5D4" opacity=".9"/>
+    <path d="M12 27 C19 31 30 32 40 30 C45 29 49 26 51 24 C49 29 42 32 32 32 C21 32 15 30 12 27 Z" fill="#D9CFBA" opacity=".85"/>
+    <path d="M16 13 C24 11 34 11 42 14" fill="none" stroke="#C8BCA4" stroke-width="1.1" opacity=".7"/>
+    <ellipse cx="24" cy="19" rx="3.6" ry="1.7" fill="#F0EAD8" opacity=".9"/>
+    <ellipse cx="36" cy="25" rx="3.2" ry="1.5" fill="#E8E0CC" opacity=".85"/>
+  </symbol>
+  <symbol id="pigear-b" viewBox="0 0 52 38">
+    <path d="M5 17 C4 9 12 4 23 3 C34 2 45 6 48 11 C51 17 46 24 38 29 C29 34 16 35 9 30 C4 26 5 21 5 17 Z" fill="#F5EFE4" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M10 8 C17 5 27 5 35 8 C30 11 22 12 16 11 C12 10 11 9 10 8 Z" fill="#FBF8F0"/>
+    <path d="M9 14 C18 12 30 12 40 15 C34 18 24 19 17 17 C12 16 10 15 9 14 Z" fill="#FFF" opacity=".85"/>
+    <path d="M10 20 C19 18 31 18 40 21 C34 24 24 25 17 23 C13 22 11 21 10 20 Z" fill="#EDE5D4" opacity=".9"/>
+    <ellipse cx="22" cy="18" rx="3.2" ry="1.5" fill="#F0EAD8" opacity=".9"/>
+  </symbol>
+  <symbol id="pshred-a" viewBox="0 0 54 34">
+    <path d="M4 8 C12 5 22 5 30 8 C38 10 44 12 48 15" fill="none" stroke="#3B2F23" stroke-width="1.7" stroke-linecap="round"/>
+    <path d="M4 8 C12 5 22 5 30 8 C38 10 44 12 48 15" fill="none" stroke="#F5E8C8" stroke-width="4.4" stroke-linecap="round"/>
+    <path d="M6 19 C14 16 24 16 32 19 C40 21 46 23 50 25" fill="none" stroke="#3B2F23" stroke-width="1.7" stroke-linecap="round"/>
+    <path d="M6 19 C14 16 24 16 32 19 C40 21 46 23 50 25" fill="none" stroke="#F0E0B8" stroke-width="4.2" stroke-linecap="round"/>
+    <path d="M10 29 C18 27 26 27 34 29" fill="none" stroke="#3B2F23" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M10 29 C18 27 26 27 34 29" fill="none" stroke="#F5E8C8" stroke-width="3.8" stroke-linecap="round"/>
+    <path d="M10 7 C18 5 28 6 36 9" fill="none" stroke="#FFF" stroke-width="1.1" stroke-linecap="round" opacity=".6"/>
+    <path d="M12 18 C20 16 28 16 34 18" fill="none" stroke="#E0C890" stroke-width=".9" opacity=".7"/>
+  </symbol>
+  <symbol id="pshred-b" viewBox="0 0 50 32">
+    <path d="M3 18 C11 15 21 15 29 18 C37 20 43 22 47 24" fill="none" stroke="#3B2F23" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M3 18 C11 15 21 15 29 18 C37 20 43 22 47 24" fill="none" stroke="#F0E0B8" stroke-width="4" stroke-linecap="round"/>
+    <path d="M6 8 C14 5 24 6 32 9" fill="none" stroke="#3B2F23" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M6 8 C14 5 24 6 32 9" fill="none" stroke="#F5E8C8" stroke-width="4" stroke-linecap="round"/>
+    <path d="M9 27 C16 25 24 25 31 27" fill="none" stroke="#3B2F23" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M9 27 C16 25 24 25 31 27" fill="none" stroke="#F5E8C8" stroke-width="3.6" stroke-linecap="round"/>
+    <path d="M9 17 C17 15 26 16 33 18" fill="none" stroke="#FFF" stroke-width="1" stroke-linecap="round" opacity=".6"/>
+  </symbol>
+  <symbol id="pbean-a" viewBox="0 0 50 22">
+    <path d="M3 10 C3 6 9 3 17 2 C26 1 38 3 43 7 C46 10 44 14 37 16 C28 19 14 20 8 17 C4 15 3 12 3 10 Z" fill="#A8B04E" stroke="#3B2F23" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M8 6 C13 4 21 4 28 5 C24 7 16 8 11 7 C9 7 8 6 8 6 Z" fill="#C4CC74" opacity=".9"/>
+    <circle cx="14" cy="11" r="1.7" fill="#88903C"/><circle cx="20" cy="9" r="1.5" fill="#88903C"/><circle cx="26" cy="11" r="1.6" fill="#88903C"/>
+    <circle cx="32" cy="9" r="1.4" fill="#88903C"/><circle cx="36" cy="12" r="1.5" fill="#88903C"/><circle cx="18" cy="14" r="1.3" fill="#88903C"/>
+    <path d="M22 4 C23 8 23 13 22 16" fill="none" stroke="#9AA03C" stroke-width="1" opacity=".7"/>
+  </symbol>
+  <symbol id="pbean-b" viewBox="0 0 44 20">
+    <path d="M3 9 C3 5 8 3 15 2 C23 1 33 3 37 6 C40 9 38 12 32 14 C25 17 13 18 7 15 C4 13 3 11 3 9 Z" fill="#A8B04E" stroke="#3B2F23" stroke-width="1.9" stroke-linejoin="round"/>
+    <path d="M7 5 C12 3 19 3 25 4 C21 6 14 7 10 6 C8 6 7 5 7 5 Z" fill="#C4CC74" opacity=".9"/>
+    <circle cx="12" cy="10" r="1.5" fill="#88903C"/><circle cx="18" cy="8" r="1.3" fill="#88903C"/><circle cx="24" cy="10" r="1.4" fill="#88903C"/>
+  </symbol>
+  <symbol id="cabbage-a" viewBox="0 0 58 44">
+    <path d="M29 4 C40 4 50 10 53 19 C56 29 50 38 39 41 C28 44 14 41 8 33 C2 25 5 14 13 8 C18 4 24 4 29 4 Z" fill="#7AB862" stroke="#3B2F23" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M29 6 C36 6 43 10 46 16 C40 14 33 14 28 16 C23 18 18 22 16 27 C12 21 14 12 20 8 C23 6 26 6 29 6 Z" fill="#9AD284" opacity=".95"/>
+    <path d="M29 8 C29 18 29 28 29 38" fill="none" stroke="#5A9444" stroke-width="2" opacity=".7"/>
+    <path d="M22 12 C18 18 16 26 17 34" fill="none" stroke="#5A9444" stroke-width="1.6" opacity=".6"/>
+    <path d="M36 12 C40 18 42 26 41 34" fill="none" stroke="#5A9444" stroke-width="1.6" opacity=".6"/>
+    <path d="M24 20 C27 19 31 19 34 20" fill="none" stroke="#C8E4B4" stroke-width="1.4" opacity=".8"/>
+    <path d="M22 28 C26 27 32 27 36 28" fill="none" stroke="#C8E4B4" stroke-width="1.3" opacity=".7"/>
+    <path d="M15 38 C21 42 32 43 40 40 C46 38 50 34 52 30 C50 36 44 40 36 42 C27 44 18 42 13 38 Z" fill="#4E8038" opacity=".8"/>
+  </symbol>
+  <symbol id="cabbage-b" viewBox="0 0 52 40">
+    <path d="M26 3 C36 3 45 9 48 17 C51 26 45 35 35 38 C25 41 13 38 7 30 C1 22 4 12 12 6 C16 3 21 3 26 3 Z" fill="#7AB862" stroke="#3B2F23" stroke-width="2.3" stroke-linejoin="round"/>
+    <path d="M26 5 C32 5 39 9 42 14 C37 12 31 12 26 14 C21 16 17 20 15 24 C11 19 13 11 19 7 C21 5 24 5 26 5 Z" fill="#9AD284" opacity=".95"/>
+    <path d="M26 7 C26 16 26 25 26 34" fill="none" stroke="#5A9444" stroke-width="1.8" opacity=".7"/>
+    <path d="M20 11 C17 16 15 23 16 30" fill="none" stroke="#5A9444" stroke-width="1.4" opacity=".6"/>
+    <path d="M32 11 C35 16 37 23 36 30" fill="none" stroke="#5A9444" stroke-width="1.4" opacity=".6"/>
+  </symbol>
+  <symbol id="wtofu-a" viewBox="0 0 44 40">
+    <rect x="5" y="6" width="34" height="29" rx="6" fill="#F5F1E6" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M10 10 C14 8 26 8 32 10 C28 12 18 13 12 12 C10 11 10 11 10 10 Z" fill="#FDFBF4"/>
+    <path d="M9 30 C14 33 26 33 33 30 C30 32 24 33.5 18 33.5 C13 33.5 10 32 9 30 Z" fill="#E4DCC8" opacity=".85"/>
+    <path d="M15 15 C20 14 26 14 30 16" fill="none" stroke="#E0D8C4" stroke-width="1.2" opacity=".8"/>
+    <path d="M16 24 C21 23 26 23 30 24" fill="none" stroke="#E0D8C4" stroke-width="1.1" opacity=".7"/>
+    <ellipse cx="22" cy="20" rx="2.8" ry="1.4" fill="#EFE8D8"/>
+  </symbol>
+  <symbol id="wtofu-b" viewBox="0 0 40 38">
+    <rect x="4" y="5" width="32" height="28" rx="5.5" fill="#F5F1E6" stroke="#3B2F23" stroke-width="2.1" stroke-linejoin="round"/>
+    <path d="M9 9 C13 7 24 7 29 9 C25 11 17 12 11 11 C9 10 9 10 9 9 Z" fill="#FDFBF4"/>
+    <path d="M8 28 C13 31 23 31 29 28 C26 30 21 31.5 15 31.5 C11 31.5 9 30 8 28 Z" fill="#E4DCC8" opacity=".85"/>
+  </symbol>
+  <symbol id="bamboo-a" viewBox="0 0 30 48">
+    <path d="M15 3 C20 8 23 18 23 28 C23 38 20 44 15 46 C10 44 7 38 7 28 C7 18 10 8 15 3 Z" fill="#E8D8A8" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M15 6 C19 11 21 19 21 28 C21 36 19 42 15 44 C11 42 9 36 9 28 C9 19 11 11 15 6 Z" fill="#F2E6C4" opacity=".95"/>
+    <ellipse cx="15" cy="16" rx="3.4" ry="1.6" fill="#D8C488" opacity=".8"/>
+    <ellipse cx="15" cy="26" rx="3.6" ry="1.7" fill="#D8C488" opacity=".8"/>
+    <ellipse cx="15" cy="36" rx="3.2" ry="1.5" fill="#D8C488" opacity=".8"/>
+    <path d="M12 10 C13 9 16 9 17.5 10" fill="none" stroke="#FFF" stroke-width="1.3" stroke-linecap="round" opacity=".6"/>
+    <path d="M13 22 C14.5 21.4 16 21.4 17 22" fill="none" stroke="#C8B078" stroke-width="1" opacity=".6"/>
+  </symbol>
+  <symbol id="bamboo-b" viewBox="0 0 26 44">
+    <path d="M13 2 C17 7 20 16 20 25 C20 34 17 40 13 42 C9 40 6 34 6 25 C6 16 9 7 13 2 Z" fill="#E8D8A8" stroke="#3B2F23" stroke-width="2.1" stroke-linejoin="round"/>
+    <path d="M13 5 C16 10 18 17 18 25 C18 33 16 38 13 40 C10 38 8 33 8 25 C8 17 10 10 13 5 Z" fill="#F2E6C4" opacity=".95"/>
+    <ellipse cx="13" cy="15" rx="3" ry="1.4" fill="#D8C488" opacity=".8"/>
+    <ellipse cx="13" cy="25" rx="3.2" ry="1.5" fill="#D8C488" opacity=".8"/>
+  </symbol>
+  <symbol id="greens-a" viewBox="0 0 50 44">
+    <path d="M25 42 C24 34 24 26 25 18" fill="none" stroke="#3B2F23" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M25 42 C24 34 24 26 25 18" fill="none" stroke="#6E9440" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M25 20 C19 19 13 15 11 9 C18 8 24 12 26 18" fill="#5FA344" stroke="#3B2F23" stroke-width="1.9" stroke-linejoin="round"/>
+    <path d="M25 18 C31 17 37 13 39 8 C32 7 26 11 24 16" fill="#6FB852" stroke="#3B2F23" stroke-width="1.9" stroke-linejoin="round"/>
+    <path d="M25 28 C20 27 15 24 13 19 C19 18 24 22 25 26" fill="#548F3C" stroke="#3B2F23" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M25 26 C30 25 35 22 37 17 C31 16 26 20 25 24" fill="#7AB862" stroke="#3B2F23" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M17 13 C19 11 22 11 24 12.6" fill="none" stroke="#C8E0B4" stroke-width="1.3" opacity=".8"/>
+    <path d="M31 12 C33 10 35 10.6 36 12" fill="none" stroke="#C8E0B4" stroke-width="1.2" opacity=".7"/>
+  </symbol>
+  <symbol id="greens-b" viewBox="0 0 44 40">
+    <path d="M22 38 C21 31 21 24 22 17" fill="none" stroke="#3B2F23" stroke-width="1.7" stroke-linecap="round"/>
+    <path d="M22 38 C21 31 21 24 22 17" fill="none" stroke="#6E9440" stroke-width="3.1" stroke-linecap="round"/>
+    <path d="M22 19 C17 18 12 15 10 10 C16 9 21 12 23 17" fill="#5FA344" stroke="#3B2F23" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M22 17 C27 16 32 13 34 9 C28 8 23 11 21 15" fill="#6FB852" stroke="#3B2F23" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M22 27 C18 26 14 23 12 19 C17 18 21 21 22 25" fill="#548F3C" stroke="#3B2F23" stroke-width="1.7" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="waipo-a" viewBox="0 0 34 26">
+    <path d="M4 19 C3 13 9 8 17 7 C25 6 31 10 31 15 C31 20 25 23 17 23 C10 23 5 22 4 19 Z" fill="#6E7030" stroke="#3B2F23" stroke-width="1.8"/>
+    <circle cx="11" cy="15" r="1.6" fill="#888A40"/><circle cx="15" cy="11" r="1.3" fill="#585A24"/><circle cx="19" cy="15" r="1.5" fill="#888A40"/>
+    <circle cx="23" cy="11" r="1.2" fill="#585A24"/><circle cx="26" cy="16" r="1.4" fill="#787A38"/><circle cx="14" cy="18" r="1.2" fill="#787A38"/>
+    <circle cx="20" cy="19" r="1.1" fill="#585A24"/><circle cx="8" cy="16" r="1.2" fill="#888A40"/>
+    <path d="M9 12 C12 10 16 10 19 11" fill="none" stroke="#9EA050" stroke-width="1" opacity=".7"/>
+  </symbol>
+  <symbol id="waipo-b" viewBox="0 0 30 24">
+    <path d="M4 17 C3 12 8 7 15 6 C22 5 27 9 27 13 C27 18 22 21 15 21 C9 21 5 20 4 17 Z" fill="#6E7030" stroke="#3B2F23" stroke-width="1.7"/>
+    <circle cx="10" cy="13" r="1.4" fill="#888A40"/><circle cx="14" cy="10" r="1.2" fill="#585A24"/><circle cx="17" cy="13" r="1.3" fill="#888A40"/>
+    <circle cx="21" cy="10" r="1.1" fill="#585A24"/><circle cx="23" cy="15" r="1.2" fill="#787A38"/>
+  </symbol>
+  <symbol id="nsheet-a" viewBox="0 0 56 40">
+    <path d="M6 24 C4 14 16 6 30 5 C44 4 54 10 53 18 C52 26 42 32 28 33 C15 34 8 31 6 24 Z" fill="#EDEAE0" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round" opacity=".92"/>
+    <path d="M12 20 C14 13 24 8 34 8 C42 8 48 11 49 15 C43 12 34 11 26 13 C19 15 14 17 12 20 Z" fill="#F8F6EE" opacity=".95"/>
+    <path d="M10 26 C16 30 26 31 36 29 C43 27 48 24 50 21 C47 26 40 29 30 30 C20 31 13 29 10 26 Z" fill="#D8D4C4" opacity=".85"/>
+    <path d="M16 24 C24 22 34 22 42 24" fill="none" stroke="#D0CCC0" stroke-width="1.1" opacity=".7"/>
+    <path d="M20 14 C26 12 34 12 40 14" fill="none" stroke="#FFF" stroke-width="1.2" opacity=".6"/>
+  </symbol>
+  <symbol id="nsheet-b" viewBox="0 0 50 36">
+    <path d="M5 21 C4 13 14 6 26 5 C38 4 47 9 46 16 C45 23 36 29 24 30 C13 31 6 27 5 21 Z" fill="#EDEAE0" stroke="#3B2F23" stroke-width="2.1" stroke-linejoin="round" opacity=".92"/>
+    <path d="M11 18 C13 12 21 8 30 8 C37 8 42 10 43 14 C38 11 30 10 23 12 C17 14 12 15 11 18 Z" fill="#F8F6EE" opacity=".95"/>
+    <path d="M9 24 C14 27 23 28 32 26 C38 25 43 22 44 19 C42 23 35 26 26 27 C17 28 12 26 9 24 Z" fill="#D8D4C4" opacity=".85"/>
+  </symbol>
+  <symbol id="scallion-a" viewBox="0 0 26 24">
+    <circle cx="10" cy="12" r="4.6" fill="#F5F2E6" stroke="#3B2F23" stroke-width="1.7"/>
+    <circle cx="10" cy="12" r="2.2" fill="#E8E4D4"/>
+    <path d="M14 10 C18 7 22 6 25 7 C23 10 19 12 15 12.6" fill="#7AB862" stroke="#3B2F23" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M14.6 14 C18 15 21 17 22.6 19.6 C19.4 20 16 18.6 14 16" fill="#5FA344" stroke="#3B2F23" stroke-width="1.5" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="scallion-b" viewBox="0 0 22 22">
+    <circle cx="8" cy="11" r="4" fill="#F5F2E6" stroke="#3B2F23" stroke-width="1.6"/>
+    <circle cx="8" cy="11" r="1.9" fill="#E8E4D4"/>
+    <path d="M11.6 9 C15 6.6 18.4 6 20.6 7 C19 9.8 15.4 11.4 12.4 11.6" fill="#7AB862" stroke="#3B2F23" stroke-width="1.5" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="chilishred-a" viewBox="0 0 46 20">
+    <path d="M4 12 C10 9 18 8 26 9 C32 10 40 12 44 14" fill="none" stroke="#3B2F23" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M4 12 C10 9 18 8 26 9 C32 10 40 12 44 14" fill="none" stroke="#C8402A" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M8 16 C14 14 22 14 30 15" fill="none" stroke="#3B2F23" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M8 16 C14 14 22 14 30 15" fill="none" stroke="#A83220" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+
+<!-- ============ 第三批新食材符号（10-14 v3：A区+饮品线） ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="kelp-a" viewBox="0 0 56 30">
+    <path d="M4 15 C4 9 14 5 28 4 C42 3 52 7 52 13 C52 19 42 24 28 25 C14 26 4 21 4 15 Z" fill="#2E4A32" stroke="#3B2F23" stroke-width="2.1" stroke-linejoin="round"/>
+    <path d="M10 11 C18 8 34 8 44 11 C38 13 24 14 15 13 C12 12 10 12 10 11 Z" fill="#4A6E48" opacity=".9"/>
+    <path d="M9 20 C18 23 36 23 46 20 C42 22 32 24 21 23 C15 22 11 21 9 20 Z" fill="#1E3622" opacity=".85"/>
+    <path d="M18 7 C20 12 20 18 18 22" fill="none" stroke="#5E8456" stroke-width="1.1" opacity=".7"/>
+    <path d="M34 6 C36 11 36 17 34 22" fill="none" stroke="#5E8456" stroke-width="1.1" opacity=".7"/>
+  </symbol>
+  <symbol id="kelp-b" viewBox="0 0 50 26">
+    <path d="M4 13 C4 8 12 4 25 4 C38 4 46 8 46 12 C46 17 38 21 25 22 C12 23 4 19 4 13 Z" fill="#2E4A32" stroke="#3B2F23" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M9 9 C16 7 30 7 39 9 C34 11 22 12 14 11 C11 10 9 10 9 9 Z" fill="#4A6E48" opacity=".9"/>
+    <path d="M16 6 C17 11 17 15 16 19" fill="none" stroke="#5E8456" stroke-width="1" opacity=".7"/>
+    <path d="M30 6 C31 11 31 15 30 19" fill="none" stroke="#5E8456" stroke-width="1" opacity=".7"/>
+  </symbol>
+  <symbol id="cegg-a" viewBox="0 0 52 42">
+    <ellipse cx="26" cy="21" rx="22" ry="18" fill="#3A3E36" stroke="#3B2F23" stroke-width="2.3"/>
+    <path d="M12 12 C16 8 24 7 30 9 C26 12 18 14 13 13 C12 13 12 12 12 12 Z" fill="#5E6656" opacity=".85"/>
+    <ellipse cx="26" cy="22" rx="12" ry="8" fill="#4E5A48" opacity=".7"/>
+    <path d="M18 16 C22 14 30 14 34 16" fill="none" stroke="#6E7A68" stroke-width="1.2" opacity=".6"/>
+    <path d="M19 25 C23 27 29 27 33 25" fill="none" stroke="#2A3028" stroke-width="1.4" opacity=".7"/>
+    <path d="M20 18 C24 21 28 21 32 18 C30 22 22 22 20 18 Z" fill="#C87828" opacity=".92"/>
+    <ellipse cx="26" cy="19" rx="4.4" ry="2.4" fill="#E89838"/>
+    <path d="M14 28 C18 31 34 31 38 28 C34 32 18 32 14 28 Z" fill="#242A22" opacity=".8"/>
+    <path d="M10 14 C12 11 16 9 20 9" fill="none" stroke="#8A9684" stroke-width="1.2" opacity=".5"/>
+  </symbol>
+  <symbol id="cegg-b" viewBox="0 0 46 38">
+    <ellipse cx="23" cy="19" rx="19" ry="16" fill="#3A3E36" stroke="#3B2F23" stroke-width="2.2"/>
+    <path d="M11 11 C14 8 20 8 25 9 C21 12 15 13 12 12 C11 12 11 11 11 11 Z" fill="#5E6656" opacity=".85"/>
+    <path d="M16 15 C20 18 26 18 30 15 C28 19 18 19 16 15 Z" fill="#C87828" opacity=".92"/>
+    <ellipse cx="23" cy="16.5" rx="4" ry="2.2" fill="#E89838"/>
+    <path d="M17 24 C21 26 25 26 29 24 C25 27 21 27 17 24 Z" fill="#242A22" opacity=".8"/>
+  </symbol>
+  <symbol id="duojiao-a" viewBox="0 0 32 26">
+    <path d="M4 18 C3 12 9 7 16 6 C23 5 29 9 29 14 C29 19 23 22 16 22 C9 22 5 21 4 18 Z" fill="#B8382A" stroke="#3B2F23" stroke-width="1.9"/>
+    <circle cx="10" cy="14" r="1.8" fill="#D95840"/><circle cx="15" cy="11" r="1.5" fill="#8E2418"/><circle cx="20" cy="14" r="1.7" fill="#D95840"/>
+    <circle cx="24" cy="11" r="1.4" fill="#8E2418"/><circle cx="26" cy="16" r="1.5" fill="#C0382A"/><circle cx="13" cy="17" r="1.4" fill="#C0382A"/>
+    <circle cx="19" cy="18" r="1.2" fill="#8E2418"/><circle cx="8" cy="16" r="1.3" fill="#D95840"/>
+    <circle cx="16" cy="13" r="1" fill="#F5E9D8" opacity=".75"/>
+    <path d="M9 10 C12 8 17 8 21 9" fill="none" stroke="#E87858" stroke-width="1.1" opacity=".7"/>
+  </symbol>
+  <symbol id="duojiao-b" viewBox="0 0 28 24">
+    <path d="M3 16 C3 11 8 7 14 6 C20 5 25 8 25 13 C25 17 20 20 14 20 C8 20 4 19 3 16 Z" fill="#B8382A" stroke="#3B2F23" stroke-width="1.8"/>
+    <circle cx="9" cy="13" r="1.6" fill="#D95840"/><circle cx="13" cy="10" r="1.3" fill="#8E2418"/><circle cx="17" cy="13" r="1.5" fill="#D95840"/>
+    <circle cx="21" cy="10" r="1.2" fill="#8E2418"/><circle cx="22" cy="15" r="1.3" fill="#C0382A"/><circle cx="12" cy="15" r="1.2" fill="#C0382A"/>
+  </symbol>
+  <symbol id="bcstick-a" viewBox="0 0 54 30">
+    <path d="M4 16 C4 10 14 5 27 4 C40 3 50 7 50 13 C50 19 40 24 27 25 C14 26 4 22 4 16 Z" fill="#E8D8A8" stroke="#3B2F23" stroke-width="2.1" stroke-linejoin="round"/>
+    <path d="M10 11 C18 8 32 8 42 10 C36 12 24 13 15 12 C12 11 10 11 10 11 Z" fill="#F4E8C8" opacity=".95"/>
+    <path d="M9 20 C18 23 36 23 45 20 C41 22 31 23.6 20 23 C14 22 11 21 9 20 Z" fill="#D0BC88" opacity=".85"/>
+    <path d="M18 8 C20 13 20 19 18 23" fill="none" stroke="#D8C494" stroke-width="1.1" opacity=".8"/>
+    <path d="M32 7 C34 12 34 18 32 22" fill="none" stroke="#D8C494" stroke-width="1.1" opacity=".8"/>
+    <ellipse cx="26" cy="16" rx="3.4" ry="1.6" fill="#F0E0B4" opacity=".9"/>
+  </symbol>
+  <symbol id="bcstick-b" viewBox="0 0 48 26">
+    <path d="M4 14 C4 9 12 5 24 4 C36 3 44 7 44 12 C44 17 36 21 24 22 C12 23 4 19 4 14 Z" fill="#E8D8A8" stroke="#3B2F23" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M9 10 C16 8 28 8 36 10 C31 12 21 13 14 12 C11 11 9 11 9 10 Z" fill="#F4E8C8" opacity=".95"/>
+    <path d="M8 18 C16 20 32 20 40 18 C36 20 26 21.4 17 21 C12 20 10 19 8 18 Z" fill="#D0BC88" opacity=".85"/>
+  </symbol>
+  <symbol id="cucumber-a" viewBox="0 0 54 30">
+    <path d="M4 15 C4 9 14 4 27 3 C40 2 50 6 50 12 C50 18 40 24 27 25 C14 26 4 21 4 15 Z" fill="#5E9440" stroke="#3B2F23" stroke-width="2.1" stroke-linejoin="round"/>
+    <path d="M10 10 C18 7 32 7 42 9 C36 11 24 12 15 11 C12 10 10 10 10 10 Z" fill="#7AB862" opacity=".9"/>
+    <path d="M27 8 C27 12 27 17 27 21" fill="none" stroke="#D8E8B4" stroke-width="2.6" opacity=".85"/>
+    <ellipse cx="27" cy="15" rx="2.6" ry="5" fill="#E8F0C8" opacity=".9"/>
+    <circle cx="21" cy="12" r="1" fill="#E8F0C8" opacity=".8"/><circle cx="33" cy="12" r="1" fill="#E8F0C8" opacity=".8"/>
+    <circle cx="21" cy="18" r="1" fill="#E8F0C8" opacity=".8"/><circle cx="33" cy="18" r="1" fill="#E8F0C8" opacity=".8"/>
+    <path d="M9 19 C18 22 36 22 45 19 C41 21 31 22.6 20 22 C14 21 11 20 9 19 Z" fill="#4E8038" opacity=".8"/>
+  </symbol>
+  <symbol id="cucumber-b" viewBox="0 0 48 28">
+    <path d="M4 14 C4 8 12 4 24 3 C36 2 44 6 44 11 C44 16 36 22 24 23 C12 24 4 20 4 14 Z" fill="#5E9440" stroke="#3B2F23" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M9 9 C16 7 28 7 36 9 C31 11 21 12 14 11 C11 10 9 10 9 9 Z" fill="#7AB862" opacity=".9"/>
+    <path d="M24 7 C24 11 24 16 24 20" fill="none" stroke="#D8E8B4" stroke-width="2.3" opacity=".85"/>
+    <ellipse cx="24" cy="14" rx="2.3" ry="4.4" fill="#E8F0C8" opacity=".9"/>
+    <circle cx="19" cy="11" r=".9" fill="#E8F0C8" opacity=".8"/><circle cx="29" cy="11" r=".9" fill="#E8F0C8" opacity=".8"/>
+    <path d="M8 18 C16 20 32 20 40 18 C36 20 27 21.4 18 21 C13 20 10 19 8 18 Z" fill="#4E8038" opacity=".8"/>
+  </symbol>
+  <symbol id="gtofu-a" viewBox="0 0 48 30">
+    <rect x="4" y="5" width="40" height="21" rx="5" fill="#E8B84B" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M9 9 C14 7 30 7 37 9 C33 11 19 12 12 11 C10 10 9 10 9 9 Z" fill="#F5CC68" opacity=".95"/>
+    <path d="M8 21 C14 23 32 23 38 21 C34 23 24 24 15 23.4 C11 23 9 22 8 21 Z" fill="#C08818" opacity=".85"/>
+    <path d="M18 10 C23 9 29 9 33 11" fill="none" stroke="#D9A838" stroke-width="1.1" opacity=".8"/>
+    <ellipse cx="24" cy="16" rx="4" ry="1.8" fill="#F5E0A0" opacity=".9"/>
+  </symbol>
+  <symbol id="gtofu-b" viewBox="0 0 44 28">
+    <rect x="3" y="4" width="38" height="20" rx="4.5" fill="#E8B84B" stroke="#3B2F23" stroke-width="2.1" stroke-linejoin="round"/>
+    <path d="M8 8 C13 6 29 6 34 8 C30 10 18 11 11 10 C9 9 8 9 8 8 Z" fill="#F5CC68" opacity=".95"/>
+    <ellipse cx="22" cy="15" rx="3.6" ry="1.6" fill="#F5E0A0" opacity=".9"/>
+  </symbol>
+  <!-- ===== 饮品符号 ===== -->
+  <symbol id="icecube-a" viewBox="0 0 34 34">
+    <path d="M6 11 L11 5 L26 4 L30 10 L28 25 L15 29 L6 22 Z" fill="#DCEEF4" stroke="#3B2F23" stroke-width="2" stroke-linejoin="round" opacity=".93"/>
+    <path d="M11 5 L26 4 L22 12 Z" fill="#F0FAFC" opacity=".95"/>
+    <path d="M11 5 L22 12 L15 29 Z" fill="#C4E0EA" opacity=".9"/>
+    <path d="M22 12 L28 25 L15 29 Z" fill="#B0D0DE" opacity=".85"/>
+    <path d="M13 8 L17 6.6 L17.6 8.4 L13.6 9.6 Z" fill="#FFF" opacity=".9"/>
+  </symbol>
+  <symbol id="icecube-b" viewBox="0 0 28 28">
+    <path d="M5 9 L9 4 L21 3 L24 8 L22 21 L12 24 L5 18 Z" fill="#DCEEF4" stroke="#3B2F23" stroke-width="1.9" stroke-linejoin="round" opacity=".93"/>
+    <path d="M9 4 L21 3 L18 10 Z" fill="#F0FAFC" opacity=".95"/>
+    <path d="M9 4 L18 10 L12 24 Z" fill="#C4E0EA" opacity=".9"/>
+  </symbol>
+  <symbol id="lemon-a" viewBox="0 0 46 46">
+    <circle cx="23" cy="23" r="19" fill="#F5D848" stroke="#3B2F23" stroke-width="2.3"/>
+    <circle cx="23" cy="23" r="14.5" fill="#F8E478"/>
+    <circle cx="23" cy="23" r="5" fill="#F5D028"/>
+    <path d="M23 9 L23 15 M23 31 L23 37 M9 23 L15 23 M31 23 L37 23 M13 13 L17.5 17.5 M28.5 28.5 L33 33 M33 13 L28.5 17.5 M17.5 28.5 L13 33" stroke="#E8B828" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M14 12 C16 10 19 9 22 9" fill="none" stroke="#FFF" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>
+  </symbol>
+  <symbol id="lemon-b" viewBox="0 0 38 38">
+    <circle cx="19" cy="19" r="15.5" fill="#F5D848" stroke="#3B2F23" stroke-width="2.1"/>
+    <circle cx="19" cy="19" r="11.5" fill="#F8E478"/>
+    <circle cx="19" cy="19" r="4" fill="#F5D028"/>
+    <path d="M19 8 L19 12.6 M19 25.4 L19 30 M8 19 L12.6 19 M25.4 19 L30 19 M11.5 11.5 L14.6 14.6 M23.4 23.4 L26.5 26.5 M26.5 11.5 L23.4 14.6 M14.6 23.4 L11.5 26.5" stroke="#E8B828" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="mint-a" viewBox="0 0 34 30">
+    <path d="M17 28 C16 22 16 15 17 9" fill="none" stroke="#3B2F23" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M17 28 C16 22 16 15 17 9" fill="none" stroke="#5E9440" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M17 10 C13 9 9 6 8 2 C13 2 17 5 18 9" fill="#4E9440" stroke="#3B2F23" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M17 9 C21 8 25 5 26 1 C21 1 17 4 16 8" fill="#68AC52" stroke="#3B2F23" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M17 17 C13 16 10 13 9 10 C13 10 17 13 18 16" fill="#44803A" stroke="#3B2F23" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M17 16 C21 15 24 12 25 9 C21 9 17 12 16 15" fill="#5EA048" stroke="#3B2F23" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M12 6 C14 4.6 17 4.6 19 6" fill="none" stroke="#B8DCA4" stroke-width="1.1" opacity=".8"/>
+  </symbol>
+  <symbol id="mint-b" viewBox="0 0 30 26">
+    <path d="M15 24 C14 19 14 13 15 8" fill="none" stroke="#3B2F23" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M15 24 C14 19 14 13 15 8" fill="none" stroke="#5E9440" stroke-width="2" stroke-linecap="round"/>
+    <path d="M15 9 C11 8 8 5.6 7 2 C11.6 2 15 5 15.6 8" fill="#4E9440" stroke="#3B2F23" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M15 8 C19 7 22 4.6 23 1 C18.4 1 15 4 14.4 7" fill="#68AC52" stroke="#3B2F23" stroke-width="1.6" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="grape-a" viewBox="0 0 34 36">
+    <circle cx="12" cy="12" r="7" fill="#7E4E9E" stroke="#3B2F23" stroke-width="2"/>
+    <circle cx="23" cy="15" r="7" fill="#6E3E8E" stroke="#3B2F23" stroke-width="2"/>
+    <circle cx="17" cy="25" r="7" fill="#8E5EAE" stroke="#3B2F23" stroke-width="2"/>
+    <circle cx="10" cy="10" r="1.8" fill="#C8A8E0" opacity=".9"/>
+    <circle cx="21" cy="13" r="1.6" fill="#B898D0" opacity=".9"/>
+    <circle cx="15" cy="23" r="1.6" fill="#D0B0E4" opacity=".9"/>
+    <path d="M17 5 C17 3 19 2 21 2" fill="none" stroke="#5E7A3A" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="grape-g" viewBox="0 0 32 34">
+    <circle cx="11" cy="11" r="6.6" fill="#8EB85E" stroke="#3B2F23" stroke-width="2"/>
+    <circle cx="22" cy="14" r="6.6" fill="#7EA84E" stroke="#3B2F23" stroke-width="2"/>
+    <circle cx="16" cy="24" r="6.6" fill="#9CC46C" stroke="#3B2F23" stroke-width="2"/>
+    <circle cx="9" cy="9" r="1.7" fill="#D8E8B4" opacity=".9"/>
+    <circle cx="20" cy="12" r="1.5" fill="#C8DC9E" opacity=".9"/>
+    <circle cx="14" cy="22" r="1.5" fill="#E0EFC0" opacity=".9"/>
+  </symbol>
+  <symbol id="melon-a" viewBox="0 0 40 36">
+    <path d="M4 30 C4 16 12 6 24 4 C34 3 38 10 37 18 C36 27 28 33 18 33 C12 33 6 33 4 30 Z" fill="#E05858" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M10 28 C10 18 16 10 24 8 C30 7 34 12 33 18 C32 25 26 30 18 30 C14 30 11 29 10 28 Z" fill="#E87878" opacity=".9"/>
+    <circle cx="18" cy="16" r="1.5" fill="#3B2F23"/><circle cx="25" cy="13" r="1.4" fill="#3B2F23"/><circle cx="28" cy="20" r="1.5" fill="#3B2F23"/>
+    <circle cx="21" cy="23" r="1.3" fill="#3B2F23"/>
+    <path d="M6 28 C5 31 6 33 9 34" fill="none" stroke="#5E9440" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M35 8 C38 6 40 7 40 10" fill="none" stroke="#5E9444" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="melon-b" viewBox="0 0 34 32">
+    <path d="M4 26 C4 14 10 6 20 4 C28 3 32 9 31 16 C30 24 24 29 16 29 C11 29 6 28 4 26 Z" fill="#E05858" stroke="#3B2F23" stroke-width="2.1" stroke-linejoin="round"/>
+    <circle cx="15" cy="14" r="1.3" fill="#3B2F23"/><circle cx="21" cy="12" r="1.2" fill="#3B2F23"/><circle cx="24" cy="18" r="1.3" fill="#3B2F23"/><circle cx="18" cy="20" r="1.2" fill="#3B2F23"/>
+    <path d="M6 24 C5 27 6 29 9 30" fill="none" stroke="#5E9440" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="coco-a" viewBox="0 0 36 26">
+    <path d="M4 13 C3 8 7 4 13 3 C19 2 27 4 32 8 C35 11 34 16 30 19 C25 23 15 24 9 22 C5 20 4 17 4 13 Z" fill="#F8F4E8" stroke="#3B2F23" stroke-width="2" opacity=".96"/>
+    <path d="M9 9 C14 6 22 6 28 9 C24 11 16 12 11 11 C9 10 9 10 9 9 Z" fill="#FFFFFF" opacity=".95"/>
+    <path d="M8 17 C13 20 22 20 28 17 C25 19.6 16 20.4 11 19 C9 18.4 8 18 8 17 Z" fill="#E8E0CC" opacity=".85"/>
+    <path d="M14 7 C16 11 16 16 14 20" fill="none" stroke="#E4DCC4" stroke-width="1.2" opacity=".8"/>
+    <path d="M23 7 C25 11 25 15 23 18" fill="none" stroke="#E4DCC4" stroke-width="1.1" opacity=".8"/>
+    <ellipse cx="13" cy="14" rx="3.2" ry="1.8" fill="#FFF" opacity=".85"/>
+    <ellipse cx="25" cy="13" rx="2.6" ry="1.5" fill="#FFF" opacity=".7"/>
+  </symbol>
+  <symbol id="boba-a" viewBox="0 0 28 22">
+    <circle cx="7" cy="14" r="4.4" fill="#3A3230" stroke="#3B2F23" stroke-width="1.7"/>
+    <circle cx="14" cy="11" r="4.4" fill="#2E2826" stroke="#3B2F23" stroke-width="1.7"/>
+    <circle cx="21" cy="14" r="4.4" fill="#3A3230" stroke="#3B2F23" stroke-width="1.7"/>
+    <circle cx="6" cy="12.6" r="1.1" fill="#8A7E76" opacity=".8"/>
+    <circle cx="13" cy="9.6" r="1" fill="#8A7E76" opacity=".8"/>
+    <circle cx="20" cy="12.6" r="1" fill="#8A7E76" opacity=".8"/>
+  </symbol>
+  <symbol id="tealeaf-a" viewBox="0 0 30 40">
+    <path d="M15 38 C14 30 14 20 15 12" fill="none" stroke="#3B2F23" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M15 38 C14 30 14 20 15 12" fill="none" stroke="#6E4A26" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M15 14 C11 12 8 8 8 4 C13 5 16 9 16 13" fill="#8E6E30" stroke="#3B2F23" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M15 12 C19 10 22 6 22 2 C17 3 14 7 14 11" fill="#A8844A" stroke="#3B2F23" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M15 22 C12 20 9 17 9 14 C13 15 16 18 16 21" fill="#7E5E28" stroke="#3B2F23" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M15 30 C12 28 10 25 10 22 C14 23 16 26 16 29" fill="#8E6E30" stroke="#3B2F23" stroke-width="1.6" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="tealeaf-g" viewBox="0 0 30 40">
+    <path d="M15 38 C14 30 14 20 15 12" fill="none" stroke="#3B2F23" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M15 38 C14 30 14 20 15 12" fill="none" stroke="#5E7A3A" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M15 14 C11 12 8 8 8 4 C13 5 16 9 16 13" fill="#6E9440" stroke="#3B2F23" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M15 12 C19 10 22 6 22 2 C17 3 14 7 14 11" fill="#7EB852" stroke="#3B2F23" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M15 22 C12 20 9 17 9 14 C13 15 16 18 16 21" fill="#5E8438" stroke="#3B2F23" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M15 30 C12 28 10 25 10 22 C14 23 16 26 16 29" fill="#6E9440" stroke="#3B2F23" stroke-width="1.6" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="jasmine-a" viewBox="0 0 30 28">
+    <circle cx="15" cy="14" r="4" fill="#F5D848"/>
+    <ellipse cx="15" cy="5" rx="4" ry="6" fill="#FAF6EC" stroke="#3B2F23" stroke-width="1.6"/>
+    <ellipse cx="24" cy="11" rx="6" ry="4" fill="#FAF6EC" stroke="#3B2F23" stroke-width="1.6" transform="rotate(40 24 11)"/>
+    <ellipse cx="21" cy="21" rx="6" ry="4" fill="#F5F0E0" stroke="#3B2F23" stroke-width="1.6" transform="rotate(120 21 21)"/>
+    <ellipse cx="9" cy="21" rx="6" ry="4" fill="#F5F0E0" stroke="#3B2F23" stroke-width="1.6" transform="rotate(200 9 21)"/>
+    <ellipse cx="6" cy="11" rx="6" ry="4" fill="#FAF6EC" stroke="#3B2F23" stroke-width="1.6" transform="rotate(280 6 11)"/>
+    <circle cx="15" cy="14" r="3.2" fill="#F5D848"/>
+    <circle cx="14" cy="13" r=".9" fill="#E8B828" opacity=".8"/>
+  </symbol>
+  <symbol id="peach-a" viewBox="0 0 36 34">
+    <path d="M18 32 C10 32 4 26 4 18 C4 10 10 4 18 4 C26 4 32 10 32 18 C32 26 26 32 18 32 Z" fill="#F5A8B0" stroke="#3B2F23" stroke-width="2.2"/>
+    <path d="M11 10 C14 7 19 6 24 8 C20 10 15 11 12 10 C11 10 11 10 11 10 Z" fill="#F8C4C8" opacity=".95"/>
+    <path d="M18 5 C18 9 18 14 18 18" fill="none" stroke="#E88894" stroke-width="1.6" opacity=".7"/>
+    <path d="M18 4 C19 2 21 1 23 2" fill="none" stroke="#5E7A3A" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="13" cy="20" rx="3" ry="4" fill="#F8C8CC" opacity=".7"/>
+  </symbol>
+  <symbol id="peach-b" viewBox="0 0 30 28">
+    <path d="M15 26 C9 26 4 21 4 15 C4 9 9 4 15 4 C21 4 26 9 26 15 C26 21 21 26 15 26 Z" fill="#F5A8B0" stroke="#3B2F23" stroke-width="2"/>
+    <path d="M10 9 C12 7 16 6 19 8 C16 9.6 12.6 10 10 9 Z" fill="#F8C4C8" opacity=".95"/>
+    <path d="M15 5 C15 8 15 12 15 15" fill="none" stroke="#E88894" stroke-width="1.4" opacity=".7"/>
+    <ellipse cx="11" cy="17" rx="2.4" ry="3.2" fill="#F8C8CC" opacity=".7"/>
+  </symbol>
+
+  <symbol id="milkdrop-a" viewBox="0 0 30 26">
+    <path d="M15 3 C21 8 25 13 25 17 C25 22 20 25 15 25 C10 25 5 22 5 17 C5 13 9 8 15 3 Z" fill="#F8F4EC" stroke="#3B2F23" stroke-width="2"/>
+    <path d="M10 12 C12 9 16 8 19 10 C17 12 13 13 10 12 Z" fill="#FFF" opacity=".95"/>
+    <path d="M9 20 C12 23 18 23 21 20 C19 23 14 24 11 22 C10 21 9 21 9 20 Z" fill="#E4DCC8" opacity=".8"/>
+    <ellipse cx="12" cy="17" rx="2.4" ry="1.6" fill="#FFF" opacity=".7"/>
+  </symbol>
+  <symbol id="milkdrop-b" viewBox="0 0 26 22">
+    <path d="M13 2 C18 7 22 11 22 15 C22 19 18 21 13 21 C8 21 4 19 4 15 C4 11 8 7 13 2 Z" fill="#F8F4EC" stroke="#3B2F23" stroke-width="1.9"/>
+    <path d="M9 10 C11 8 14 7 17 9 C15 11 11 11 9 10 Z" fill="#FFF" opacity=".95"/>
+    <ellipse cx="10" cy="14" rx="2" ry="1.3" fill="#FFF" opacity=".7"/>
+  </symbol>
+
+  <symbol id="shrimp-a" viewBox="0 0 40 28">
+    <path d="M8 18 C4 14 5 8 10 5 C15 2 22 2 27 5 C31 8 32 13 29 17 C26 21 19 23 13 21 Z" fill="#F0B8A8" stroke="#3B2F23" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M29 14 C33 12 37 13 39 16 C36 17 32 17 29 16 Z" fill="#E8A090" stroke="#3B2F23" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M12 8 C15 6 20 6 24 8 C21 10 16 10 13 9 C12 9 12 8 12 8 Z" fill="#F8CFC4" opacity=".95"/>
+    <path d="M10 17 C14 20 21 21 26 19 C22 21 15 21.6 11 19.4 C10 19 10 18 10 17 Z" fill="#D89888" opacity=".85"/>
+    <circle cx="15" cy="13" r="1.2" fill="#3B2F23"/>
+    <path d="M14 6 C16 4 19 4 21 5" fill="none" stroke="#E89888" stroke-width="1.2" opacity=".7"/>
+    <path d="M18 10 C20 12 20 15 18 17" fill="none" stroke="#E8A090" stroke-width="1" opacity=".6"/>
+  </symbol>
+  <symbol id="shrimp-b" viewBox="0 0 34 24">
+    <path d="M7 15 C4 12 5 7 9 4.6 C13 2.4 19 2.6 23 5 C26.6 7.4 27.4 11.6 24.6 15 C21.6 18.4 15.6 19.8 10.6 18.2 Z" fill="#F0B8A8" stroke="#3B2F23" stroke-width="1.9" stroke-linejoin="round"/>
+    <path d="M24.6 12 C28 10.4 31 11.4 32.6 13.8 C30 14.6 26.6 14.4 24.6 13.6 Z" fill="#E8A090" stroke="#3B2F23" stroke-width="1.6" stroke-linejoin="round"/>
+    <circle cx="12" cy="11" r="1.1" fill="#3B2F23"/>
+    <path d="M10 7 C12 5.4 16 5.4 18.6 6.6" fill="none" stroke="#F8CFC4" stroke-width="1.2" opacity=".9"/>
+  </symbol>
+  <symbol id="potato-a" viewBox="0 0 50 38">
+    <path d="M8 12 C6 6 14 2 24 2 C34 2 44 5 46 11 C48 17 44 25 36 30 C28 35 15 36 10 30 C6 25 10 18 8 12 Z" fill="#E8C878" stroke="#3B2F23" stroke-width="2.3" stroke-linejoin="round"/>
+    <path d="M13 8 C19 5 29 5 37 8 C31 10 21 11 15 10 C13 9 13 9 13 8 Z" fill="#F5DC9A" opacity=".95"/>
+    <path d="M12 26 C17 30 27 31 35 28 C40 26 43 23 44 20 C42 25 36 28 28 29 C20 30 15 28 12 26 Z" fill="#D0A848" opacity=".85"/>
+    <path d="M20 14 C24 12.6 30 12.6 34 14" fill="none" stroke="#D9B868" stroke-width="1.2" opacity=".8"/>
+    <ellipse cx="18" cy="20" rx="2.6" ry="1.4" fill="#E0BC64" opacity=".8"/>
+    <ellipse cx="32" cy="22" rx="2.4" ry="1.3" fill="#E0BC64" opacity=".8"/>
+    <path d="M25 17 C26 19 26 22 25 24" fill="none" stroke="#E0BC64" stroke-width="1" opacity=".7"/>
+  </symbol>
+  <symbol id="potato-b" viewBox="0 0 44 34">
+    <path d="M7 11 C5 5 12 2 21 2 C30 2 38 5 40 10 C42 15 38 22 31 26 C24 30 13 31 9 26 C5 22 9 16 7 11 Z" fill="#E8C878" stroke="#3B2F23" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M12 7 C17 5 25 5 32 7 C27 9 19 10 14 9 C12 8 12 8 12 7 Z" fill="#F5DC9A" opacity=".95"/>
+    <ellipse cx="16" cy="18" rx="2.3" ry="1.2" fill="#E0BC64" opacity=".8"/>
+    <ellipse cx="28" cy="20" rx="2.1" ry="1.1" fill="#E0BC64" opacity=".8"/>
+  </symbol>
+  <symbol id="lime-a" viewBox="0 0 46 46">
+    <circle cx="23" cy="23" r="19" fill="#B8CC5E" stroke="#3B2F23" stroke-width="2.3"/>
+    <circle cx="23" cy="23" r="14.5" fill="#D4E088"/>
+    <circle cx="23" cy="23" r="5" fill="#A8BC48"/>
+    <path d="M23 9 L23 15 M23 31 L23 37 M9 23 L15 23 M31 23 L37 23 M13 13 L17.5 17.5 M28.5 28.5 L33 33 M33 13 L28.5 17.5 M17.5 28.5 L13 33" stroke="#8EA038" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M14 12 C16 10 19 9 22 9" fill="none" stroke="#FFF" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>
+  </symbol>
+  <symbol id="lime-b" viewBox="0 0 36 36">
+    <circle cx="18" cy="18" r="15" fill="#B8CC5E" stroke="#3B2F23" stroke-width="2.1"/>
+    <circle cx="18" cy="18" r="11" fill="#D4E088"/>
+    <circle cx="18" cy="18" r="4" fill="#A8BC48"/>
+    <path d="M18 5 L18 10 M18 26 L18 31 M5 18 L10 18 M26 18 L31 18" stroke="#8EA038" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="peanut-a" viewBox="0 0 28 22">
+    <ellipse cx="9" cy="11" rx="5" ry="4.4" fill="#E8C89A" stroke="#3B2F23" stroke-width="1.8"/>
+    <ellipse cx="19" cy="10" rx="4.8" ry="4.2" fill="#E0BC8C" stroke="#3B2F23" stroke-width="1.8"/>
+    <path d="M7 9 C8 8 10 8 11 9" fill="none" stroke="#C8A070" stroke-width="1" opacity=".8"/>
+    <path d="M17 8 C18 7 20 7 21 8" fill="none" stroke="#C8A070" stroke-width="1" opacity=".8"/>
+    <circle cx="9" cy="11" r=".9" fill="#B89060"/><circle cx="19" cy="10" r=".9" fill="#B89060"/>
+  </symbol>
+  <symbol id="peanut-b" viewBox="0 0 24 20">
+    <ellipse cx="8" cy="10" rx="4.4" ry="4" fill="#E8C89A" stroke="#3B2F23" stroke-width="1.7"/>
+    <ellipse cx="17" cy="9" rx="4.2" ry="3.8" fill="#E0BC8C" stroke="#3B2F23" stroke-width="1.7"/>
+    <circle cx="8" cy="10" r=".8" fill="#B89060"/><circle cx="17" cy="9" r=".8" fill="#B89060"/>
+  </symbol>
+  <symbol id="douchi-a" viewBox="0 0 26 18">
+    <ellipse cx="6" cy="9" rx="3.4" ry="2.8" fill="#3E342C" stroke="#3B2F23" stroke-width="1.5"/>
+    <ellipse cx="13" cy="7" rx="3.2" ry="2.6" fill="#4A3E34" stroke="#3B2F23" stroke-width="1.5"/>
+    <ellipse cx="20" cy="10" rx="3.4" ry="2.8" fill="#3E342C" stroke="#3B2F23" stroke-width="1.5"/>
+    <circle cx="5" cy="8" r=".8" fill="#8A7A6A" opacity=".8"/>
+    <circle cx="12" cy="6" r=".7" fill="#8A7A6A" opacity=".8"/>
+    <circle cx="19" cy="9" r=".8" fill="#8A7A6A" opacity=".8"/>
+  </symbol>
+</svg>
+
 <main id="view-home" class="view active">
   <div class="content">
 
@@ -1042,15 +2107,1292 @@ var LAYOUT = [
   ['w2','woodEar-b',48,44, 203,602,12, 122,440,  5, 4],
   ['w3','woodEar-c',44,46, 132,630, 6,  86,474, -3, 4],
   ['w4','woodEar-a',58,50, 171,635, 5, 138,478,  4, 4],
-  ['w5','woodEar-b',48,44, 141,628, 4, 106,498,  3, 4]
+  ['w5','woodEar-b',48,44, 141,628, 4, 106,498,  3, 4],
+  ['d1','douchi-a',26,18, 122,592,18,  92,214,  4, 5],
+  ['d2','douchi-a',26,18, 190,620,11, 158,228,  5, 5],
+  ['d3','douchi-a',26,18, 158,606,16, 226,222, -3, 5],
+  ['d4','douchi-a',26,18, 214,636, 9, 120,246,  3, 5]
 ];
 var LSCALE = [1, .85, .82, .78, .9]; // 各层爆炸态陈列缩放（防重叠）
 
 /* ================= 状态 ================= */
 var SPICE_NAMES = ['不辣','微辣','中辣','特辣','湖南辣'];
 var state = {
-  dish: { spice:null, avoid:[], note:'', qty:1 },
+  dish: { spice:null, ice:null, avoid:[], note:'', qty:1 },
   cart: []
+};
+
+
+/* ================= 多菜品动画注册表（v3·10-13：第一批10道，语法继承v2） ================= */
+var ANIMS = {}, COPY = {};
+// 盘子模板：白瓷盘（v2原版）
+function plateWhite(){ return '<svg class="plate" viewBox="0 0 300 170" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+ + '<ellipse cx="150" cy="150" rx="128" ry="12" fill="#3B2F23" opacity=".10"/>'
+ + '<ellipse cx="150" cy="147" rx="106" ry="8" fill="#3B2F23" opacity=".07"/>'
+ + '<ellipse cx="150" cy="80" rx="140" ry="52" fill="#F0E9DC"/>'
+ + '<path d="M10 80 C12 106 70 131 150 131 C230 131 288 106 290 80 C288 100 230 124 150 124 C70 124 12 100 10 80 Z" fill="#E2D8C4"/>'
+ + '<ellipse cx="150" cy="80" rx="140" ry="52" fill="none" stroke="#3B2F23" stroke-width="2.4"/>'
+ + '<path d="M22 66 C56 40 108 28 150 28 C192 28 244 40 278 66" fill="none" stroke="#FFF" stroke-width="1.6" opacity=".5"/>'
+ + '</svg>'; }
+// 深盘（红烧肉/跳跳蛙/油泼牛肉）
+function plateDeep(sauce){ return '<svg class="plate" viewBox="0 0 300 178" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+ + '<ellipse cx="150" cy="158" rx="130" ry="12" fill="#3B2F23" opacity=".12"/>'
+ + '<ellipse cx="150" cy="154" rx="108" ry="8" fill="#3B2F23" opacity=".08"/>'
+ + '<ellipse cx="150" cy="82" rx="142" ry="56" fill="#F0E9DC"/>'
+ + '<path d="M8 82 C10 112 70 140 150 140 C230 140 290 112 292 82 C290 108 230 132 150 132 C70 132 10 108 8 82 Z" fill="#E2D8C4"/>'
+ + '<ellipse cx="150" cy="86" rx="118" ry="42" fill="'+(sauce||'#B8722E')+'" opacity=".9"/>'
+ + '<ellipse cx="150" cy="86" rx="118" ry="42" fill="none" stroke="#3B2F23" stroke-width="1.6" opacity=".5"/>'
+ + '<ellipse cx="150" cy="82" rx="142" ry="56" fill="none" stroke="#3B2F23" stroke-width="2.4"/>'
+ + '<path d="M24 66 C58 42 108 32 150 32 C192 32 242 42 276 66" fill="none" stroke="#FFF" stroke-width="1.6" opacity=".5"/>'
+ + '<path d="M56 88 C88 76 122 72 150 72 C186 72 224 78 244 90" fill="none" stroke="#FFF" stroke-width="1.4" opacity=".3"/>'
+ + '</svg>'; }
+// 黑铁干锅（手撕鸡/肥肠）
+function plateIron(){ return '<svg class="plate" viewBox="0 0 300 184" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+ + '<ellipse cx="150" cy="164" rx="128" ry="12" fill="#3B2F23" opacity=".14"/>'
+ + '<ellipse cx="150" cy="84" rx="138" ry="58" fill="#2A2724"/>'
+ + '<path d="M12 84 C14 114 72 142 150 142 C228 142 286 114 288 84 C286 110 226 136 150 136 C74 136 14 110 12 84 Z" fill="#1C1A17"/>'
+ + '<ellipse cx="150" cy="88" rx="112" ry="40" fill="#3A342C"/>'
+ + '<ellipse cx="150" cy="86" rx="98" ry="34" fill="#4A4238"/>'
+ + '<ellipse cx="150" cy="84" rx="138" ry="58" fill="none" stroke="#141210" stroke-width="2.6"/>'
+ + '<path d="M28 68 C62 44 110 34 150 34 C190 34 238 44 272 68" fill="none" stroke="#6E6458" stroke-width="2" opacity=".6"/>'
+ + '<ellipse cx="150" cy="84" rx="98" ry="34" fill="none" stroke="#5A5248" stroke-width="1.4" opacity=".7"/>'
+ + '<ellipse cx="112" cy="78" rx="16" ry="5" fill="#8A7E6E" opacity=".3"/><ellipse cx="190" cy="90" rx="12" ry="4" fill="#8A7E6E" opacity=".25"/>'
+ + '<path d="M8 90 C2 88 0 82 4 78" fill="none" stroke="#141210" stroke-width="4.5" stroke-linecap="round"/>'
+ + '<path d="M292 90 C298 88 300 82 296 78" fill="none" stroke="#141210" stroke-width="4.5" stroke-linecap="round"/>'
+ + '</svg>'; }
+// 汤盘（酸菜鱼金汤/酸汤鱼红汤/肥肠鱼/西红柿牛腩）
+function plateSoup(c1, c2){ return '<svg class="plate" viewBox="0 0 300 182" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+ + '<ellipse cx="150" cy="162" rx="128" ry="12" fill="#3B2F23" opacity=".12"/>'
+ + '<ellipse cx="150" cy="84" rx="140" ry="58" fill="#F0E9DC"/>'
+ + '<path d="M10 84 C12 114 70 140 150 140 C230 140 288 114 290 84 C288 108 228 134 150 134 C72 134 12 108 10 84 Z" fill="#E2D8C4"/>'
+ + '<ellipse cx="150" cy="88" rx="122" ry="44" fill="'+c1+'"/>'
+ + '<ellipse cx="150" cy="86" rx="104" ry="36" fill="'+c2+'"/>'
+ + '<ellipse cx="150" cy="88" rx="122" ry="44" fill="none" stroke="#3B2F23" stroke-width="1.4" opacity=".35"/>'
+ + '<ellipse cx="150" cy="84" rx="140" ry="58" fill="none" stroke="#3B2F23" stroke-width="2.4"/>'
+ + '<path d="M26 66 C60 44 108 34 150 34 C192 34 240 44 274 66" fill="none" stroke="#FFF" stroke-width="1.6" opacity=".5"/>'
+ + '<path d="M62 90 C90 80 122 76 150 76 C182 76 214 80 238 90" fill="none" stroke="#FFF" stroke-width="1.6" opacity=".35"/>'
+ + '<ellipse cx="100" cy="82" rx="18" ry="5" fill="#FFF" opacity=".16"/><ellipse cx="196" cy="92" rx="14" ry="4" fill="#FFF" opacity=".14"/>'
+ + '</svg>'; }
+// 烤盘（F01）
+function plateGrill(){ return '<svg class="plate" viewBox="0 0 300 172" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+ + '<ellipse cx="150" cy="152" rx="132" ry="11" fill="#3B2F23" opacity=".14"/>'
+ + '<rect x="16" y="30" width="268" height="108" rx="18" fill="#3A3632"/>'
+ + '<rect x="24" y="38" width="252" height="92" rx="13" fill="#C03828"/>'
+ + '<rect x="24" y="38" width="252" height="92" rx="13" fill="none" stroke="#2A2622" stroke-width="2"/>'
+ + '<ellipse cx="96" cy="66" rx="26" ry="8" fill="#E05838" opacity=".55"/>'
+ + '<ellipse cx="188" cy="96" rx="22" ry="7" fill="#E05838" opacity=".45"/>'
+ + '<ellipse cx="150" cy="74" rx="20" ry="6" fill="#FFF" opacity=".12"/>'
+ + '<path d="M44 46 C80 40 120 38 150 38 C190 38 230 42 254 48" fill="none" stroke="#FFF" stroke-width="1.4" opacity=".25"/>'
+ + '<rect x="16" y="30" width="268" height="108" rx="18" fill="none" stroke="#141210" stroke-width="2.6"/>'
+ + '<rect x="6" y="62" width="12" height="26" rx="6" fill="#2A2622" stroke="#141210" stroke-width="2"/>'
+ + '<rect x="282" y="62" width="12" height="26" rx="6" fill="#2A2622" stroke="#141210" stroke-width="2"/>'
+ + '</svg>'; }
+// 饮品杯模板（10-14 v3：直筒杯/锤打杯/一升桶）
+function cupTall(liq1, liq2){ return '<svg class="plate cup" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+ + '<ellipse cx="150" cy="286" rx="76" ry="10" fill="#3B2F23" opacity=".12"/>'
+ + '<path d="M86 30 C86 30 84 250 92 268 C98 282 202 282 208 268 C216 250 214 30 214 30 Z" fill="'+(liq2||'#F5E8C8')+'" opacity=".9"/>'
+ + '<path d="M92 120 C92 170 92 230 98 262 C102 274 198 274 202 262 C208 230 208 170 208 120 Z" fill="'+(liq1||'#D9B84E')+'"/>'
+ + '<path d="M86 30 C86 30 84 250 92 268 C98 282 202 282 208 268 C216 250 214 30 214 30 Z" fill="none" stroke="#3B2F23" stroke-width="2.6"/>'
+ + '<ellipse cx="150" cy="30" rx="64" ry="12" fill="#FFF" opacity=".32"/>'
+ + '<path d="M96 40 C96 40 95 240 100 262" fill="none" stroke="#FFF" stroke-width="2" opacity=".4"/>'
+ + '<path d="M86 30 C86 30 84 250 92 268 C98 282 202 282 208 268 C216 250 214 30 214 30" fill="none" stroke="#3B2F23" stroke-width="2.6"/>'
+ + '</svg>'; }
+function cupMason(liq1, liq2){ return '<svg class="plate cup" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+ + '<ellipse cx="150" cy="288" rx="80" ry="10" fill="#3B2F23" opacity=".12"/>'
+ + '<rect x="82" y="58" width="136" height="18" rx="6" fill="#C8B898" stroke="#3B2F23" stroke-width="2.4"/>'
+ + '<path d="M92 74 C92 74 90 250 96 266 C102 280 198 280 204 266 C210 250 208 74 208 74 Z" fill="'+(liq2||'#E8C860')+'"/>'
+ + '<path d="M96 150 C96 200 96 240 100 260 C104 272 196 272 200 260 C204 240 204 200 204 150 Z" fill="'+(liq1||'#D9A83C')+'"/>'
+ + '<path d="M92 74 C92 74 90 250 96 266 C102 280 198 280 204 266 C210 250 208 74 208 74 Z" fill="none" stroke="#3B2F23" stroke-width="2.6"/>'
+ + '<rect x="76" y="52" width="148" height="12" rx="5" fill="#C8B898" stroke="#3B2F23" stroke-width="2.2"/>'
+ + '<ellipse cx="150" cy="76" rx="56" ry="9" fill="#FFF" opacity=".3"/>'
+ + '<path d="M100 84 C100 84 99 240 103 260" fill="none" stroke="#FFF" stroke-width="2" opacity=".4"/>'
+ + '</svg>'; }
+function cupBucket(liq1){ return '<svg class="plate cup" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+ + '<ellipse cx="150" cy="290" rx="86" ry="10" fill="#3B2F23" opacity=".12"/>'
+ + '<path d="M74 40 C74 40 70 260 82 274 C94 288 206 288 218 274 C230 260 226 40 226 40 Z" fill="'+(liq1||'#F0E0C8')+'"/>'
+ + '<path d="M80 160 C80 220 82 256 88 268 C98 282 202 282 212 268 C218 256 220 220 220 160 Z" fill="#E8B8B8" opacity=".9"/>'
+ + '<path d="M74 40 C74 40 70 260 82 274 C94 288 206 288 218 274 C230 260 226 40 226 40 Z" fill="none" stroke="#3B2F23" stroke-width="2.8"/>'
+ + '<ellipse cx="150" cy="40" rx="76" ry="14" fill="#FFF" opacity=".35"/>'
+ + '<path d="M84 50 C84 50 81 250 86 268" fill="none" stroke="#FFF" stroke-width="2.2" opacity=".4"/>'
+ + '<path d="M74 40 C90 20 210 20 226 40" fill="none" stroke="#C8B898" stroke-width="5" stroke-linecap="round"/>'
+ + '</svg>'; }
+// 黑砂锅（C08茄子煲）
+function plateClaypot(){ return '<svg class="plate" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+ + '<ellipse cx="150" cy="160" rx="126" ry="11" fill="#3B2F23" opacity=".14"/>'
+ + '<ellipse cx="150" cy="84" rx="132" ry="56" fill="#3A2E26"/>'
+ + '<path d="M18 84 C20 112 76 138 150 138 C224 138 280 112 282 84 C280 106 222 130 150 130 C78 130 20 106 18 84 Z" fill="#2A2018"/>'
+ + '<ellipse cx="150" cy="86" rx="108" ry="42" fill="#1C1610"/>'
+ + '<ellipse cx="150" cy="88" rx="94" ry="34" fill="#8E5A28" opacity=".9"/>'
+ + '<ellipse cx="150" cy="90" rx="80" ry="27" fill="#A86828" opacity=".8"/>'
+ + '<ellipse cx="150" cy="84" rx="132" ry="56" fill="none" stroke="#14100A" stroke-width="2.6"/>'
+ + '<path d="M30 68 C64 46 110 36 150 36 C190 36 236 46 270 68" fill="none" stroke="#5E4A34" stroke-width="2.2" opacity=".7"/>'
+ + '<ellipse cx="150" cy="88" rx="94" ry="34" fill="none" stroke="#C08848" stroke-width="1.3" opacity=".5"/>'
+ + '<path d="M56 92 C86 82 118 78 150 78 C186 78 218 82 244 92" fill="none" stroke="#FFF" stroke-width="1.4" opacity=".2"/>'
+ + '<ellipse cx="104" cy="86" rx="14" ry="4" fill="#FFF" opacity=".12"/>'
+ + '<path d="M14 78 C6 76 2 70 6 64" fill="none" stroke="#14100A" stroke-width="5" stroke-linecap="round"/>'
+ + '<path d="M286 78 C294 76 298 70 294 64" fill="none" stroke="#14100A" stroke-width="5" stroke-linecap="round"/>'
+ + '</svg>'; }
+// 汽线/光斑/酱点（v2语法）
+function steamSvg(){ return '<svg class="steam" viewBox="0 0 343 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+ + '<path d="M150 8 C146 26 158 34 154 52 C151 66 160 74 157 88" fill="none" stroke="#B8A98E" stroke-width="3.4" stroke-linecap="round" opacity=".4"/>'
+ + '<path d="M193 14 C189 30 199 38 196 54 C193 68 201 76 199 88" fill="none" stroke="#B8A98E" stroke-width="3" stroke-linecap="round" opacity=".32"/>'
+ + '</svg>'; }
+function glossSvg(){ return '<svg class="gloss" viewBox="0 0 343 343" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+ + '<ellipse cx="60" cy="252" rx="7" ry="3.2" fill="#FFF" opacity=".4"/>'
+ + '<ellipse cx="290" cy="240" rx="6" ry="2.8" fill="#FFF" opacity=".38"/>'
+ + '<ellipse cx="48" cy="230" rx="5" ry="2.4" fill="#FFF" opacity=".3"/>'
+ + '</svg>'; }
+
+// ---------- D04 油豆腐红烧肉 ----------
+ANIMS['D04'] = {
+  plate: plateDeep('#A05F1E'),
+  layout: [
+    ['r1','rbelly-a',60,44, 96,540,26,  40,44,  -4,1],['r2','rbelly-b',56,42, 148,532,28, 118,36, 5,1],['r3','rbelly-c',54,40, 200,544,24, 196,58, -5,1],
+    ['r4','rbelly-a',60,44, 118,576,20, 246,40, 6,1],['r5','rbelly-b',56,42, 172,586,18,  62,96,  4,1],['r6','rbelly-c',54,40, 90,602,12, 150,88, -4,1],
+    ['r7','rbelly-a',60,44, 224,590,16, 224,92,  3,1],['r8','rbelly-b',56,42, 140,620,10, 288,66,  5,1],
+    ['t1','tofu-a',46,42, 78,560,22,  52,192, -3,2],['t2','tofu-b',42,40, 130,596,17, 116,204, 4,2],['t3','tofu-c',44,38, 186,606,15, 182,196, -4,2],
+    ['t4','tofu-a',46,42, 236,576,19, 246,208,  5,2],['t5','tofu-b',42,40, 100,634,8,  84,232,  3,2],['t6','tofu-c',44,38, 158,644,6, 148,238, -3,2],
+    ['c1','rockcandy-a',36,32, 200,556,23, 124,294,  4,3],['c2','rockcandy-b',26,24, 88,584,14,  70,314, -5,3],['c3','rockcandy-a',36,32, 148,606,9, 106,330,  3,3]
+  ],
+  labels: [
+    {x:12, y:52,  b:'五花肉', s:'红烧出琥珀色', side:'l'},
+    {x:196,y:196, b:'油豆腐', s:'专吸肉汁',      side:'r'},
+    {x:170,y:308, b:'冰糖',   s:'上色提亮',      side:'r'}
+  ],
+  lines: [
+    'M96 66 Q120 60 168 58','M180 214 Q240 210 282 206','M120 326 Q150 318 162 316'
+  ],
+  hint: '红烧到琥珀透亮，豆泡比肉先没',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['D04'] = {
+  intro: '五花肉红烧到琥珀透亮，油豆腐最后下锅——每个豆泡都是一口汤汁，常常比肉先被抢完。',
+  steps: [['肉块煸糖色','冰糖小火炒糖色，五花肉下锅煸到上色出油。'],['慢烧入味','添汤慢烧，肉块烧到琥珀透亮、筷子能透。'],['油豆腐收汁','豆泡最后下锅，把汤汁一口一口吸进去。']],
+  arc: [
+    {ico:'rbelly-b', w:56, h:42, u:2, name:'五花肉', slogan:'红烧出琥珀色', desc:'肥瘦分层现切肉块，冰糖上色、小火慢烧——烧到肥肉透亮、瘦肉不柴，琥珀色是时间给的。'},
+    {ico:'tofu-a', w:46, h:42, u:7, name:'油豆腐', slogan:'专吸肉汁', desc:'豆泡空心的结构就是为吸汤而生——红烧肉收汁前下锅，每个豆泡都是一口汤汁。'},
+    {ico:'rockcandy-a', w:24, h:22, u:16, name:'冰糖', slogan:'上色提亮', desc:'炒糖色用冰糖不用白糖——色更亮、味更醇，红烧肉的琥珀光泽从这来。'}
+  ]
+};
+
+// ---------- D05 干锅手撕鸡 ----------
+ANIMS['D05'] = {
+  plate: plateIron(),
+  layout: [
+    ['s1','shred-a',56,34, 98,548,26,  40,52,  -4,1],['s2','shred-b',52,32, 156,540,28, 112,48,  5,1],['s3','shred-c',50,30, 208,556,24, 184,58, -5,1],
+    ['s4','shred-a',56,34, 128,588,20, 244,50,  4,1],['s5','shred-b',52,32, 180,598,18,  64,110, -3,1],['s6','shred-c',50,30, 94,616,12, 146,102,  5,1],
+    ['s7','shred-a',56,34, 226,614,14, 222,106, -4,1],['s8','shred-b',52,32, 146,634,8,  284,102,  4,1],
+    ['g1','ginger-a',34,34, 112,572,22,  58,200,  4,2],['g2','ginger-b',32,32, 170,606,16, 124,212, -5,2],['g3','ginger-a',34,34, 220,632,10, 190,204,  3,2],['g4','ginger-b',32,32, 84,640,6,  250,216, -4,2],
+    ['l1','chili-a',26,22, 196,566,23,  70,296,  4,3],['l2','chili-b',26,22, 92,600,15, 132,308, -5,3],['l3','chili-a',26,22, 244,600,13, 196,300,  3,3],['l4','chili-b',26,22, 146,652,4,  258,312,  5,3]
+  ],
+  labels: [
+    {x:12, y:60,  b:'鸡腿肉', s:'盐焗入味·手撕成条', side:'l'},
+    {x:12, y:206, b:'姜蒜辣椒', s:'香气的骨架', side:'l'},
+    {x:186,y:300, b:'干锅',    s:'上桌不停火', side:'r'}
+  ],
+  lines: [
+    'M120 70 Q160 66 196 64','M120 216 Q160 212 196 210','M186 310 Q150 320 116 322'
+  ],
+  hint: '盐焗鸡腿手撕成条，小火一直煨着',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['D05'] = {
+  intro: '盐焗鸡腿手撕成条，配姜蒜干辣椒——干锅小火一直煨着，鸡肉越煮越入味，冬天点它不会错。',
+  steps: [['盐焗蒸透','整只鸡腿盐焗蒸熟，咸香先入骨。'],['手撕成条','放凉后手工撕条，粗细不一才挂味。'],['干锅慢煨','姜蒜辣椒炝锅，小火不停煨着上桌。']],
+  arc: [
+    {ico:'shred-a', w:56, h:34, u:2, name:'鸡腿', slogan:'盐焗入味·手撕成条', desc:'整只鸡腿盐焗蒸熟再手撕——机器切的断面光滑挂不住味，手撕的毛边才吸汤汁。'},
+    {ico:'ginger-a', w:34, h:34, u:16, name:'姜蒜辣椒', slogan:'香气的骨架', desc:'老姜厚片、整蒜、干辣椒——干锅香气就靠这三样撑着，越煨越出味。'},
+    {ico:'chili-b', w:26, h:22, u:2, name:'干锅', slogan:'上桌不停火', desc:'固体酒精小炉一直煨着——鸡肉越煮越入味，最后一口最香。'}
+  ]
+};
+
+// ---------- D08 湘村酸菜鱼 ----------
+ANIMS['D08'] = {
+  plate: plateSoup('#D9B84E','#E8C860'),
+  layout: [
+    ['f1','fillet-a',64,44, 100,536,26,  44,50,  -4,1],['f2','fillet-b',58,40, 158,528,28, 116,44,  5,1],['f3','fillet-c',52,42, 210,542,24, 188,56, -5,1],
+    ['f4','fillet-a',64,44, 124,574,20, 248,46,  6,1],['f5','fillet-b',58,40, 178,584,18,  60,104, -3,1],['f6','fillet-c',52,42, 92,600,12, 148,96,  4,1],
+    ['f7','fillet-a',64,44, 226,606,14, 216,100, -4,1],['f8','fillet-b',58,40, 142,624,8,  280,96,  3,1],
+    ['p1','pickle-a',52,26, 96,566,22,  54,196,  4,2],['p2','pickle-b',48,24, 150,602,16, 120,208, -4,2],['p3','pickle-c',44,22, 204,616,13, 186,198,  3,2],
+    ['p4','pickle-a',52,26, 118,640,6,  246,200,  5,2],['p5','pickle-b',48,24, 226,644,4,  88,226, -3,2],
+    ['d1','soupdrop-g',30,26, 178,552,25, 130,298,  4,3],['d2','soupdrop-g',30,26, 88,588,15,  76,310, -5,3],['d3','soupdrop-g',30,26, 232,592,17, 196,302,  3,3]
+  ],
+  labels: [
+    {x:12, y:58,  b:'鱼片', s:'现杀现片·十几秒即起', side:'l'},
+    {x:186,y:200, b:'老坛酸菜', s:'酸汤的底', side:'r'},
+    {x:170,y:304, b:'金汤', s:'酸辣·喝到见底', side:'r'}
+  ],
+  lines: [
+    'M120 68 Q160 62 196 60','M176 210 Q240 206 282 202','M172 314 Q140 322 108 324'
+  ],
+  hint: '酸菜熬出金汤，鱼片十几秒即起',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['D08'] = {
+  intro: '鱼现杀现片，老坛酸菜熬出酸汤——鱼片入锅十几秒即起，嫩是硬标准，汤是酸得开胃。',
+  steps: [['鱼片码味','现杀现片，盐和蛋清上浆，嫩是硬标准。'],['酸菜熬汤','老坛酸菜下锅熬出酸香金汤。'],['滚汤汆鱼','鱼片入锅十几秒即起，多一秒都老。']],
+  arc: [
+    {ico:'fillet-a', w:64, h:44, u:2, name:'鱼片', slogan:'现杀现片·十几秒即起', desc:'活鱼现杀现片，蛋清上浆锁水——汆烫十几秒即起，入口是滑的、嫩是有弹性的。'},
+    {ico:'pickle-a', w:52, h:26, u:4, name:'老坛酸菜', slogan:'酸汤的底', desc:'老坛自然发酵的酸菜，酸是时间酿的——不是醋精兑的酸，汤喝到见底不烧心。'},
+    {ico:'soupdrop-g', w:30, h:26, u:6, name:'金汤', slogan:'酸辣·喝到见底', desc:'酸菜与骨汤同熬成金汤——酸得开胃、辣得克制，最后那口汤最值钱。'}
+  ]
+};
+
+// ---------- D09 凯里酸汤鱼 ----------
+ANIMS['D09'] = {
+  plate: plateSoup('#C44828','#D95A2B'),
+  layout: [
+    ['f1','fillet-a',64,44, 104,540,26,  46,52,  -4,1],['f2','fillet-b',58,40, 162,530,28, 118,46,  5,1],['f3','fillet-c',52,42, 212,546,24, 190,56, -5,1],
+    ['f4','fillet-a',64,44, 128,578,20, 250,48,  4,1],['f5','fillet-b',58,40, 180,588,18,  62,104, -3,1],['f6','fillet-c',52,42, 94,604,12, 150,98,  4,1],
+    ['f7','fillet-a',64,44, 224,608,14, 218,102, -4,1],
+    ['t1','tomato-a',52,42, 98,560,22,  56,192,  4,2],['t2','tomato-b',46,40, 152,598,16, 122,204, -5,2],['t3','tomato-c',44,36, 204,618,12, 186,196,  3,2],
+    ['t4','tomato-a',52,42, 122,636,7,  244,200,  5,2],['t5','tomato-b',46,40, 228,644,5,  86,226, -3,2],
+    ['li1','litsea-a',34,28, 176,552,25, 126,290,  4,3],['li2','litsea-b',28,24, 86,586,15,  72,308, -5,3],['li3','litsea-a',34,28, 230,590,17, 196,294,  3,3],['li4','litsea-b',28,24, 140,644,4,  254,312,  5,3]
+  ],
+  labels: [
+    {x:12, y:60,  b:'鱼片', s:'现片滑嫩', side:'l'},
+    {x:190,y:198, b:'红酸汤', s:'番茄自然发酵', side:'r'},
+    {x:170,y:306, b:'木姜子', s:'这锅汤的灵魂香料', side:'r'}
+  ],
+  lines: [
+    'M120 70 Q160 64 196 62','M180 208 Q240 204 282 200','M172 316 Q140 324 108 326'
+  ],
+  hint: '黔东南老手艺：番茄发酵成酸，木姜子提香',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['D09'] = {
+  intro: '黔东南的老手艺——番茄自然发酵成酸，木姜子是这锅汤的魂。汤酸得明亮，鱼片滑嫩。',
+  steps: [['红酸熬汤','番茄自然发酵成酸汤底，酸得明亮。'],['木姜提香','木姜子下锅，山野的柠檬香就出来了。'],['鱼片汆熟','鱼片滚汤汆熟，滑嫩收锅。']],
+  arc: [
+    {ico:'tomato-a', w:52, h:42, u:2, name:'红酸汤', slogan:'番茄自然发酵', desc:'凯里做法：番茄自然发酵出酸——不用一滴醋，酸是活的、明亮的，喝完喉咙不发紧。'},
+    {ico:'litsea-a', w:26, h:22, u:6, name:'木姜子', slogan:'这锅汤的灵魂香料', desc:'山胡椒科的小果子，柠檬香里带木质感——酸汤鱼没它就没了魂，凯里人认它。'},
+    {ico:'fillet-a', w:64, h:44, u:2, name:'鱼片', slogan:'现片滑嫩', desc:'活鱼现片，滚汤汆熟——嫩到筷子要轻夹，滑到汤里找不着。'}
+  ]
+};
+
+// ---------- E01 招牌跳跳蛙 ----------
+ANIMS['E01'] = {
+  plate: plateDeep('#B8722E'),
+  layout: [
+    ['fr1','frog-a',62,48, 100,530,26,  44,44,  -4,1],['fr2','frog-b',58,44, 160,522,28, 118,40,  5,1],['fr3','frog-c',52,50, 214,538,24, 190,52, -5,1],
+    ['fr4','frog-a',62,48, 126,576,20, 250,44,  6,1],['fr5','frog-b',58,44, 182,586,18,  62,102, -3,1],['fr6','frog-c',52,50, 96,604,12, 150,96,  4,1],
+    ['fr7','frog-a',62,48, 228,608,14, 220,100, -4,1],['fr8','frog-b',58,44, 148,628,8,  282,96,  3,1],
+    ['dc1','dchili-a',26,48, 104,552,23,  56,214,  5,2],['dc2','dchili-b',34,44, 160,582,17, 124,222, -4,2],['dc3','dchili-c',24,46, 216,596,15, 186,218,  4,2],
+    ['dc4','dchili-a',26,48, 88,618,11,  248,222, -5,2],['dc5','dchili-b',34,44, 172,646,5,  90,248,  3,2],['dc6','dchili-c',24,46, 232,642,6,  254,246,  5,2],
+    ['pc1','pepperc-a',38,30, 182,556,25, 132,306,  4,3],['pc2','pepperc-b',32,32, 86,588,16,  74,326, -5,3],['pc3','pepperc-a',38,30, 232,600,18, 194,310,  3,3],['pc4','pepperc-b',32,32, 134,644,4,  254,330,  4,3],['cb1','cabbage-b',52,40, 108,606,13,  62,342, -4,3],['cb2','cabbage-a',58,44, 200,634,8,  200,346,  5,3]
+  ],
+  labels: [
+    {x:12, y:52,  b:'牛蛙', s:'现杀现烧·嫩似蒜瓣', side:'l'},
+    {x:186,y:220, b:'干辣椒', s:'双倍的量', side:'r'},
+    {x:170,y:326, b:'花椒', s:'麻香的底', side:'r'}
+  ],
+  lines: [
+    'M118 62 Q158 56 194 54','M176 226 Q240 222 282 218','M172 336 Q140 344 108 346'
+  ],
+  hint: '蛙腿肉一瓣一瓣的嫩，辣椒花椒不客气',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['E01'] = {
+  intro: '牛蛙现杀现炒，腿肉饱满弹嫩——辣椒蒜香层层裹上，白菜垫底吸饱汤汁，蛙肉吃完汤底别浪费。',
+  steps: [['牛蛙现杀','鲜活牛蛙现杀现切，腿肉成瓣。'],['猛火爆炒','辣椒蒜香层层裹上，猛火快攻。'],['辣椒收锅','白菜垫底，辣椒收锅出亮油。']],
+  arc: [
+    {ico:'frog-a', w:62, h:48, u:2, name:'牛蛙', slogan:'现杀现炒·腿肉弹嫩', desc:'鲜活牛蛙现杀现炒——腿肉饱满弹嫩，一瓣一瓣的蒜瓣嫩。'},
+    {ico:'dchili-b', w:34, h:44, u:4, name:'辣椒蒜香', slogan:'层层裹上', desc:'干辣椒与蒜香层层裹上——辣椒的香、蒜的辛，都挂在蛙肉上。'},
+    {ico:'cabbage-a', w:58, h:44, u:4, name:'白菜垫底', slogan:'吸饱汤汁', desc:'白菜垫底吸饱汤汁——蛙肉吃完，汤底泡菜别浪费。'}
+  ]
+};
+
+// ---------- E06 油泼湘味牛肉 ----------
+ANIMS['E06'] = {
+  plate: plateDeep('#8E2A1A'),
+  layout: [
+    ['b1','beef-a',64,40, 98,536,26,  42,48,  -4,1],['b2','beef-b',60,38, 158,528,28, 116,42,  5,1],['b3','beef-c',56,40, 212,544,24, 190,54, -5,1],
+    ['b4','beef-a',64,40, 124,578,20, 248,46,  6,1],['b5','beef-b',60,38, 180,588,18,  62,104, -3,1],['b6','beef-c',56,40, 94,604,12, 150,98,  4,1],
+    ['b7','beef-a',64,40, 226,606,14, 218,102, -4,1],['b8','beef-b',60,38, 146,626,8,  280,98,  3,1],
+    ['cp1','cpowder-a',34,26, 100,560,23,  58,214,  4,2],['cp2','cpowder-b',30,24, 156,592,17, 126,224, -4,2],['cp3','cpowder-a',34,26, 212,604,15, 188,218,  3,2],
+    ['cp4','cpowder-b',30,24, 86,620,11,  246,224,  5,2],['cp5','cpowder-a',34,26, 172,650,5,  90,248, -3,2],
+    ['gb1','gbit-a',36,28, 172,566,25, 124,308,  4,3],['gb2','gbit-b',28,22, 88,594,16,  76,320, -5,3],['gb3','gbit-a',36,28, 222,598,18, 194,312,  3,3],['pn1','peanut-a',28,22, 240,626,10,  250,324,  5,3],['pn2','peanut-b',24,20, 142,648,4,  262,342,  4,3],['cl1','cilantro-a',44,40, 106,634,8,  58,338, -4,3],
+    ['pn1','peanut-a',28,22, 240,626,10,  250,324,  5,3],
+    ['pn2','peanut-b',24,20, 142,648,4,  262,342,  4,3],
+    ['cl1','cilantro-a',44,40, 106,634,8,  58,338, -4,3]
+  ],
+  labels: [
+    {x:12, y:56,  b:'牛里脊', s:'现切薄片', side:'l'},
+    {x:186,y:220, b:'辣椒面', s:'铺满一面', side:'r'},
+    {x:172,y:326, b:'蒜末', s:'滚油一泼就香', side:'r'}
+  ],
+  lines: [
+    'M118 66 Q158 60 194 58','M176 226 Q240 222 282 218','M174 336 Q142 344 110 346'
+  ],
+  hint: '滚油当头泼下，滋啦一声香气全开',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['E06'] = {
+  intro: '牛肉滑嫩锁汁，干辣椒花椒铺顶——滚油一泼，香气炸开；白芝麻香菜收尾，一片肉一口香。',
+  steps: [['牛肉滑嫩断生','牛里脊上浆滑油，断生即起。'],['辣料铺顶','干辣椒花椒白芝麻铺满。'],['滚油泼香','滚油一泼，香菜收尾。']],
+  arc: [
+    {ico:'beef-a', w:64, h:40, u:2, name:'牛肉', slogan:'滑嫩锁汁', desc:'牛肉滑嫩锁汁——上浆滑油断生即起，嫩得反光。'},
+    {ico:'cpowder-a', w:40, h:30, u:6, name:'干辣椒花椒', slogan:'铺顶', desc:'干辣椒花椒铺满顶——滚油的香气就靠这两样炸开。'},
+    {ico:'peanut-a', w:28, h:22, u:4, name:'芝麻香菜', slogan:'收尾提香', desc:'白芝麻香菜收尾——一片肉一口香，收口是芝麻香。'}
+  ]
+};
+
+// ---------- E07 干锅肥肠 ----------
+ANIMS['E07'] = {
+  plate: plateIron(),
+  layout: [
+    ['i1','intest-a',58,40, 100,534,26,  44,46,  -4,1],['i2','intest-b',54,38, 160,526,28, 116,40,  5,1],['i3','intest-c',50,36, 214,540,24, 190,52, -5,1],
+    ['i4','intest-a',58,40, 126,576,20, 250,44,  6,1],['i5','intest-b',54,38, 182,586,18,  62,102, -3,1],['i6','intest-c',50,36, 96,602,12, 150,96,  4,1],
+    ['i7','intest-a',58,40, 228,606,14, 220,100, -4,1],['i8','intest-b',54,38, 148,626,8,  282,96,  3,1],
+    ['pp1','pepper-a',52,40, 104,556,23,  56,196,  4,2],['pp2','pepper-b',46,44, 158,584,17, 124,206, -4,2],['pp3','pepper-c',44,36, 212,598,15, 186,200,  3,2],
+    ['pp4','pepper-a',52,40, 88,618,11,  246,204,  5,2],['pp5','pepper-b',46,44, 170,648,5,  88,230, -3,2],
+    ['gv1','gclove-a',30,32, 176,558,25, 126,296,  4,3],['gv2','gclove-b',28,30, 88,590,16,  74,308, -5,3],['gv3','gclove-a',30,32, 226,600,18, 196,300,  3,3],['cs1','chilishred-a',46,20, 240,620,14,  252,310,  5,3],['cs2','chilishred-a',46,20, 140,646,7,  262,332,  4,3],['cl1','cilantro-a',44,40, 108,636,9,  58,330, -4,3]
+  ],
+  labels: [
+    {x:12, y:54,  b:'肥肠', s:'先卤后煸·边卷油亮', side:'l'},
+    {x:188,y:202, b:'青红椒', s:'配角的分寸', side:'r'},
+    {x:172,y:308, b:'蒜子', s:'整颗更香', side:'r'}
+  ],
+  lines: [
+    'M118 64 Q158 58 194 56','M178 208 Q240 204 282 200','M174 318 Q142 326 110 328'
+  ],
+  hint: '先卤透、再煸到边缘微卷',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['E07'] = {
+  intro: '肥肠先卤透、再煸到边缘微卷——干锅端上桌小火不停，配红绿辣椒段与整瓣蒜，越煮越香。',
+  steps: [['卤透去腻','肥肠卤到透，腥气全无只剩香。'],['煸出焦边','下锅煸到边缘微卷，油亮焦香。'],['干锅慢煨','红绿辣椒蒜子入锅，小火煨着上桌。']],
+  arc: [
+    {ico:'intest-a', w:58, h:40, u:2, name:'肥肠', slogan:'先卤后煸·边卷油亮', desc:'先卤透、再煸到边缘微卷——油脂煸出去，香留下来，肥而不腻是这么来的。'},
+    {ico:'chilishred-a', w:46, h:20, u:2, name:'红绿辣椒段', slogan:'配角的分寸', desc:'红辣椒段与青椒块——提香不抢戏，越煮越出味。'},
+    {ico:'gclove-a', w:30, h:32, u:6, name:'整瓣蒜', slogan:'更香', desc:'整颗蒜子不切碎——焖到化沙，甜香融进锅底。'}
+  ]
+};
+
+// ---------- E09 西红柿牛腩 ----------
+ANIMS['E09'] = {
+  plate: plateClaypot(),
+  layout: [
+    ['k1','brisket-a',58,42, 100,536,26,  44,50,  -4,1],['k2','brisket-b',54,40, 158,528,28, 116,44,  5,1],['k3','brisket-c',56,38, 214,542,24, 190,56, -5,1],
+    ['k4','brisket-a',58,42, 124,578,20, 248,46,  6,1],['k5','brisket-b',54,40, 180,588,18,  62,104, -3,1],['k6','brisket-c',56,38, 96,604,12, 150,98,  4,1],
+    ['k7','brisket-a',58,42, 226,606,14, 218,102, -4,1],['k8','brisket-b',54,40, 146,626,8,  280,98,  3,1],
+    ['t1','tomato-a',52,42, 100,562,22,  56,192,  4,2],['t2','tomato-b',46,40, 154,596,16, 124,202, -4,2],['t3','tomato-c',44,36, 206,616,12, 188,196,  3,2],
+    ['t4','tomato-a',52,42, 122,636,7,  244,200,  5,2],['t5','tomato-b',46,40, 228,644,5,  86,226, -3,2],
+    ['sd1','soupdrop-t',30,26, 186,558,25, 138,298,  4,3],['sd2','soupdrop-t',30,26, 92,592,15,  80,310, -5,3],['sd3','soupdrop-t',30,26, 234,596,17, 202,302,  3,3],['pt1','potato-a',50,38, 130,568,22,  56,322,  4,3],['pt2','potato-b',44,34, 216,602,14,  190,326, -4,3],['pt3','potato-a',50,38, 168,612,10,  258,320,  5,3]
+  ],
+  labels: [
+    {x:12, y:60,  b:'牛腩', s:'慢炖到筷子一碰就散', side:'l'},
+    {x:188,y:198, b:'番茄', s:'熬化进汤', side:'r'},
+    {x:172,y:304, b:'汤汁', s:'拌饭的隐藏用法', side:'r'}
+  ],
+  lines: [
+    'M118 70 Q158 64 194 62','M178 204 Q240 200 282 196','M174 314 Q142 322 110 324'
+  ],
+  hint: '番茄熬化进汤，酸甜裹着肉香',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['E09'] = {
+  intro: '带筋牛腩炖足时候，筷子一碰就散；番茄熬化进汤，土豆炖到起沙——酸甜裹着肉香，汤汁拿来拌饭是隐藏吃法。',
+  steps: [['牛腩焯水','带筋牛腩整块焯水，切大块。'],['慢炖两小时','慢炖到筷子一碰就散。'],['番茄土豆收汤','番茄熬化、土豆起沙，收汤上桌。']],
+  arc: [
+    {ico:'brisket-a', w:58, h:42, u:2, name:'牛腩', slogan:'带筋·慢炖到一碰就散', desc:'带筋牛腩炖足两小时——筷子一碰就散，筋膜糯到抿化。'},
+    {ico:'tomato-a', w:52, h:42, u:2, name:'番茄', slogan:'熬化进汤', desc:'番茄整颗下锅熬到化——酸甜全在汤里。'},
+    {ico:'potato-a', w:50, h:38, u:2, name:'土豆', slogan:'炖到起沙·吸饱汤汁', desc:'去皮土豆炖到起沙——吸饱汤汁，比肉先没。'}
+  ]
+};
+
+// ---------- E10 肥肠鱼 ----------
+ANIMS['E10'] = {
+  plate: plateSoup('#B4382A','#D0402A'),
+  layout: [
+    ['f1','fillet-a',64,44, 100,532,26,  44,44,  -4,1],['f2','fillet-b',58,40, 160,524,28, 116,38,  5,1],['f3','fillet-c',52,42, 214,538,24, 190,50, -5,1],
+    ['f4','fillet-a',64,44, 126,574,20, 250,42,  6,1],['f5','fillet-b',58,40, 182,584,18,  62,100, -3,1],['f6','fillet-c',52,42, 96,600,12, 150,94,  4,1],
+    ['f7','fillet-a',64,44, 228,604,14, 218,98, -4,1],['f8','fillet-b',58,40, 146,624,8,  282,94,  3,1],
+    ['i1','intest-a',58,40, 102,556,23,  58,194,  4,2],['i2','intest-b',54,38, 158,586,17, 126,204, -4,2],['i3','intest-c',50,36, 210,600,15, 190,198,  3,2],
+    ['i4','intest-a',58,40, 88,618,11,  246,202,  5,2],['i5','intest-b',54,38, 170,648,5,  88,228, -3,2],
+    ['sd1','soupdrop-r',30,26, 186,558,25, 138,298,  4,3],['sd2','soupdrop-r',30,26, 92,592,15,  80,310, -5,3],['sd3','soupdrop-r',30,26, 234,596,17, 202,302,  3,3],['sd4','soupdrop-r',30,26, 140,650,4,  258,314,  5,3]
+  ],
+  labels: [
+    {x:12, y:52,  b:'鱼片', s:'现片·滑嫩铺面', side:'l'},
+    {x:186,y:198, b:'肥肠', s:'煸香垫底', side:'r'},
+    {x:172,y:304, b:'麻辣汤', s:'收拢全局', side:'r'}
+  ],
+  lines: [
+    'M118 62 Q158 56 194 54','M176 204 Q240 200 282 196','M174 314 Q142 322 110 324'
+  ],
+  hint: '一锅双主角：鱼片滑嫩，肥肠焦香',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['E10'] = {
+  intro: '肥肠煸香垫底、鱼片滑嫩铺面——一锅里两种口感，麻辣汤底收拢全局。人多必点。',
+  steps: [['肥肠煸香','卤好的肥肠煸出焦边，垫在锅底。'],['汤底熬辣','麻辣汤底熬出红油，香而不燥。'],['鱼片汆熟','鱼片滚汤汆熟，铺面收锅。']],
+  arc: [
+    {ico:'fillet-a', w:64, h:44, u:2, name:'鱼片', slogan:'现片，滑嫩', desc:'活鱼现片，蛋清上浆——鱼片滑嫩，滚汤十几秒即起，铺在肥肠上头。'},
+    {ico:'intest-a', w:58, h:40, u:2, name:'肥肠', slogan:'煸香垫底', desc:'肥肠先卤后煸，焦边油香垫在锅底——一锅里两种口感的另一半。'},
+    {ico:'soupdrop-r', w:30, h:26, u:6, name:'麻辣汤', slogan:'收拢全局', desc:'麻辣汤底收拢全局——鱼片的嫩、肥肠的香，最后都在这口汤里收口。'}
+  ]
+};
+
+// ---------- F01 脆皮爆汁烤鱼 ----------
+ANIMS['F01'] = {
+  plate: plateGrill(),
+  noPileSquash: true,
+  layout: [
+    ['wf1','wfish',240,104, 52,548,24, 52,36,   0,1],
+    ['cr1','crisp-a',26,22, 96,536,26,  56,166,  4,2],['cr2','crisp-b',24,20, 150,532,27, 118,176, -4,2],['cr3','crisp-a',26,22, 206,538,25, 182,172,  3,2],
+    ['cr4','crisp-b',24,20, 248,548,23, 244,178,  5,2],['cr5','crisp-a',26,22, 84,576,20,  72,196, -3,2],['cr6','crisp-b',24,20, 168,578,19, 136,200,  4,2],
+    ['sp1','sprout2-a',30,40, 100,562,22,  48,272,  4,3],['sp2','sprout2-b',26,36, 154,586,18, 112,288, -4,3],['sp3','sprout2-a',30,40, 208,592,16, 180,278,  3,3],['pn1','peanut-a',28,22, 244,600,20,  246,280,  5,3],['pn2','peanut-b',24,20, 90,620,12,  62,300, -4,3],['pn3','peanut-a',28,22, 172,636,8,  190,300,  4,3],
+    ['lo1','lotus-a',38,34, 84,606,17,  246,284,  5,3],['sp4','sprout2-b',26,36, 250,610,15,  76,312, -5,3],['lo2','lotus-a',38,34, 134,630,10,  202,310,  4,3],['sp5','sprout2-a',30,40, 188,642,6,  258,314, -3,3]
+  ],
+  labels: [
+    {x:12, y:44,  b:'整鱼', s:'现杀现烤', side:'l'},
+    {x:186,y:182, b:'脆皮', s:'烤到起泡·脆而不焦', side:'r'},
+    {x:186,y:296, b:'汤底配菜', s:'越煮越入味', side:'r'}
+  ],
+  lines: [
+    'M100 62 Q140 56 176 54','M176 188 Q240 184 282 180','M172 300 Q140 308 108 310'
+  ],
+  hint: '先吃皮，再吃肉，配菜留在汤里慢慢涮',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['F01'] = {
+  intro: '整鱼现杀现烤，鱼皮烤到起泡酥脆、鱼肉锁住汁水——干辣椒花生铺顶，垫底的土豆块泡在汤里，先吃皮、再吃肉、最后涮配菜。',
+  steps: [['整鱼改刀','整鱼现杀改刀，腌足底味。'],['炭火烤皮','炭火把鱼皮烤到起泡，脆而不焦。'],['汤底慢煨','黑烤盘上桌，小火慢煨越煮越入味。']],
+  arc: [
+    {ico:'wfish', w:240, h:104, u:0, uw:120, uh:52, name:'整鱼', slogan:'现杀现烤', desc:'整条现杀现烤，不改刀到底、不切段——一条鱼的样子，就是这条鱼的诚意。'},
+    {ico:'crisp-a', w:26, h:22, u:20, name:'脆皮', slogan:'烤到起泡·脆而不焦', desc:'鱼皮烤到起泡才是脆——火候差一分皮软，多一分就焦，起泡是刚刚好。'},
+    {ico:'peanut-a', w:28, h:22, u:4, name:'花生土豆垫底', slogan:'泡汤越煮越香', desc:'油炸花生米铺顶、土豆块垫底——泡在汤里越煮越香，鱼吃完了它们才到最好吃的时候。'}
+  ]
+};
+
+
+/* ================= 舞台构建器（v3：C03基线捕获 + 任意菜品舞台装配） ================= */
+var C03_MARKUP = $('canvas') ? $('canvas').innerHTML : '';
+var C03_LAYOUT = LAYOUT.map(function(r){ return r.slice(); });
+var C03_ARC = document.querySelector('.arc-list') ? document.querySelector('.arc-list').innerHTML : '';
+var C03_STEPS = document.querySelector('.cook-steps') ? document.querySelector('.cook-steps').innerHTML : '';
+
+function buildStage(key){
+  var a = ANIMS[key];
+  if(!a){ return false; }
+  var canvas = $('canvas');
+  var h = '';
+  h += a.plate;
+  h += a.cup ? '' : '<svg class="plate-front" viewBox="0 0 300 84" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+    + '<path d="M13 10 C34 40 86 56 150 56 C214 56 266 40 287 10 C285 38 232 66 150 67 C68 68 15 40 13 10 Z" fill="#F0E9DC"/>'
+    + '<path d="M17 13 C38 41 88 55 150 55 C212 55 262 41 283 13 C281 36 228 60 150 61 C72 62 19 36 17 13 Z" fill="#D8CDB8" opacity=".55"/>'
+    + '<path d="M13 10 C34 40 86 56 150 56 C214 56 266 40 287 10" fill="none" stroke="#3B2F23" stroke-width="2" opacity=".75"/>'
+    + '<path d="M22 22 C44 46 92 58 150 58 C208 58 256 46 278 22" fill="none" stroke="#3B2F23" stroke-width="1.3" opacity=".4"/>'
+    + '</svg>';
+  // 引线 + 标签
+  h += '<svg id="linesvg" viewBox="0 0 343 760" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>';
+  for(var i=0;i<a.lines.length;i++){
+    h += '<mask id="mNx'+(i+1)+'"><path class="grow gx'+(i+1)+'" d="'+a.lines[i]+'" pathLength="400"/></mask>';
+  }
+  h += '</defs>';
+  for(var j=0;j<a.lines.length;j++){
+    h += '<path class="cline" mask="url(#mNx'+(j+1)+')" d="'+a.lines[j]+'"/>';
+  }
+  h += '</svg>';
+  for(var k=0;k<a.labels.length;k++){
+    var L = a.labels[k];
+    h += '<div class="lbl lbl-L'+(k+1)+'" style="left:'+L.x+'px;top:'+L.y+'px"><b>'+L.b+'</b><span>'+L.s+'</span></div>';
+  }
+  h += '<div id="pieces"></div>';
+  h += a.cup ? '' : '<svg class="steam" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+    + '<path d="M22 82 C18 66 28 58 24 44 C21 32 28 24 26 14" fill="none" stroke="#8C7B6B" stroke-width="3" stroke-linecap="round" opacity=".32"/>'
+    + '<path d="M62 86 C58 70 68 60 64 46 C61 34 68 26 66 16" fill="none" stroke="#8C7B6B" stroke-width="2.6" stroke-linecap="round" opacity=".26"/>'
+    + '</svg>';
+  h += '<div class="gloss" aria-hidden="true"><div class="gloss-lit"></div><div class="gloss-shade"></div></div>';
+  h += '<div id="dish-simple" style="display:none"><div class="ds-plate" id="ds-plate"></div><p class="ds-ing" id="ds-ing"></p></div>';
+  h += '<button class="xbtn breath" id="xbtn">'+(a.xbtn?a.xbtn[0]:'拆开看看')+'</button>';
+  canvas.innerHTML = h;
+  // 重置舞台状态
+  stage = document.querySelector('.stage');
+  stage.classList.remove('exploded');
+  stage.classList.toggle('hascup', !!a.cup);
+  pieces = [];
+  LAYOUT = a.layout;
+  buildPieces();
+  return true;
+}
+
+function restoreC03(){
+  var canvas = $('canvas');
+  canvas.innerHTML = C03_MARKUP;
+  stage = document.querySelector('.stage');
+  stage.classList.remove('exploded');
+  pieces = [];
+  LAYOUT = C03_LAYOUT;
+  buildPieces();
+}
+
+/* ================= 档案页渲染（v3：数据驱动） ================= */
+function renderArchive(key){
+  var box = document.querySelector('.arc-list');
+  if(!box) return;
+  if(key === 'C03' || !COPY[key]){ box.innerHTML = C03_ARC; return; }
+  var h = '';
+  for(var i=0;i<COPY[key].arc.length;i++){
+    var c = COPY[key].arc[i];
+    var w = c.uw || c.w, ht = c.uh || c.h;
+    var ix = Math.max(0, (64-w)/2), iy = Math.max(0, (52-ht)/2);
+    h += '<div class="arc-card"><div class="arc-ico"><svg width="64" height="52" viewBox="0 0 64 52"><use href="#'+c.ico+'" x="'+ix+'" y="'+iy+'" width="'+w+'" height="'+ht+'"/></svg></div>'
+      + '<div class="arc-body"><div class="arc-name">'+esc(c.name)+'</div><div class="arc-slogan">'+esc(c.slogan)+'</div><p class="arc-desc">'+esc(c.desc)+'</p></div></div>';
+  }
+  box.innerHTML = h;
+}
+
+/* ================= 口味定制：菜品=辣度 / 饮品=甜度+冰度 ================= */
+var DRINK_CATS = ['小甜水','手打柠檬茶','轻乳茶'];
+var SWEET_NAMES = ['标准糖','少糖','微糖'];
+var ICE_NAMES = ['标准冰','少冰','去冰'];
+function isDrink(d){ return DRINK_CATS.indexOf(d && d.category) >= 0; }
+function buildTastePanel(d){
+  var row = $('spice-row'), rem = $('spice-remember');
+  if(isDrink(d)){
+    document.querySelector('.panel-title').textContent = '口味定制';
+    document.querySelector('.panel-sub').textContent = '甜度冰度选好，下次来不用再说';
+    row.innerHTML = SWEET_NAMES.map(function(n,i){ return '<button class="spice-pill" data-spice="'+i+'">'+n+'</button>'; }).join('')
+      + '<span style="width:8px"></span>'
+      + ICE_NAMES.map(function(n,i){ return '<button class="spice-pill icepill" data-spice="'+i+'">'+n+'</button>'; }).join('');
+    rem.textContent = '您的甜度冰度已记住，下次来不用再说。';
+  }else{
+    document.querySelector('.panel-title').textContent = '口味定制';
+    document.querySelector('.panel-sub').textContent = '选好的口味，下次来不用再说';
+    row.innerHTML = SPICE_NAMES.map(function(n,i){ return '<button class="spice-pill" data-spice="'+i+'">'+n+'</button>'; }).join('');
+    rem.textContent = '您的辣度已记住，下次来不用再说。';
+  }
+  bindTastePills();
+}
+function bindTastePills(){
+  var pills = document.querySelectorAll('#spice-row .spice-pill');
+  for(var s2=0;s2<pills.length;s2++){
+    (function(btn){
+      btn.addEventListener('click', function(){ setSpice(parseInt(btn.getAttribute('data-spice'),10), btn, false); });
+    })(pills[s2]);
+  }
+}
+
+/* ================= 批次2注册表（C区10+B区10，10-14生成） ================= */
+ANIMS['C04'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','tripe-a',60,44, 95,534,24, 78,44, 3, 1],['a1','tripe-b',54,40, 138,543,27, 114,51, 0, 1],['a2','tripe-a',60,44, 152,553,23, 151,58, -2, 1],
+    ['a3','tripe-b',54,40, 195,528,26, 187,40, -5, 1],['a4','tripe-a',60,44, 208,538,22, 272,47, 3, 1],['b0','cilantro-a',44,40, 92,556,14, 89,166, 3, 2],
+    ['b1','cilantro-b',40,38, 145,567,17, 135,178, 1, 2],['b2','cilantro-a',44,40, 162,579,13, 180,190, -2, 2],['b3','cilantro-b',40,38, 216,591,16, 226,202, -5, 2],
+    ['c0','chili-a',26,22, 83,626,4, 105,308, 3, 3],['c1','chili-b',26,22, 155,641,7, 166,323, 1, 3],['c2','chili-a',26,22, 227,602,10, 226,284, -2, 3]
+  ],
+  labels: [{x:12,y:52,b:'牛肚',s:'卤足时候·厚片',side:'l'}, {x:186,y:200,b:'香菜',s:'猛火快炒·香不散',side:'r'}, {x:170,y:306,b:'小米辣',s:'随喜好',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '一个韧、一个香，脆韧交锋',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['C04'] = {
+  intro: '牛肚卤足时候切厚片，香菜段猛火快炒——一个韧、一个香，香菜爱好者会专点这盘。',
+  steps: [['牛肚卤透','卤足时候切厚片，韧性都在。'],['猛火快炒','高温快攻，牛肚挂汁香菜脆嫩。'],['香菜断生即起','香菜最后下，断生立即出锅。']],
+  arc: [{ico:'tripe-b',w:54,h:40,u:8,uw:26,name:'牛肚',slogan:'卤足时候·厚片',desc:'牛肚卤足时候再切厚片——韧而不柴，每片都挂着卤香。'},{ico:'cilantro-a',w:44,h:40,u:4,uw:40,name:'香菜',slogan:'猛火快炒·香不散',desc:'香菜段猛火快炒——十秒内出锅，香而不蔫。'},{ico:'chili-b',w:26,h:22,u:4,uw:18,name:'小米辣',slogan:'随喜好',desc:'能吃辣的加点小米辣——不抢牛肚的香，只提一层亮。'}]
+};
+
+ANIMS['C05'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','beef-a',64,40, 102,542,26, 42,50, -5, 1],['a1','beef-b',60,38, 116,552,21, 126,57, 3, 1],['a2','beef-c',56,40, 159,527,25, 162,39, 0, 1],
+    ['a3','beef-a',64,40, 172,536,20, 199,46, -2, 1],['a4','beef-b',60,38, 215,546,24, 235,53, -5, 1],['b0','cilantro-a',44,40, 101,566,15, 44,176, -5, 2],
+    ['b1','cilantro-b',40,38, 154,577,18, 149,188, 3, 2],['b2','cilantro-a',44,40, 171,589,15, 195,201, 1, 2],['b3','cilantro-b',40,38, 225,559,18, 240,169, -2, 2],
+    ['c0','chili-a',26,22, 95,639,6, 44,321, -5, 3],['c1','chili-b',26,22, 167,600,9, 185,282, 3, 3],['c2','chili-a',26,22, 189,615,5, 246,297, 1, 3]
+  ],
+  labels: [{x:12,y:52,b:'牛肉',s:'现切·猛火不过十秒',side:'l'}, {x:186,y:200,b:'香菜',s:'收尾的香',side:'r'}, {x:170,y:306,b:'红椒',s:'配色提辣',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '猛火不过十秒，牛肉嫩得刚熟',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['C05'] = {
+  intro: '鲜牛肉现切，猛火不过十秒，香菜收尾。',
+  steps: [['现切现码','鲜牛肉逆纹切薄片，底味码足。'],['猛火快炒','十秒内出锅，嫩得刚熟。'],['香菜收尾','香菜最后撒，余温激香。']],
+  arc: [{ico:'beef-a',w:64,h:40,u:2,uw:22,name:'牛肉',slogan:'现切·猛火不过十秒',desc:'鲜牛肉当日现切——猛火不过十秒，多一秒就老，嫩是掐着表的。'},{ico:'cilantro-a',w:44,h:40,u:4,uw:40,name:'香菜',slogan:'收尾的香',desc:'香菜收尾不是点缀——余温把香激出来，和牛肉的镬气缠在一起。'},{ico:'chili-b',w:26,h:22,u:4,uw:18,name:'红椒',slogan:'配色提辣',desc:'红椒配色提辣——不吃辣的可以跟老板说去掉。'}]
+};
+
+ANIMS['C07'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','gizzard-a',46,40, 80,550,20, 53,56, -3, 1],['a1','gizzard-b',42,38, 123,526,23, 137,38, 5, 1],['a2','gizzard-a',46,40, 166,535,27, 174,45, 3, 1],
+    ['a3','gizzard-b',42,38, 179,545,22, 210,52, 0, 1],['a4','gizzard-a',46,40, 222,554,26, 247,59, -3, 1],['b0','pickle-a',54,28, 109,576,17, 58,187, -2, 2],
+    ['b1','pickle-b',48,24, 126,587,13, 104,199, -5, 2],['b2','pickle-a',54,28, 180,557,16, 209,167, 3, 2],['b3','pickle-b',48,24, 196,569,12, 255,179, 1, 2],
+    ['c0','chili-a',26,22, 107,598,7, 63,280, -2, 3],['c1','chili-b',26,22, 179,613,10, 124,295, -5, 3],['c2','chili-a',26,22, 201,628,7, 265,310, 3, 3]
+  ],
+  labels: [{x:12,y:52,b:'鸡胗鸡肠',s:'脆爽',side:'l'}, {x:186,y:200,b:'老坛酸菜',s:'酸香的底',side:'r'}, {x:170,y:306,b:'红椒',s:'提辣',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '鸡胗的脆，酸菜的酸，酸辣脆爽',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['C07'] = {
+  intro: '鸡胗鸡肠配老坛酸菜，酸辣脆爽。',
+  steps: [['鸡杂现处理','鸡胗鸡肠当日现处理，腥味全无。'],['酸菜同炒','老坛酸菜先下锅，炒出酸香。'],['猛火合炒','鸡杂下锅猛火合炒，脆爽出锅。']],
+  arc: [{ico:'gizzard-a',w:46,h:40,u:2,uw:28,name:'鸡胗',slogan:'脆爽',desc:'鸡胗花刀改过——猛火十几秒，脆到耳朵能听见。'},{ico:'pickle-a',w:54,h:28,u:2,uw:22,name:'老坛酸菜',slogan:'酸香的底',desc:'老坛自然发酵的酸菜——酸香的底，压住鸡杂的腥气。'},{ico:'chili-b',w:26,h:22,u:4,uw:18,name:'红椒',slogan:'提辣',desc:'红椒提辣——酸辣二重奏的高音部。'}]
+};
+
+ANIMS['C08'] = {
+  plate: plateClaypot(),
+  layout: [
+    ['a0','eggplant-a',30,56, 87,524,21, 65,37, 0, 1],['a1','eggplant-b',26,50, 130,534,25, 101,44, -3, 1],['a2','eggplant-a',30,56, 143,543,20, 185,51, 5, 1],
+    ['a3','eggplant-b',26,50, 186,553,24, 222,58, 3, 1],['a4','eggplant-a',30,56, 229,528,27, 258,40, 0, 1],['b0','porkmince-a',34,26, 81,586,12, 83,197, 0, 2],
+    ['b1','porkmince-b',30,24, 153,597,15, 143,209, -2, 2],['b2','porkmince-a',34,26, 225,567,18, 204,178, -5, 2],['c0','scallion-a',26,24, 119,611,9, 83,293, 0, 3],
+    ['c1','scallion-b',22,22, 141,626,5, 143,308, -3, 3],['c2','scallion-a',26,24, 213,641,8, 204,323, -5, 3]
+  ],
+  labels: [{x:12,y:52,b:'茄子',s:'吸饱肉香·上桌还咕嘟',side:'l'}, {x:186,y:200,b:'肉末',s:'煸香提鲜',side:'r'}, {x:170,y:306,b:'砂锅',s:'慢煲入味',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '砂锅慢煲，上桌还咕嘟',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['C08'] = {
+  intro: '砂锅慢煲，茄子吸饱肉香，上桌还咕嘟。',
+  steps: [['茄子改条','茄子切条，盐杀出水。'],['肉末煸香','肉末煸出油香，茄子入砂锅。'],['慢煲上桌','砂锅慢煲到咕嘟，端着锅上桌。']],
+  arc: [{ico:'eggplant-a',w:30,h:56,u:2,uw:28,name:'茄子',slogan:'吸饱肉香·上桌还咕嘟',desc:'茄子条在砂锅里吸饱肉香——上桌还在咕嘟，越煨越入味。'},{ico:'porkmince-a',w:34,h:26,u:2,uw:22,name:'肉末',slogan:'煸香提鲜',desc:'肉末煸香提鲜——油脂渗进茄条，素菜吃出荤香。'},{ico:'scallion-a',w:26,h:24,u:4,uw:20,name:'砂锅',slogan:'慢煲入味',desc:'黑砂锅聚热慢煨——锅气闷在里面，掀盖才散。'}]
+};
+
+ANIMS['C09'] = {
+  plate: plateDeep('#C8A050'),
+  layout: [
+    ['a0','feet-a',40,54, 92,527,22, 75,39, 1, 1],['a1','feet-b',36,50, 145,536,26, 121,46, -2, 1],['a2','feet-a',40,54, 162,546,21, 166,53, -5, 1],
+    ['a3','feet-b',36,50, 216,555,25, 271,59, 4, 1],['b0','gclove-a',30,32, 84,589,12, 77,201, 1, 2],['b1','gclove-b',28,30, 138,559,15, 123,169, -2, 2],
+    ['b2','gclove-a',30,32, 192,571,18, 168,181, -4, 2],['b3','gclove-b',28,30, 208,582,15, 274,194, 4, 2],['c0','gbit-a',36,28, 123,615,10, 89,297, 1, 3],
+    ['c1','gbit-b',28,22, 145,630,6, 150,312, -2, 3],['c2','gbit-a',36,28, 217,645,9, 210,327, -4, 3],
+    ['lm1','lime-a',46,46, 138,566,24,  58,318,  4,3],
+    ['lm2','lime-b',36,36, 244,616,12,  254,322, -4,3]
+  ],
+  labels: [{x:12,y:52,b:'凤爪',s:'先卤后焖·蒜香烧进骨头',side:'l'}, {x:186,y:200,b:'蒜瓣',s:'一层层烧进去',side:'r'}, {x:170,y:306,b:'酱汁',s:'油亮挂爪',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '蒜香一层一层烧进骨头缝',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['C09'] = {
+  intro: '鸡爪焖到皮糯筋弹，蒜蓉铺满——青柠一挤，解腻点睛，啃到停不下来。',
+  steps: [['鸡爪处理','鸡爪剪甲焯水，处理干净。'],['蒜香焖透','蒜蓉铺满，小火焖到皮糯筋弹。'],['青柠收尾','青柠一挤，解腻点睛。']],
+  arc: [
+    {ico:'feet-a', w:40, h:54, u:2, name:'凤爪', slogan:'焖到皮糯筋弹', desc:'凤爪焖到皮糯筋弹——胶质全焖出来，啃着才有劲。'},
+    {ico:'gbit-a', w:36, h:28, u:4, name:'蒜蓉', slogan:'铺满每一只', desc:'蒜蓉铺满每一只——蒜香是这道菜的主味。'},
+    {ico:'lime-a', w:46, h:46, u:2, name:'青柠', slogan:'一挤解腻', desc:'青柠一挤解腻点睛——酸香一激，啃到停不下来。'}
+  ]
+};
+
+ANIMS['C10'] = {
+  plate: plateDeep('#A86828'),
+  layout: [
+    ['a0','feet-a',40,54, 101,535,24, 89,45, 3, 1],['a1','feet-b',36,50, 154,545,27, 135,52, 1, 1],['a2','feet-a',40,54, 171,554,23, 180,59, -2, 1],
+    ['a3','feet-b',36,50, 225,530,27, 226,41, -5, 1],['b0','ginger-a',40,36, 93,557,14, 92,167, 4, 2],['b1','ginger-b',32,32, 147,569,17, 137,179, 1, 2],
+    ['b2','ginger-a',40,36, 163,581,13, 183,192, -2, 2],['b3','ginger-b',32,32, 217,592,16, 228,204, -4, 2],['c0','dchili-a',26,48, 84,628,4, 91,310, 4, 3],
+    ['c1','dchili-b',34,44, 138,643,7, 137,325, 1, 3],['c2','dchili-c',24,46, 192,604,10, 182,286, -2, 3],['c3','dchili-a',26,48, 208,619,7, 228,301, -4, 3]
+  ],
+  labels: [{x:12,y:52,b:'凤爪',s:'焖到骨酥',side:'l'}, {x:186,y:200,b:'老姜',s:'量足',side:'r'}, {x:170,y:306,b:'干辣椒',s:'够猛',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '姜辣焖进骨头缝',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['C10'] = {
+  intro: '老姜量足，干辣椒够猛，姜辣焖进骨头缝。',
+  steps: [['老姜炝锅','老姜厚片下锅炝香。'],['辣椒同焖','干辣椒够猛，与凤爪同焖。'],['小火焖酥','小火焖到姜辣进骨。']],
+  arc: [{ico:'feet-a',w:40,h:54,u:2,uw:32,name:'凤爪',slogan:'焖到骨酥',desc:'凤爪焖到骨酥肉糯——咬一口骨肉分离。'},{ico:'ginger-a',w:40,h:36,u:2,uw:26,name:'老姜',slogan:'量足',desc:'老姜切厚片、下足量——姜辣是这道菜的主语。'},{ico:'dchili-b',w:34,h:44,u:2,uw:26,name:'干辣椒',slogan:'够猛',desc:'干辣椒整支不剪——猛香全在油里。'}]
+};
+
+ANIMS['C11'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','waipo-a',34,26, 106,541,25, 99,49, 5, 1],['a1','waipo-b',30,24, 123,550,21, 145,56, 2, 1],['a2','waipo-a',34,26, 177,526,24, 190,38, 0, 1],
+    ['a3','waipo-b',30,24, 193,535,20, 235,45, -3, 1],['b0','porkmince-a',34,26, 99,564,15, 101,174, 5, 2],['b1','porkmince-b',30,24, 153,576,18, 147,187, 3, 2],
+    ['b2','porkmince-a',34,26, 169,587,14, 192,199, 0, 2],['b3','porkmince-b',30,24, 223,557,17, 238,167, -3, 2],['c0','scallion-a',26,24, 93,637,5, 121,319, 5, 3],
+    ['c1','scallion-b',22,22, 165,598,8, 182,280, 3, 3],['c2','scallion-a',26,24, 187,613,5, 242,295, 0, 3]
+  ],
+  labels: [{x:12,y:52,b:'外婆菜',s:'湘西咸香',side:'l'}, {x:186,y:200,b:'肉末',s:'油润',side:'r'}, {x:170,y:306,b:'青蒜',s:'提香',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '外婆菜的咸香，肉末的油润',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['C11'] = {
+  intro: '外婆菜的咸香，肉末的油润，白饭不够吃。',
+  steps: [['外婆菜漂洗','湘西外婆菜切碎漂洗，咸而不死。'],['肉末煸油','肉末煸出油润。'],['合炒提香','青蒜最后提香。']],
+  arc: [{ico:'waipo-a',w:34,h:26,u:2,uw:24,name:'外婆菜',slogan:'湘西咸香',desc:'湘西外婆菜——腌菜的咸香里带一点酸，下饭的底。'},{ico:'porkmince-a',w:34,h:26,u:2,uw:22,name:'肉末',slogan:'油润',desc:'肉末煸出油润——把外婆菜的干香润起来。'},{ico:'scallion-a',w:26,h:24,u:4,uw:20,name:'青蒜',slogan:'提香',desc:'青蒜最后撒——一勺热油激出的香。'}]
+};
+
+ANIMS['C13'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','pigear-a',58,40, 103,543,26, 43,51, -5, 1],['a1','pigear-b',52,38, 117,553,21, 128,58, 3, 1],['a2','pigear-a',58,40, 160,528,25, 164,40, 1, 1],
+    ['a3','pigear-b',52,38, 173,538,20, 200,47, -2, 1],['a4','pigear-a',58,40, 216,547,24, 237,54, -5, 1],['b0','soupdrop-r',30,26, 109,567,16, 48,178, -5, 2],
+    ['b1','soupdrop-r',30,26, 131,579,12, 188,190, 4, 2],['b2','soupdrop-r',30,26, 203,591,15, 249,202, 1, 2],['c0','scallion-a',26,24, 97,641,6, 47,323, -5, 3],
+    ['c1','scallion-b',22,22, 169,602,9, 188,284, 4, 3],['c2','scallion-a',26,24, 191,617,5, 248,299, 1, 3]
+  ],
+  labels: [{x:12,y:52,b:'猪耳',s:'先卤后凉·手切片薄',side:'l'}, {x:186,y:200,b:'红油',s:'现舀的辣香',side:'r'}, {x:170,y:306,b:'葱花芝麻',s:'最后撒上',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '脆骨的脆与弹肉的糯',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['C13'] = {
+  intro: '猪耳先卤后凉、手切片薄——红油一拌，脆骨的脆与弹肉的糯，一层一层来。',
+  steps: [['卤透放凉','猪耳卤透，放凉定型。'],['手切薄片','手切片薄，脆骨保留。'],['红油拌匀','红油现舀，葱花芝麻撒上。']],
+  arc: [{ico:'pigear-a',w:58,h:40,u:2,uw:26,name:'猪耳',slogan:'先卤后凉·手切片薄',desc:'猪耳先卤后凉——手切片薄，脆骨与糯肉一层一层。'},{ico:'soupdrop-r',w:30,h:26,u:4,uw:22,name:'红油',slogan:'现舀的辣香',desc:'红油现舀——辣香不抢猪耳的卤味。'},{ico:'scallion-a',w:26,h:24,u:4,uw:20,name:'葱花芝麻',slogan:'最后撒上',desc:'葱花芝麻最后撒上——添香也添口感。'}]
+};
+
+ANIMS['C14'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','pigear-a',58,40, 81,551,20, 55,57, -2, 1],['a1','pigear-b',52,38, 124,527,23, 91,39, -5, 1],['a2','pigear-a',58,40, 167,536,27, 176,46, 3, 1],
+    ['a3','pigear-b',52,38, 180,546,22, 212,53, 1, 1],['a4','pigear-a',58,40, 223,555,26, 248,59, -2, 1],['b0','pepper-a',52,40, 111,577,17, 60,188, -2, 2],
+    ['b1','pepper-b',46,44, 127,589,13, 106,201, -5, 2],['b2','pepper-c',44,36, 181,559,16, 211,169, 4, 2],['b3','pepper-a',52,40, 198,570,13, 257,181, 1, 2],
+    ['c0','soupdrop-g',30,26, 124,600,8, 79,282, -2, 3],['c1','soupdrop-g',30,26, 157,615,4, 170,297, -5, 3]
+  ],
+  labels: [{x:12,y:52,b:'猪耳尖',s:'卤制·脆骨保留',side:'l'}, {x:186,y:200,b:'螺丝椒',s:'当日现采',side:'r'}, {x:170,y:306,b:'猛火',s:'锅气的来源',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '青椒的辣混着脆骨的响',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['C14'] = {
+  intro: '卤好的猪耳尖配螺丝椒猛火爆炒——青椒的辣混着脆骨的响，热菜版本更香。',
+  steps: [['猪耳卤制','猪耳尖卤好，脆骨保留。'],['螺丝椒炝锅','螺丝椒当日现采，炝锅出辣香。'],['猛火合炒','猛火合炒，锅气直冲。']],
+  arc: [{ico:'pigear-a',w:58,h:40,u:2,uw:26,name:'猪耳尖',slogan:'卤制·脆骨保留',desc:'卤好的猪耳尖——脆骨咬着响，糯肉弹牙。'},{ico:'pepper-a',w:52,h:40,u:2,uw:26,name:'螺丝椒',slogan:'当日现采',desc:'螺丝椒当日现采——枝头到灶头不过夜。'},{ico:'soupdrop-g',w:30,h:26,u:4,uw:22,name:'猛火',slogan:'锅气的来源',desc:'猛火快攻——锅气就是香气的来源。'}]
+};
+
+ANIMS['C15'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','pigear-a',58,40, 85,523,21, 63,36, -1, 1],['a1','pigear-b',52,38, 129,532,25, 99,43, -3, 1],['a2','pigear-a',58,40, 142,542,20, 183,50, 5, 1],
+    ['a3','pigear-b',52,38, 185,551,24, 220,57, 2, 1],['a4','pigear-a',58,40, 228,527,27, 256,39, 0, 1],['b0','soupdrop-t',30,26, 129,584,18, 79,195, 0, 2],
+    ['b1','soupdrop-t',30,26, 151,596,15, 140,208, -3, 2],['b2','soupdrop-t',30,26, 223,565,18, 281,176, 5, 2],['c0','scallion-a',26,24, 136,608,9, 98,290, 0, 3],
+    ['c1','scallion-b',22,22, 169,623,5, 189,305, -3, 3]
+  ],
+  labels: [{x:12,y:52,b:'老卤',s:'多年养着的一锅',side:'l'}, {x:186,y:200,b:'猪耳',s:'慢浸入味',side:'r'}, {x:170,y:306,b:'蘸料',s:'随喜',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '不加红油，吃本味卤香',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['C15'] = {
+  intro: '老卤一锅多年，猪耳浸足入味——不加红油、不添戏，吃的干净与本味。',
+  steps: [['老卤烧开','多年养着的老卤，每日烧开。'],['猪耳浸透','猪耳慢浸，入味到骨。'],['放凉切片','放凉切片即食。']],
+  arc: [{ico:'pigear-a',w:58,h:40,u:2,uw:26,name:'猪耳',slogan:'慢浸入味',desc:'猪耳在老卤里浸足时候——入味而不咸，本味派首选。'},{ico:'soupdrop-t',w:30,h:26,u:4,uw:22,name:'老卤',slogan:'多年养着的一锅',desc:'老卤一锅养多年——每天烧开晾凉，越养越香。'},{ico:'scallion-b',w:22,h:22,u:4,uw:18,name:'蘸料',slogan:'随喜',desc:'蘸料随喜——原味派直接吃，重口派蘸一下。'}]
+};
+
+ANIMS['B02'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','pshred-a',54,34, 90,531,23, 69,42, 2, 1],['a1','pshred-b',50,32, 126,540,27, 99,49, -1, 1],['a2','pshred-a',54,34, 137,550,22, 129,56, -3, 1],
+    ['a3','pshred-b',50,32, 173,525,26, 199,38, 5, 1],['a4','pshred-a',54,34, 184,535,21, 230,45, 2, 1],['a5','pshred-b',50,32, 220,544,25, 260,52, 0, 1],
+    ['b0','chilishred-a',46,20, 91,594,13, 99,206, 2, 2],['b1','chilishred-a',46,20, 163,564,16, 159,174, 0, 2],['b2','chilishred-a',46,20, 185,575,12, 220,186, -3, 2],
+    ['c0','scallion-a',26,24, 154,621,10, 127,303, 2, 3],['c1','scallion-b',22,22, 187,636,7, 218,318, 0, 3]
+  ],
+  labels: [{x:12,y:52,b:'土豆丝',s:'手切细丝·爽脆',side:'l'}, {x:186,y:200,b:'红椒丝',s:'配色提味',side:'r'}, {x:170,y:306,b:'葱花',s:'最后撒',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '酸辣爽脆，一筷子停不下',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['B02'] = {
+  intro: '土豆丝手切细丝，酸辣爽脆。',
+  steps: [['手切细丝','土豆手切细丝，清水冲去淀粉。'],['猛火快炒','红椒丝同炒，锅边醋一泼。'],['断生即起','断生即起，爽脆出锅。']],
+  arc: [{ico:'pshred-a',w:54,h:34,u:2,uw:26,name:'土豆丝',slogan:'手切细丝·爽脆',desc:'手切细丝才均匀——冲净淀粉，炒出来根根爽脆。'},{ico:'chilishred-a',w:46,h:20,u:2,uw:16,name:'红椒丝',slogan:'配色提味',desc:'红椒丝配色提味——酸甜里一点亮。'},{ico:'scallion-b',w:22,h:22,u:4,uw:18,name:'锅边醋',slogan:'酸香的关键',desc:'出锅前锅边醋一泼——酸香是激发出来的。'}]
+};
+
+ANIMS['B03'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','pbean-a',50,22, 102,542,26, 89,50, 5, 1],['a1','pbean-b',44,20, 115,551,21, 126,57, 3, 1],['a2','pbean-a',50,22, 159,527,25, 162,39, 0, 1],
+    ['a3','pbean-b',44,20, 172,536,20, 198,46, -3, 1],['a4','pbean-a',50,22, 215,546,24, 235,53, -5, 1],['b0','porkmince-a',34,26, 100,565,15, 43,176, -5, 2],
+    ['b1','porkmince-b',30,24, 154,577,18, 149,188, 3, 2],['b2','porkmince-a',34,26, 171,589,15, 194,200, 1, 2],['b3','porkmince-b',30,24, 225,559,18, 240,169, -2, 2],
+    ['c0','chili-a',26,22, 95,638,6, 44,320, -5, 3],['c1','chili-b',26,22, 167,600,9, 184,282, 3, 3],['c2','chili-a',26,22, 189,615,5, 245,297, 0, 3]
+  ],
+  labels: [{x:12,y:52,b:'酸豆角',s:'老坛发酵',side:'l'}, {x:186,y:200,b:'肉末',s:'煸香',side:'r'}, {x:170,y:306,b:'小米辣',s:'点辣',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '酸香开胃，一勺浇饭',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['B03'] = {
+  intro: '老坛酸豆角配肉末，酸香开胃。',
+  steps: [['酸豆角切粒','老坛酸豆角切粒，酸香足。'],['肉末煸香','肉末煸香下豆角。'],['合炒出香','小米辣点辣，合炒出锅。']],
+  arc: [{ico:'pbean-a',w:50,h:22,u:2,uw:18,name:'酸豆角',slogan:'老坛发酵',desc:'老坛发酵的酸豆角——酸是天然的，一勺浇饭就对了。'},{ico:'porkmince-a',w:34,h:26,u:2,uw:22,name:'肉末',slogan:'煸香',desc:'肉末煸香——油脂裹住酸豆角，酸香更润。'},{ico:'chili-b',w:26,h:22,u:4,uw:18,name:'小米辣',slogan:'点辣',desc:'小米辣只点一点——辣是配角，酸是主角。'}]
+};
+
+ANIMS['B04'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','tomato-a',52,42, 114,547,27, 51,54, -4, 1],['a1','tomato-b',46,40, 130,523,22, 156,36, 5, 1],['a2','tomato-c',44,36, 184,532,26, 202,43, 2, 1],
+    ['a3','tomato-a',52,42, 201,542,21, 247,50, -1, 1],['b0','egg-a',74,58, 106,572,16, 53,183, -3, 2],['b1','egg-b',68,62, 123,584,13, 158,195, 5, 2],
+    ['b2','egg-c',60,54, 177,596,16, 204,207, 2, 2],['b3','egg-b',68,62, 193,565,12, 249,176, 0, 2],['c0','scallion-a',26,24, 115,647,7, 64,329, -3, 3],
+    ['c1','scallion-b',22,22, 223,608,10, 275,290, 5, 3]
+  ],
+  labels: [{x:12,y:52,b:'番茄',s:'炒出沙才算数',side:'l'}, {x:186,y:200,b:'土鸡蛋',s:'大块嫩炒',side:'r'}, {x:170,y:306,b:'汤汁',s:'拌饭留着',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '酸甜的汤汁留着拌饭',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['B04'] = {
+  intro: '土鸡蛋炒成大块，番茄炒到出沙——酸甜的汤汁留着拌饭，从小吃到大的一盘。',
+  steps: [['蛋先炒成块','土鸡蛋大块嫩炒，先出锅。'],['番茄炒沙','番茄炒到出沙出汁。'],['合炒出汁','蛋块回锅，合炒出汁。']],
+  arc: [{ico:'tomato-a',w:52,h:42,u:2,uw:26,name:'番茄',slogan:'炒出沙才算数',desc:'番茄要炒到出沙——沙了才酸甜，汤汁才浓。'},{ico:'egg-a',w:74,h:58,u:2,uw:30,name:'土鸡蛋',slogan:'大块嫩炒',desc:'土鸡蛋大块嫩炒——块大有存在感，嫩不噎人。'},{ico:'scallion-b',w:22,h:22,u:4,uw:18,name:'汤汁',slogan:'拌饭留着',desc:'酸甜的汤汁留着拌饭——隐藏吃法从小吃到大。'}]
+};
+
+ANIMS['B05'] = {
+  plate: plateIron(),
+  layout: [
+    ['a0','cabbage-a',58,44, 109,550,27, 53,56, -3, 1],['a1','cabbage-b',52,40, 123,525,23, 137,38, 5, 1],['a2','cabbage-a',58,44, 166,535,26, 174,45, 3, 1],
+    ['a3','cabbage-b',52,40, 179,544,22, 210,52, 0, 1],['a4','cabbage-a',58,44, 222,554,26, 246,58, -3, 1],['b0','chilishred-a',46,20, 139,575,17, 74,186, -3, 2],
+    ['b1','chilishred-a',46,20, 172,587,13, 165,199, -5, 2],['c0','soupdrop-g',30,26, 121,597,7, 74,279, -3, 3],['c1','soupdrop-g',30,26, 229,612,10, 165,294, -5, 3],
+    ['sh1','shrimp-a',40,28, 196,586,18,  190,206,  5,2],
+    ['sh2','shrimp-b',34,24, 86,622,10,  54,218, -4,2],
+    ['sh3','shrimp-a',40,28, 142,630,6,  246,220,  3,2]
+  ],
+  labels: [{x:12,y:52,b:'包菜',s:'手撕·断面挂味',side:'l'}, {x:186,y:200,b:'干辣椒花椒',s:'炝锅',side:'r'}, {x:170,y:306,b:'猪油',s:'香气的底',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '脆里带甜，锅气十足',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['B05'] = {
+  intro: '包菜不用刀切、只用手撕——断面毛糙才挂得住味。虾干借鲜，干辣椒借香，铁锅猛火逼出焦边，一道素菜炒出荤香。',
+  steps: [['包菜手撕','包菜手撕成大片，断面毛糙挂味。'],['虾干爆香','虾干下锅爆香，借一口海鲜的鲜。'],['猛火快翻','铁锅猛火快翻，逼出焦边锅气。']],
+  arc: [
+    {ico:'cabbage-a', w:58, h:44, u:2, name:'手撕包菜', slogan:'断面粗糙更挂味', desc:'包菜不用刀——手撕的断面毛糙，酱汁才挂得住。'},
+    {ico:'shrimp-a', w:40, h:28, u:2, name:'虾干', slogan:'借海鲜一口鲜', desc:'虾干借鲜——三两只就够，素菜炒出荤香的秘密。'},
+    {ico:'chilishred-a', w:46, h:20, u:2, name:'铁锅猛火', slogan:'焦边锅气', desc:'铁锅猛火逼出焦边——锅气足，一碗饭不够。'}
+  ]
+};
+
+ANIMS['B07'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','wtofu-a',44,40, 84,555,21, 60,59, -1, 1],['a1','wtofu-b',40,38, 127,531,24, 97,42, -4, 1],['a2','wtofu-a',44,40, 140,540,20, 181,49, 5, 1],
+    ['a3','wtofu-b',40,38, 184,550,23, 218,55, 2, 1],['a4','wtofu-a',44,40, 227,525,27, 254,38, -1, 1],['b0','porkmince-a',34,26, 127,582,18, 76,193, -1, 2],
+    ['b1','porkmince-b',30,24, 149,594,14, 137,206, -3, 2],['b2','porkmince-a',34,26, 221,564,17, 277,174, 5, 2],['c0','scallion-a',26,24, 115,606,8, 76,288, -1, 3],
+    ['c1','scallion-b',22,22, 137,621,5, 136,303, -3, 3],['c2','soupdrop-r',30,26, 209,636,8, 277,318, 5, 3]
+  ],
+  labels: [{x:12,y:52,b:'豆腐',s:'嫩而不散',side:'l'}, {x:186,y:200,b:'麻辣红油',s:'现炝',side:'r'}, {x:170,y:306,b:'肉末葱花',s:'提香',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '麻辣烫嫩，一勺浇饭',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['B07'] = {
+  intro: '豆腐嫩到用勺舀，红油麻辣裹住每块——讲究"麻、辣、烫、嫩"四个字，上桌时必须还冒着气。',
+  steps: [['豆腐轻焯','豆腐轻焯定型，嫩而不散。'],['肉末煸香','肉末煸香，红油现炝。'],['红汤慢收','豆腐入红汤慢收，勺舀上桌。']],
+  arc: [{ico:'wtofu-a',w:44,h:40,u:2,uw:26,name:'豆腐',slogan:'嫩而不散',desc:'豆腐嫩到用勺舀——轻焯定型，怎么烧都不散。'},{ico:'porkmince-a',w:34,h:26,u:2,uw:22,name:'麻辣红油',slogan:'现炝',desc:'红油现炝——麻、辣、烫、嫩，四个字一个不能少。'},{ico:'scallion-a',w:26,h:24,u:4,uw:20,name:'肉末葱花',slogan:'提香',desc:'肉末葱花提香——最后一把，香气封顶。'}]
+};
+
+ANIMS['B08'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','bamboo-a',30,48, 87,524,21, 64,37, 0, 1],['a1','bamboo-b',26,44, 130,534,25, 101,44, -3, 1],['a2','bamboo-a',30,48, 143,543,20, 185,51, 5, 1],
+    ['a3','bamboo-b',26,44, 186,553,24, 221,57, 3, 1],['a4','bamboo-a',30,48, 229,528,27, 258,40, 0, 1],['b0','pickle-a',54,28, 81,585,12, 72,197, 0, 2],
+    ['b1','pickle-b',48,24, 135,597,15, 118,209, -3, 2],['b2','pickle-a',54,28, 189,567,18, 163,177, -5, 2],['b3','pickle-b',48,24, 205,579,14, 269,190, 3, 2],
+    ['c0','chili-a',26,22, 139,610,9, 102,292, 0, 3],['c1','chili-b',26,22, 172,625,5, 193,307, -3, 3]
+  ],
+  labels: [{x:12,y:52,b:'小笋',s:'嫩尖·掐得出水',side:'l'}, {x:186,y:200,b:'老坛酸菜',s:'发酵的酸',side:'r'}, {x:170,y:306,b:'干辣椒',s:'提辣',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '两个爽脆之物同锅',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['B08'] = {
+  intro: '酸菜的酸是发酵出来的酸，小笋的脆是带水分的脆——两个爽脆之物同锅，筷子停不下来。',
+  steps: [['酸菜挤干','老坛酸菜切碎挤干。'],['小笋快炒','嫩笋尖快炒断生。'],['合锅出香','合锅出香，干辣椒提辣。']],
+  arc: [{ico:'bamboo-a',w:30,h:48,u:2,uw:28,name:'小笋',slogan:'嫩尖·掐得出水',desc:'小笋只用嫩尖——掐得出水的鲜嫩，炒后依旧带脆。'},{ico:'pickle-a',w:54,h:28,u:2,uw:22,name:'老坛酸菜',slogan:'发酵的酸',desc:'酸菜的酸是发酵出来的——不是醋兑的，酸得有层次。'},{ico:'chili-b',w:26,h:22,u:4,uw:18,name:'干辣椒',slogan:'提辣',desc:'干辣椒提辣——酸辣脆三重奏。'}]
+};
+
+ANIMS['B11'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','greens-a',50,44, 91,529,23, 72,41, 1, 1],['a1','greens-b',44,40, 134,539,26, 108,48, -1, 1],['a2','greens-a',50,44, 148,548,22, 145,55, -4, 1],
+    ['a3','greens-b',44,40, 191,524,25, 229,37, 4, 1],['a4','greens-a',50,44, 204,533,21, 265,44, 2, 1],['b0','gclove-a',40,36, 89,592,13, 95,204, 2, 2],
+    ['b1','gclove-b',32,32, 161,562,16, 156,172, -1, 2],['b2','gclove-a',40,36, 183,574,12, 216,184, -3, 2],['c0','gbit-a',36,28, 151,619,10, 122,301, 2, 3],
+    ['c1','gbit-b',28,22, 184,634,6, 212,316, -1, 3]
+  ],
+  labels: [{x:12,y:52,b:'时蔬',s:'当日现采·当季轮换',side:'l'}, {x:186,y:200,b:'蒜',s:'炝锅',side:'r'}, {x:170,y:306,b:'大火',s:'锁翠',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '油盐之外不加戏',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['B11'] = {
+  intro: '什么当季炒什么，当日到货当日清。蒜香与油盐之外不加戏——吃蔬菜自己的甜。',
+  steps: [['猛火炝蒜','猛火炝蒜出香。'],['时蔬下锅','时蔬下锅快炒。'],['断生即起','断生即起，翠绿锁住。']],
+  arc: [{ico:'greens-a',w:50,h:44,u:2,uw:28,name:'时蔬',slogan:'当日现采·当季轮换',desc:'当日现采，当季轮换——今天什么鲜就炒什么。'},{ico:'gclove-a',w:40,h:36,u:2,uw:26,name:'蒜',slogan:'炝锅',desc:'蒜片炝锅——素菜的香就靠这一步。'},{ico:'gbit-b',w:28,h:22,u:4,uw:18,name:'大火',slogan:'锁翠',desc:'大火快攻锁翠——多炒十秒就黄。'}]
+};
+
+ANIMS['B12'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','tshred-a',52,36, 108,548,27, 51,55, -3, 1],['a1','tshred-b',48,34, 121,524,23, 135,37, 5, 1],['a2','tshred-a',52,36, 164,533,26, 171,44, 2, 1],
+    ['a3','tshred-b',48,34, 178,543,22, 208,51, 0, 1],['a4','tshred-a',52,36, 221,552,25, 244,57, -3, 1],['b0','cpowder-a',40,30, 117,574,17, 60,184, -3, 2],
+    ['b1','cpowder-b',30,24, 139,585,13, 200,197, 5, 2],['b2','cpowder-a',40,30, 211,597,16, 261,209, 3, 2],['c0','gbit-a',36,28, 105,595,7, 60,277, -3, 3],
+    ['c1','gbit-b',28,22, 177,610,10, 200,292, 5, 3],['c2','soupdrop-g',30,26, 199,625,6, 261,307, 3, 3],
+    ['cl1','cilantro-a',44,40, 96,594,20,  64,306, -4,3],
+    ['pn1','peanut-a',28,22, 220,598,17,  198,300,  5,3],
+    ['pn2','peanut-b',24,20, 150,640,7,  246,318,  4,3]
+  ],
+  labels: [{x:12,y:52,b:'牛肚丝',s:'卤香细切',side:'l'}, {x:186,y:200,b:'辣椒蒜末',s:'铺面',side:'r'}, {x:170,y:306,b:'滚油',s:'泼香',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '滚油泼下，滋啦一声',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['B12'] = {
+  intro: '牛肚白卤煮透、切细丝，红油拌香——白芝麻、辣椒碎、整叶香菜盖顶，肚丝脆弹挂汁，凉吃更爽口。',
+  steps: [['白卤煮透','牛肚白卤煮透，本味清爽。'],['切细丝','放凉切细丝，根根脆弹。'],['红油芝麻拌','红油拌开，芝麻香菜盖顶。']],
+  arc: [
+    {ico:'tshred-a', w:52, h:36, u:2, name:'牛肚丝', slogan:'白卤煮透·切丝脆弹', desc:'牛肚白卤煮透切细丝——白卤保本味，丝丝脆弹挂汁。'},
+    {ico:'soupdrop-r', w:30, h:26, u:4, name:'红油', slogan:'挂每根丝上·香而不呛', desc:'红油挂在每根丝上——香而不呛，凉吃更爽口。'},
+    {ico:'peanut-a', w:28, h:22, u:4, name:'芝麻香菜', slogan:'收尾提香', desc:'白芝麻、整叶香菜盖顶——红油拌制的收笔。'}
+  ]
+};
+
+ANIMS['B13'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','egg-a',74,58, 84,554,20, 63,58, -2, 1],['a1','egg-b',68,62, 138,529,24, 108,41, -4, 1],['a2','egg-c',60,54, 192,539,27, 213,48, 4, 1],
+    ['a3','egg-b',68,62, 208,548,23, 259,54, 1, 1],['b0','waipo-a',34,26, 114,580,18, 65,191, -1, 2],['b1','waipo-b',30,24, 130,592,14, 110,204, -4, 2],
+    ['b2','waipo-a',34,26, 184,562,17, 216,172, 4, 2],['b3','waipo-b',30,24, 200,573,13, 261,184, 2, 2],['c0','chili-a',26,22, 130,604,8, 88,286, -1, 3],
+    ['c1','chili-b',26,22, 162,619,4, 179,301, -4, 3]
+  ],
+  labels: [{x:12,y:52,b:'土鸡蛋',s:'大块',side:'l'}, {x:186,y:200,b:'外婆菜',s:'咸香',side:'r'}, {x:170,y:306,b:'红椒',s:'配色',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '咸香下饭，蛋香裹着菜香',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['B13'] = {
+  intro: '湘西外婆菜配土鸡蛋，咸香下饭。',
+  steps: [['蛋炒大块','土鸡蛋炒成大块先出锅。'],['外婆菜炒香','外婆菜下锅炒香。'],['合炒','蛋块回锅合炒，红椒配色。']],
+  arc: [{ico:'egg-a',w:74,h:58,u:2,uw:30,name:'土鸡蛋',slogan:'大块',desc:'土鸡蛋炒成大块——蛋香裹着菜香。'},{ico:'waipo-a',w:34,h:26,u:2,uw:22,name:'外婆菜',slogan:'咸香',desc:'湘西外婆菜——咸香里带脆，下饭神器。'},{ico:'chili-b',w:26,h:22,u:4,uw:18,name:'红椒',slogan:'配色',desc:'红椒配色——好看也是味道的一部分。'}]
+};
+
+ANIMS['B14'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','nsheet-a',56,40, 90,528,22, 70,40, 1, 1],['a1','nsheet-b',50,36, 133,538,26, 106,47, -2, 1],['a2','nsheet-a',56,40, 146,547,21, 143,54, -4, 1],
+    ['a3','nsheet-b',50,36, 190,522,25, 227,36, 4, 1],['a4','nsheet-a',56,40, 203,532,20, 263,43, 1, 1],['b0','pickle-a',54,28, 87,590,13, 92,202, 1, 2],
+    ['b1','pickle-b',48,24, 159,560,16, 152,170, -1, 2],['b2','pickle-a',54,28, 181,572,12, 213,183, -4, 2],['c0','chili-a',26,22, 147,617,10, 116,299, 1, 3],
+    ['c1','chili-b',26,22, 180,632,6, 207,314, -1, 3]
+  ],
+  labels: [{x:12,y:52,b:'粉皮',s:'红薯粉·透亮滑韧',side:'l'}, {x:186,y:200,b:'酸菜',s:'酸香',side:'r'}, {x:170,y:306,b:'红椒',s:'提辣',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '透亮滑韧，酸香同炒',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['B14'] = {
+  intro: '红薯粉皮透亮滑韧，酸菜酸香同炒。',
+  steps: [['粉皮泡软','红薯粉皮泡软撕片。'],['酸菜同炒','酸菜与粉皮同炒。'],['出锅','红椒提辣，滑韧出锅。']],
+  arc: [{ico:'nsheet-a',w:56,h:40,u:2,uw:26,name:'粉皮',slogan:'红薯粉·透亮滑韧',desc:'红薯粉皮透亮滑韧——吸汁不烂，滑得筷子要用力。'},{ico:'pickle-a',w:54,h:28,u:2,uw:22,name:'酸菜',slogan:'酸香',desc:'酸菜酸香——裹在粉皮上，一口一个酸爽。'},{ico:'chili-b',w:26,h:22,u:4,uw:18,name:'红椒',slogan:'提辣',desc:'红椒提辣——色香味都齐了。'}]
+};
+
+/* ================= 批次3注册表（A区6+饮品11，10-14生成） ================= */
+ANIMS['A01'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','woodEar-a',58,50, 89,527,22, 69,40, 1, 1],['a1','woodEar-b',48,44, 132,537,26, 105,46, -2, 1],['a2','woodEar-c',44,46, 146,546,21, 141,53, -5, 1],
+    ['a3','woodEar-a',58,50, 189,522,25, 226,36, 4, 1],['a4','woodEar-b',48,44, 202,531,20, 262,42, 1, 1],['b0','soupdrop-r',30,26, 86,589,12, 90,201, 1, 2],
+    ['b1','soupdrop-r',30,26, 158,559,15, 150,169, -2, 2],['b2','gbit-a',36,28, 180,571,12, 211,182, -4, 2],['c0','cilantro-a',44,40, 124,615,10, 90,297, 1, 3],
+    ['c1','cilantro-b',40,38, 146,630,6, 150,312, -2, 3],['c2','scallion-a',26,24, 217,645,9, 211,327, -4, 3]
+  ],
+  labels: [{x:12,y:52,b:'木耳',s:'当日泡发·超四小时废弃',side:'l'}, {x:186,y:200,b:'酸辣汁',s:'现调·不隔夜',side:'r'}, {x:170,y:306,b:'蒜末香菜',s:'提味不抢戏',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '酸辣冷汁浸进每一片褶皱',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['A01'] = {
+  intro: '木耳当日泡发、当日用完，超时不留。酸辣冷汁浸进每一片褶皱——凉菜里的头盘。',
+  steps: [['沸水快焯','沸水快焯十几秒，杀菌收紧。'],['冰水收紧','冰水一过，脆度锁住。'],['冷汁拌匀','酸辣冷汁现调，拌匀即上。']],
+  arc: [{ico:'woodEar-a',w:58,h:50,u:2,uw:32,name:'木耳',slogan:'当日泡发·超四小时废弃',desc:'木耳当日泡发、当日用完——超过四小时直接废弃，褶皱里不藏隔夜水。'},{ico:'soupdrop-r',w:30,h:26,u:4,uw:22,name:'酸辣汁',slogan:'现调·不隔夜',desc:'酸辣汁现调不隔夜——醋香提得起木耳的脆。'},{ico:'cilantro-a',w:44,h:40,u:4,uw:38,name:'蒜末香菜',slogan:'提味不抢戏',desc:'蒜末香菜提味不抢戏——凉菜头盘的分寸。'}]
+};
+
+ANIMS['A02'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','kelp-a',56,30, 92,530,23, 73,41, 2, 1],['a1','kelp-b',50,26, 135,539,26, 109,48, -1, 1],['a2','kelp-a',56,30, 148,549,22, 145,55, -4, 1],
+    ['a3','kelp-b',50,26, 191,524,25, 230,38, 5, 1],['a4','kelp-a',56,30, 204,534,21, 266,44, 2, 1],['b0','gbit-a',36,28, 90,593,13, 96,204, 2, 2],
+    ['b1','gbit-b',28,22, 162,562,16, 157,173, -1, 2],['b2','gbit-a',36,28, 184,574,12, 217,185, -3, 2],['c0','soupdrop-r',30,26, 152,620,10, 123,302, 2, 3],
+    ['c1','soupdrop-r',30,26, 185,635,6, 214,317, -1, 3]
+  ],
+  labels: [{x:12,y:52,b:'海带',s:'切丝冰镇·韧劲保留',side:'l'}, {x:186,y:200,b:'蒜醋汁',s:'现调',side:'r'}, {x:170,y:306,b:'辣椒油',s:'一点红',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '脆得有韧劲',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['A02'] = {
+  intro: '海带切丝焯水，过冰水保住那口韧脆。蒜蓉与醋汁提起咸鲜——开胃，但不抢主菜的戏。',
+  steps: [['切丝焯水','海带切丝，沸水快焯。'],['冰水过凉','冰水一过，韧脆锁住。'],['冷汁拌匀','蒜醋汁拌匀上桌。']],
+  arc: [{ico:'kelp-a',w:56,h:30,u:2,uw:26,name:'海带',slogan:'切丝冰镇·韧劲保留',desc:'海带切丝冰镇——那口韧脆是冰水给的。'},{ico:'gbit-a',w:36,h:28,u:2,uw:22,name:'蒜醋汁',slogan:'现调',desc:'蒜蓉与醋汁现调——咸鲜的开胃号角。'},{ico:'soupdrop-r',w:30,h:26,u:4,uw:22,name:'辣椒油',slogan:'一点红',desc:'辣椒油一点红——好看，也提一层香。'}]
+};
+
+ANIMS['A03'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','cegg-a',52,42, 108,535,24, 106,45, 3, 1],['a1','cegg-b',46,38, 130,545,20, 167,52, 1, 1],['a2','cegg-a',52,42, 202,554,23, 227,59, -2, 1],
+    ['b0','duojiao-a',32,26, 98,557,14, 109,167, 4, 2],['b1','duojiao-b',28,24, 170,569,17, 170,180, 1, 2],['b2','duojiao-a',32,26, 192,581,13, 230,192, -2, 2],
+    ['c0','soupdrop-g',30,26, 89,628,4, 142,310, 4, 3],['c1','soupdrop-g',30,26, 197,643,7, 233,325, 1, 3]
+  ],
+  labels: [{x:12,y:52,b:'皮蛋',s:'溏心·松花纹是时间给的',side:'l'}, {x:186,y:200,b:'湖南剁椒',s:'发酵的酸辣',side:'r'}, {x:170,y:306,b:'热油',s:'上桌前激的那一下',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '凉的皮蛋，热的香',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['A03'] = {
+  intro: '皮蛋溏心、蛋体透亮带松花纹，湖南剁椒铺面，滚油一激——凉的皮蛋，热的香。',
+  steps: [['皮蛋对切','溏心皮蛋一分为四。'],['剁椒铺面','湖南剁椒铺满蛋面。'],['滚油激香','滚油一激，上桌。']],
+  arc: [{ico:'cegg-a',w:52,h:42,u:2,uw:28,name:'皮蛋',slogan:'溏心·松花纹是时间给的',desc:'溏心皮蛋蛋体透亮——松花纹是时间给的，急不来。'},{ico:'duojiao-a',w:32,h:26,u:2,uw:22,name:'湖南剁椒',slogan:'发酵的酸辣',desc:'湖南剁椒发酵的酸辣——铺在皮蛋上，红配墨绿。'},{ico:'soupdrop-g',w:30,h:26,u:4,uw:22,name:'热油',slogan:'上桌前激的那一下',desc:'滚油上桌前激的那一下——香气带着温度来的。'}]
+};
+
+ANIMS['A04'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','bcstick-a',54,30, 99,538,25, 84,47, 4, 1],['a1','bcstick-b',48,26, 112,548,20, 120,54, 2, 1],['a2','bcstick-a',54,30, 155,523,24, 157,37, -1, 1],
+    ['a3','bcstick-b',48,26, 198,533,27, 193,43, -4, 1],['a4','bcstick-a',54,30, 212,542,23, 277,50, 5, 1],['b0','soupdrop-r',30,26, 102,561,15, 115,171, 5, 2],
+    ['b1','soupdrop-r',30,26, 174,572,18, 176,183, 2, 2],['b2','soupdrop-r',30,26, 196,584,14, 237,196, -1, 2],['c0','cilantro-a',44,40, 95,633,5, 152,315, 5, 3],
+    ['c1','cilantro-b',40,38, 203,594,8, 243,276, 2, 3]
+  ],
+  labels: [{x:12,y:52,b:'腐竹',s:'豆香弹韧·冷水收紧',side:'l'}, {x:186,y:200,b:'红油',s:'自己熬的辣',side:'r'}, {x:170,y:306,b:'香菜葱花',s:'最后一把',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '豆香收在嚼劲里',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['A04'] = {
+  intro: '腐竹煮到弹韧、冷水收紧，红油与香菜拌开——豆制品的凉吃法，豆香收在嚼劲里。',
+  steps: [['煮到弹韧','腐竹煮到弹韧不烂。'],['冷水收紧','冷水一收，嚼劲立住。'],['红油拌匀','红油与香菜拌匀。']],
+  arc: [{ico:'bcstick-a',w:54,h:30,u:2,uw:26,name:'腐竹',slogan:'豆香弹韧·冷水收紧',desc:'腐竹煮到弹韧、冷水收紧——豆香收在嚼劲里。'},{ico:'soupdrop-r',w:30,h:26,u:4,uw:22,name:'红油',slogan:'自己熬的辣',desc:'红油自己熬——辣香有层次，不燥。'},{ico:'cilantro-a',w:44,h:40,u:4,uw:38,name:'香菜葱花',slogan:'最后一把',desc:'香菜葱花最后一把——凉菜的收尾。'}]
+};
+
+ANIMS['A05'] = {
+  plate: plateWhite(),
+  layout: [
+    ['a0','cucumber-a',54,30, 104,543,26, 44,51, -5, 1],['a1','cucumber-b',48,28, 117,553,21, 128,58, 3, 1],['a2','cucumber-a',54,30, 160,528,25, 164,40, 1, 1],
+    ['a3','cucumber-b',48,28, 173,538,20, 201,47, -2, 1],['a4','cucumber-a',54,30, 216,547,24, 237,54, -5, 1],['b0','gbit-a',36,28, 110,567,16, 48,178, -5, 2],
+    ['b1','gbit-b',28,22, 132,579,12, 189,190, 4, 2],['b2','gbit-a',36,28, 204,591,15, 249,203, 1, 2],['c0','chili-a',26,22, 107,641,6, 51,323, -5, 3],
+    ['c1','chili-b',26,22, 214,602,9, 262,284, 4, 3]
+  ],
+  labels: [{x:12,y:52,b:'黄瓜',s:'刀背拍裂·裂口吸汁',side:'l'}, {x:186,y:200,b:'蒜汁',s:'现拍现调',side:'r'}, {x:170,y:306,b:'辣椒',s:'点睛的红',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '刀背拍裂，脆到出水',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['A05'] = {
+  intro: '黄瓜要用刀背拍裂——裂口才挂得住蒜汁。冰镇上桌，一筷子醒胃。',
+  steps: [['刀背拍裂','刀背拍裂黄瓜，裂口吸汁。'],['冰镇锁脆','冰镇锁脆，上桌还带凉气。'],['蒜汁拌匀','现拍蒜汁拌匀。']],
+  arc: [{ico:'cucumber-a',w:54,h:30,u:2,uw:26,name:'黄瓜',slogan:'刀背拍裂·裂口吸汁',desc:'黄瓜用刀背拍裂——裂口才挂得住蒜汁，切的不行。'},{ico:'gbit-a',w:36,h:28,u:2,uw:22,name:'蒜汁',slogan:'现拍现调',desc:'蒜汁现拍现调——蒜香是生的、冲的、醒胃的。'},{ico:'chili-b',w:26,h:22,u:4,uw:18,name:'辣椒',slogan:'点睛的红',desc:'辣椒点睛的红——脆到出水的最后一笔。'}]
+};
+
+ANIMS['A07'] = {
+  plate: plateDeep('#A86828'),
+  layout: [
+    ['a0','gtofu-a',48,30, 81,552,20, 55,57, -2, 1],['a1','gtofu-b',44,28, 124,527,23, 92,39, -5, 1],['a2','gtofu-a',48,30, 167,537,27, 176,46, 3, 1],
+    ['a3','gtofu-b',44,28, 180,546,22, 212,53, 1, 1],['a4','gtofu-a',48,30, 223,522,26, 249,36, -2, 1],['b0','cpowder-a',40,30, 122,578,17, 67,189, -2, 2],
+    ['b1','cpowder-b',30,24, 144,589,13, 128,201, -5, 2],['b2','cpowder-a',40,30, 215,559,17, 268,169, 4, 2],['c0','gbit-a',36,28, 110,600,8, 67,282, -2, 3],
+    ['c1','gbit-b',28,22, 131,615,4, 128,297, -5, 3],['c2','soupdrop-g',30,26, 203,630,7, 268,312, 4, 3]
+  ],
+  labels: [{x:12,y:52,b:'黄金干',s:'金黄豆干·外韧内嫩',side:'l'}, {x:186,y:200,b:'蒜末辣椒',s:'铺满一面',side:'r'}, {x:170,y:306,b:'滚油',s:'当桌泼下的一声滋啦',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '香气是带着声音上桌的',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['A07'] = {
+  intro: '金黄香干外韧内嫩，铺蒜末与辣椒面，滚油"滋啦"一声泼下——香气是带着声音上桌的。',
+  steps: [['香干切条','金黄香干切条，外韧内嫩。'],['料铺满','蒜末辣椒面铺满一面。'],['滚油激香','滚油当桌泼下，滋啦一声。']],
+  arc: [{ico:'gtofu-a',w:48,h:30,u:2,uw:26,name:'黄金干',slogan:'金黄豆干·外韧内嫩',desc:'金黄香干外韧内嫩——炸过的皮，嫩的芯。'},{ico:'cpowder-a',w:40,h:30,u:2,uw:24,name:'蒜末辣椒',slogan:'铺满一面',desc:'蒜末辣椒铺满一面——等那一声滋啦。'},{ico:'soupdrop-g',w:30,h:26,u:4,uw:22,name:'滚油',slogan:'当桌泼下的一声滋啦',desc:'滚油当桌泼下——香气是带着声音上桌的。'}]
+};
+
+ANIMS['S01'] = {
+  cup: true,
+  plate: cupBucket('#F0E0C8'),
+  layout: [
+    ['a0','melon-a',40,36, 110,540,24, 63,61, -1, 1],['a1','melon-b',34,32, 140,511,27, 109,45, -4, 1],['a2','melon-a',40,36, 150,522,24, 214,51, 4, 1],
+    ['a3','melon-b',34,32, 180,534,26, 260,57, 2, 1],['b0','coco-a',34,24, 133,582,21, 74,192, -1, 2],['b1','coco-a',34,24, 146,593,18, 134,203, -4, 2],
+    ['b2','coco-a',34,24, 186,564,20, 275,174, 5, 2],['c0','icecube-a',34,34, 127,623,12, 73,288, -1, 3],['c1','icecube-b',28,28, 139,636,8, 134,301, -4, 3],
+    ['c2','icecube-a',34,34, 179,648,11, 275,313, 5, 3]
+  ],
+  labels: [{x:12,y:52,b:'西瓜',s:'手捣果肉打底',side:'l'}, {x:186,y:200,b:'海底椰',s:'脆嫩白片',side:'r'}, {x:170,y:306,b:'一升桶',s:'与朋友分着喝',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '椰乳清润，一升桶装',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['S01'] = {
+  intro: '手捣西瓜肉打底，椰乳清润，一升桶装与朋友分着喝。',
+  steps: [['西瓜手捣','西瓜肉手捣出汁，果肉保留。'],['椰乳调和','椰乳清润调和。'],['桶装上冰','一升桶装，加足冰块。']],
+  arc: [{ico:'melon-a',w:40,h:36,u:2,uw:32,name:'西瓜',slogan:'手捣果肉打底',desc:'西瓜肉手捣——汁和肉都在，不是兑的糖水。'},{ico:'coco-a',w:34,h:24,u:2,uw:22,name:'海底椰',slogan:'脆嫩白片',desc:'海底椰白片脆嫩——椰香的另一种形态。'},{ico:'icecube-a',w:34,h:34,u:2,uw:28,name:'一升桶',slogan:'与朋友分着喝',desc:'一升桶装——一个人的量是两个人的友谊。'}]
+};
+
+ANIMS['S02'] = {
+  cup: true,
+  plate: cupTall('#F5E8C8','#EDE4C4'),
+  layout: [
+    ['a0','lemon-a',46,46, 118,510,26, 90,44, 1, 1],['a1','lemon-b',38,38, 158,521,28, 150,50, -2, 1],['a2','lemon-a',46,46, 170,532,25, 211,56, -4, 1],
+    ['b0','mint-a',34,30, 112,591,16, 93,201, 2, 2],['b1','mint-b',30,26, 152,562,19, 153,172, -1, 2],['b2','mint-a',34,30, 165,574,16, 214,184, -4, 2],
+    ['c0','icecube-a',34,34, 133,634,13, 92,299, 2, 3],['c1','icecube-b',28,28, 146,647,10, 153,311, -1, 3],['c2','icecube-a',34,34, 186,659,12, 214,323, -4, 3]
+  ],
+  labels: [{x:12,y:52,b:'柠檬',s:'新鲜现切',side:'l'}, {x:186,y:200,b:'薄荷',s:'冰水直出',side:'r'}, {x:170,y:306,b:'解腻醒神',s:'饭后一杯',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '新鲜薄荷与柠檬，冰水直出',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['S02'] = {
+  intro: '新鲜薄荷与柠檬，冰水直出，解腻醒神。',
+  steps: [['柠檬现切','柠檬现切厚片，黄皮带香。'],['薄荷入杯','新鲜薄荷轻拍入杯。'],['冰水直出','冰水直出，不加糖浆。']],
+  arc: [{ico:'lemon-a',w:46,h:46,u:2,uw:34,name:'柠檬',slogan:'新鲜现切',desc:'柠檬新鲜现切——厚片才出得起味。'},{ico:'mint-a',w:34,h:30,u:2,uw:26,name:'薄荷',slogan:'冰水直出',desc:'新鲜薄荷——冰水直出，香得干净。'},{ico:'icecube-b',w:28,h:28,u:2,uw:24,name:'解腻醒神',slogan:'饭后一杯',desc:'饭后一杯解腻醒神——RM 3.9 的清醒。'}]
+};
+
+ANIMS['S03'] = {
+  cup: true,
+  plate: cupTall('#C8A8E0','#E4D8EC'),
+  layout: [
+    ['a0','grape-a',34,36, 122,516,27, 103,48, 3, 1],['a1','grape-g',32,34, 162,527,29, 163,54, 0, 1],['a2','grape-a',34,36, 175,538,26, 224,60, -2, 1],
+    ['b0','boba-a',28,22, 116,558,17, 105,168, 3, 2],['b1','boba-a',28,22, 157,569,20, 166,179, 1, 2],['b2','boba-a',28,22, 169,580,17, 227,190, -2, 2],
+    ['b3','boba-a',34,26, 108,640,10, 100,300,  4, 3],['b4','boba-a',34,26, 158,648,8,  158,306, -4, 3],['b5','boba-a',34,26, 208,644,6,  216,300,  5, 3],['b6','boba-a',34,26, 132,662,4,  258,296,  3, 3],['b7','boba-a',34,26, 182,664,3,   72,300, -5, 3]
+  ],
+  labels: [{x:12,y:52,b:'葡萄',s:'清甜打底',side:'l'}, {x:186,y:200,b:'波波',s:'每口都有嚼感',side:'r'}, {x:170,y:306,b:'淡茶色',s:'清爽不腻',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '每口都有嚼感',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['S03'] = {
+  intro: '葡萄清甜打底，波波铺底，每口都有嚼感。',
+  steps: [['葡萄入杯','葡萄果肉入杯，清甜打底。'],['波波铺底','黑色波波铺满杯底。'],['茶色调和','淡茶色调和，清爽不腻。']],
+  arc: [{ico:'grape-a',w:34,h:36,u:2,uw:30,name:'葡萄',slogan:'清甜打底',desc:'葡萄果肉清甜打底——紫的绿的都在。'},{ico:'boba-a',w:28,h:22,u:2,uw:20,name:'波波',slogan:'每口都有嚼感',desc:'黑色波波铺底——吸管戳到底，每口都有嚼感。'},{ico:'icecube-b',w:28,h:28,u:2,uw:24,name:'淡茶色',slogan:'清爽不腻',desc:'淡茶色调和——甜得清爽不腻。'}]
+};
+
+ANIMS['L01'] = {
+  cup: true,
+  plate: cupMason('#D9A83C','#E8C860'),
+  layout: [
+    ['a0','lemon-a',46,46, 124,519,27, 109,49, 4, 1],['a1','lemon-b',38,38, 137,530,24, 170,55, 1, 1],['a2','lemon-a',46,46, 177,502,26, 230,40, -2, 1],
+    ['b0','tealeaf-a',30,40, 124,561,18, 147,171, 4, 2],['b1','tealeaf-a',30,40, 185,572,21, 238,182, 2, 2],['c0','icecube-a',34,34, 112,645,8, 112,309, 4, 3],
+    ['c1','icecube-b',28,28, 152,658,11, 172,322, 1, 3],['c2','icecube-a',34,34, 164,624,8, 233,290, -1, 3]
+  ],
+  labels: [{x:12,y:52,b:'香水柠檬',s:'现捶·皮油迸香',side:'l'}, {x:186,y:200,b:'茶底',s:'浓茶现萃',side:'r'}, {x:170,y:306,b:'冰爽',s:'锤打杯上桌',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '皮油迸香，酸爽回甘',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['L01'] = {
+  intro: '香水柠檬现捶，皮油迸香，酸爽回甘。',
+  steps: [['柠檬现捶','香水柠檬整片捶打出皮油。'],['浓茶现萃','茶底浓萃，压得住酸。'],['锤打出杯','锤打杯装满冰，上桌。']],
+  arc: [{ico:'lemon-a',w:46,h:46,u:2,uw:34,name:'香水柠檬',slogan:'现捶·皮油迸香',desc:'香水柠檬现捶——皮油迸出来的香，不捶不出。'},{ico:'tealeaf-a',w:30,h:40,u:2,uw:32,name:'茶底',slogan:'浓茶现萃',desc:'茶底浓萃——酸的另一面是茶的重。'},{ico:'icecube-a',w:34,h:34,u:2,uw:28,name:'冰爽',slogan:'锤打杯上桌',desc:'锤打杯上桌——冰爽从第一口到最后一口。'}]
+};
+
+ANIMS['L02'] = {
+  cup: true,
+  plate: cupMason('#B8884A','#D9A862'),
+  layout: [
+    ['a0','lemon-a',46,46, 140,526,28, 42,53, -5, 1],['a1','lemon-b',38,38, 158,537,25, 253,59, 3, 1],['b0','tealeaf-a',30,40, 123,567,19, 45,177, -5, 2],
+    ['b1','tealeaf-a',30,40, 163,578,21, 185,188, 3, 2],['b2','tealeaf-a',30,40, 176,589,18, 246,199, 1, 2],['c0','icecube-a',34,34, 121,652,9, 46,316, -5, 3],
+    ['c1','icecube-b',28,28, 181,619,12, 257,285, 3, 3]
+  ],
+  labels: [{x:12,y:52,b:'凤凰单丛',s:'潮州入茶',side:'l'}, {x:186,y:200,b:'柠檬',s:'一杯两香',side:'r'}, {x:170,y:306,b:'冰镇',s:'回甘持久',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '茶香衬柠檬，一杯两香',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['L02'] = {
+  intro: '潮州凤凰单丛入茶，茶香衬柠檬，一杯两香。',
+  steps: [['单丛现萃','凤凰单丛现萃，焙香入汤。'],['柠檬现捶','柠檬捶打出酸香。'],['合杯','茶撞柠檬，一杯两香。']],
+  arc: [{ico:'tealeaf-a',w:30,h:40,u:2,uw:32,name:'凤凰单丛',slogan:'潮州入茶',desc:'潮州凤凰单丛——鸭屎香的雅名，焙香高扬。'},{ico:'lemon-a',w:46,h:46,u:2,uw:34,name:'柠檬',slogan:'一杯两香',desc:'柠檬的酸与单丛的香——一杯里两种主角。'},{ico:'icecube-b',w:28,h:28,u:2,uw:24,name:'冰镇',slogan:'回甘持久',desc:'冰镇后回甘更持久——单丛的余韵。'}]
+};
+
+ANIMS['L05'] = {
+  cup: true,
+  plate: cupMason('#D9C060','#E8D88A'),
+  layout: [
+    ['a0','lemon-a',46,46, 146,532,29, 61,56, -4, 1],['a1','lemon-b',38,38, 165,503,26, 272,40, 5, 1],['b0','jasmine-a',30,28, 128,574,20, 57,184, -3, 2],
+    ['b1','tealeaf-g',30,40, 140,585,16, 198,195, 5, 2],['b2','jasmine-a',30,28, 180,596,19, 259,206, 2, 2],['c0','icecube-a',34,34, 128,659,10, 65,323, -3, 3],
+    ['c1','icecube-b',28,28, 188,626,13, 276,292, 5, 3]
+  ],
+  labels: [{x:12,y:52,b:'茉莉',s:'窨香入茶',side:'l'}, {x:186,y:200,b:'绿茶叶',s:'原叶打底',side:'r'}, {x:170,y:306,b:'柠檬',s:'一点酸',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '花香一缕甜',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['L05'] = {
+  intro: '茉莉窨香入茶，柠檬一点酸，花香一缕甜。',
+  steps: [['茉莉窨制','茉莉鲜花窨制的绿茶打底。'],['柠檬点缀','柠檬一点酸，不多不少。'],['冰镇出杯','冰镇出杯，先闻花香。']],
+  arc: [{ico:'jasmine-a',w:30,h:28,u:2,uw:26,name:'茉莉',slogan:'窨香入茶',desc:'茉莉鲜花窨制——花香是茶自己吸进去的。'},{ico:'tealeaf-g',w:30,h:40,u:2,uw:32,name:'绿茶叶',slogan:'原叶打底',desc:'绿茶叶原叶打底——看得见的叶子。'},{ico:'lemon-b',w:38,h:38,u:2,uw:30,name:'柠檬',slogan:'一点酸',desc:'柠檬一点酸——把花香衬得更甜。'}]
+};
+
+ANIMS['L06'] = {
+  cup: true,
+  plate: cupMason('#7EA84E','#9CC46C'),
+  layout: [
+    ['a0','lemon-a',46,46, 108,535,24, 70,58, -3, 1],['a1','lemon-b',38,38, 168,506,26, 281,42, 5, 1],['b0','tealeaf-g',30,40, 130,577,20, 64,187, -2, 2],
+    ['b1','tealeaf-g',30,40, 142,588,17, 124,198, -5, 2],['b2','tealeaf-g',30,40, 182,559,20, 265,169, 3, 2],['c0','icecube-a',34,34, 131,617,11, 74,283, -2, 3],
+    ['c1','icecube-b',28,28, 191,630,13, 165,295, -5, 3]
+  ],
+  labels: [{x:12,y:52,b:'泰式绿茶',s:'翠绿透亮',side:'l'}, {x:186,y:200,b:'柠檬',s:'清苦回甘',side:'r'}, {x:170,y:306,b:'冰镇',s:'泰式喝法',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '翠绿透亮，清苦回甘',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['L06'] = {
+  intro: '泰式绿茶打底，翠绿透亮，清苦回甘。',
+  steps: [['泰绿现萃','泰式绿茶现萃，翠绿透亮。'],['柠檬现捶','柠檬现捶入茶。'],['满冰出杯','满冰出杯，泰式喝法。']],
+  arc: [{ico:'tealeaf-g',w:30,h:40,u:2,uw:32,name:'泰式绿茶',slogan:'翠绿透亮',desc:'泰式绿茶——那抹翠绿是茶本色，不是色素。'},{ico:'lemon-a',w:46,h:46,u:2,uw:34,name:'柠檬',slogan:'清苦回甘',desc:'柠檬与泰绿——清苦之后的回甘才叫回甘。'},{ico:'icecube-a',w:34,h:34,u:2,uw:28,name:'冰镇',slogan:'泰式喝法',desc:'满冰出杯——泰式的喝法，热天的解法。'}]
+};
+
+ANIMS['M01'] = {
+  cup: true,
+  plate: cupTall('#EFE4C4','#F8F0DC'),
+  layout: [
+    ['a0','tealeaf-a',30,40, 114,502,24, 90,40, -1, 1],['a1','tealeaf-a',30,40, 175,513,27, 181,46, -4, 1],['b0','milkdrop-a',30,26, 148,583,21, 94,193, -1, 2],
+    ['b1','milkdrop-b',26,22, 166,594,18, 185,204, -3, 2],['c0','icecube-a',34,34, 138,624,12, 94,290, -1, 3],['c1','icecube-b',28,28, 156,637,8, 185,302, -3, 3]
+  ],
+  labels: [{x:12,y:52,b:'单丛',s:'焙香高扬',side:'l'}, {x:186,y:200,b:'轻乳',s:'轻盈·低负担',side:'r'}, {x:170,y:306,b:'温热冰做',s:'双选',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '香而不腻，一杯见底',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['M01'] = {
+  intro: '单丛茶的焙香本就高扬，轻乳一收，香得温和——喝完杯底不留腻感。',
+  steps: [['单丛现萃','单丛现萃，焙香入汤。'],['轻乳匀和','轻乳一匀，香得温和。'],['双选出杯','温热冰做，双选出杯。']],
+  arc: [{ico:'tealeaf-a',w:30,h:40,u:2,uw:32,name:'单丛',slogan:'焙香高扬',desc:'单丛焙香高扬——轻乳压得住，压不没。'},{ico:'milkdrop-a',w:30,h:26,u:2,uw:22,name:'轻乳',slogan:'轻盈·低负担',desc:'轻乳轻盈低负担——喝完杯底不留腻感。'},{ico:'icecube-b',w:28,h:28,u:2,uw:24,name:'温热冰做',slogan:'双选',desc:'温热冰做双选——天气说了算。'}]
+};
+
+ANIMS['M02'] = {
+  cup: true,
+  plate: cupTall('#E8B8B0','#F8E8E0'),
+  layout: [
+    ['a0','peach-a',36,34, 114,505,25, 80,41, 0, 1],['a1','peach-b',30,28, 155,516,28, 141,47, -3, 1],['a2','peach-a',36,34, 167,527,24, 281,54, 5, 1],
+    ['b0','tealeaf-a',30,40, 109,586,16, 83,196, 0, 2],['b1','milkdrop-a',30,26, 149,597,18, 143,207, -2, 2],['b2','milkdrop-b',26,22, 189,569,21, 204,179, -5, 2],
+    ['c0','icecube-a',34,34, 141,628,12, 103,293, 0, 3],['c1','icecube-b',28,28, 159,641,9, 194,306, -3, 3]
+  ],
+  labels: [{x:12,y:52,b:'蜜桃',s:'果肉真实入杯',side:'l'}, {x:186,y:200,b:'乌龙茶',s:'原叶打底',side:'r'}, {x:170,y:306,b:'轻乳',s:'收尾顺滑',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '果甜茶甘，粉得干净',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['M02'] = {
+  intro: '蜜桃的甜是明面上的，乌龙的甘压着分寸——轻乳兜底，粉得干净。',
+  steps: [['乌龙现萃','乌龙原叶现萃。'],['蜜桃入杯','蜜桃果肉真实入杯。'],['轻乳匀和','轻乳兜底，粉得干净。']],
+  arc: [{ico:'peach-a',w:36,h:34,u:2,uw:30,name:'蜜桃',slogan:'果肉真实入杯',desc:'蜜桃果肉真实入杯——喝得到的果肉，不是香精。'},{ico:'tealeaf-a',w:30,h:40,u:2,uw:32,name:'乌龙茶',slogan:'原叶打底',desc:'乌龙原叶打底——甜的下面是茶的甘。'},{ico:'milkdrop-a',w:30,h:26,u:2,uw:22,name:'轻乳',slogan:'收尾顺滑',desc:'轻乳收尾顺滑——粉得干净。'}]
+};
+
+ANIMS['M05'] = {
+  cup: true,
+  plate: cupTall('#D89850','#E8C8A0'),
+  layout: [
+    ['a0','tealeaf-a',30,40, 121,508,25, 109,43, 1, 1],['a1','tealeaf-a',30,40, 181,519,28, 200,49, -2, 1],['b0','milkdrop-a',30,26, 112,589,16, 113,199, 1, 2],
+    ['b1','milkdrop-b',26,22, 173,561,19, 204,171, -2, 2],['c0','icecube-a',34,34, 144,632,13, 113,297, 1, 3],['c1','icecube-b',28,28, 163,645,9, 204,309, -2, 3]
+  ],
+  labels: [{x:12,y:52,b:'锡兰红茶',s:'斯里兰卡·汤色红亮',side:'l'}, {x:186,y:200,b:'轻乳',s:'匀和劲道',side:'r'}, {x:170,y:306,b:'回味',s:'仍是茶',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '入口顺，回味仍是茶',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['M05'] = {
+  intro: '锡兰红茶性子强劲、汤色红亮，轻乳一匀——入口顺，回味仍是茶。',
+  steps: [['锡兰现萃','锡兰红茶现萃，汤色红亮。'],['轻乳匀和','轻乳匀和强劲的茶性。'],['双选出杯','温热冰做双选。']],
+  arc: [{ico:'tealeaf-a',w:30,h:40,u:2,uw:32,name:'锡兰红茶',slogan:'斯里兰卡·汤色红亮',desc:'斯里兰卡锡兰红茶——汤色红亮是本色。'},{ico:'milkdrop-a',w:30,h:26,u:2,uw:22,name:'轻乳',slogan:'匀和劲道',desc:'轻乳匀和劲道——顺，但不削弱茶。'},{ico:'icecube-b',w:28,h:28,u:2,uw:24,name:'回味',slogan:'仍是茶',desc:'入口顺，回味仍是茶——奶是配角。'}]
+};
+
+ANIMS['M06'] = {
+  cup: true,
+  plate: cupTall('#E0ECD4','#F0F5E8'),
+  layout: [
+    ['a0','jasmine-a',30,28, 131,518,27, 137,48, 3, 1],['a1','jasmine-a',30,28, 191,529,29, 228,54, 1, 1],['b0','milkdrop-a',30,26, 123,559,18, 142,169, 4, 2],
+    ['b1','milkdrop-b',26,22, 183,570,20, 233,180, 1, 2],['c0','icecube-a',34,34, 112,643,8, 141,308, 4, 3],['c1','icecube-b',28,28, 173,656,11, 232,320, 1, 3]
+  ],
+  labels: [{x:12,y:52,b:'茉莉花茶',s:'鲜花窨制',side:'l'}, {x:186,y:200,b:'轻乳',s:'轻而不寡',side:'r'}, {x:170,y:306,b:'花香在上',s:'茶味收在下',side:'r'}],
+  lines: ['M118 64 Q158 58 194 56','M176 210 Q240 206 282 202','M172 320 Q140 328 108 330'],
+  hint: '先闻花香，再喝茶味',
+  xbtn: ['拆开看看','合起来看']
+};
+COPY['M06'] = {
+  intro: '茉莉花茶做底，轻乳盖面——一层花香在上，茶味收在下。',
+  steps: [['茉莉茶底','茉莉花茶底现萃。'],['轻乳盖面','轻乳盖面，层次分明。'],['双选出杯','温热冰做双选。']],
+  arc: [{ico:'jasmine-a',w:30,h:28,u:2,uw:26,name:'茉莉花茶',slogan:'鲜花窨制',desc:'茉莉鲜花窨制——一层花香在上。'},{ico:'milkdrop-a',w:30,h:26,u:2,uw:22,name:'轻乳',slogan:'轻而不寡',desc:'轻乳轻而不寡——盖得住香，盖不住茶。'},{ico:'icecube-b',w:28,h:28,u:2,uw:24,name:'花香在上',slogan:'茶味收在下',desc:'先闻花香，再喝茶味——顺序别乱。'}]
 };
 
 /* ================= 真实数据层（10-12 接生产API） ================= */
@@ -1090,13 +3432,17 @@ function dishCardHtml(d){
 function renderFeatured(){
   var box = $('featured-list');
   if(!box) return;
-  var feat = DISHES.filter(function(d){ return d.category === '招牌'; });
+  var feat = DISHES.filter(function(d){ return d.category === '招牌菜' || d.category === '招牌'; });
+  if(feat.length < 3){
+    var hard = DISHES.filter(function(x){ return x.category === '镇店硬菜' || x.category === '炭火烤鱼'; });
+    feat = feat.concat(hard.slice(0, 3 - feat.length));
+  }
   if(!feat.length) feat = DISHES.slice(0, 3);
   box.innerHTML = feat.length
     ? feat.slice(0, 3).map(dishCardHtml).join('')
     : '<div class="feat-empty">招牌位虚位以待<br><small>老板后台把菜品分类设为「招牌」即在此展示</small></div>';
 }
-var MENU_ICONS = { '招牌':'🌶','主食':'🍚','饮品':'🥤','奶茶':'🧋','柠檬茶':'🍋','罐装':'🥫','外卖':'🍱','A类':'🥘','B类':'🍲','C类':'🍜','D类':'🥬','小吃':'🥟','汤':'🍲' };
+var MENU_ICONS = { '招牌菜':'🌶','镇店硬菜':'🥘','炭火烤鱼':'🐟','家常小炒':'🍳','下饭小炒':'🍚','开胃凉拌':'🥗','小甜水':'🍉','手打柠檬茶':'🍋','轻乳茶':'🥛','招牌':'🌶','主食':'🍚','饮品':'🥤' };
 function catIcon(c){ return MENU_ICONS[c] || '🍽'; }
 var menuLoading = false;
 function renderMenu(){
@@ -1117,11 +3463,13 @@ function renderMenu(){
   }).join('') || '<div class="feat-empty">菜单整理中</div>';
   grid.innerHTML = DISHES.length ? DISHES.map(function(d, i){
     return '<button class="dish-card" data-dish="' + d.id + '" style="animation-delay:' + Math.min(i * 45, 400) + 'ms">'
-      + '<div class="dc-thumb">' + esc(d.name.slice(0,1)) + '</div>'
+      + (d.image_path
+          ? '<div class="dc-thumb dc-img"><img src="' + esc(d.image_path) + '" alt="' + esc(d.name) + '" loading="lazy"></div>'
+          : '<div class="dc-thumb">' + esc(d.name.slice(0,1)) + '</div>')
       + '<div class="dc-body"><div class="dc-name">' + esc(d.name) + (d.category === '招牌' ? '<span class="badge-sign">招牌</span>' : '') + '</div>'
       + '<div class="dc-desc">' + esc(d.description||'') + '</div>'
       + '<div class="dc-foot"><span class="dc-price">' + fmtRM(d.price_cents) + '</span>'
-      + '<span class="dc-sold">月售 ' + (d.monthly_sold||0) + '</span></div></div></button>';
+      + ((d.monthly_sold||0) >= 10 ? '<span class="dc-sold">月售 ' + d.monthly_sold + '</span>' : '<span class="dc-sold" style="opacity:.55">' + esc(d.category) + '</span>') + '</div></div></button>';
   }).join('') : '<div class="feat-empty">今天菜单还没上齐，稍后再来看看</div>';
 }
 /* 分类点击：过滤网格 */
@@ -1231,31 +3579,52 @@ function fillAvoid(d){
 }
 function openDish(d){
   CUR = d;
-  state.dish = { spice:null, avoid:[], note:'', qty:1 };
+  state.dish = { spice:null, ice:null, avoid:[], note:'', qty:1 };
+  entered = false;
   $('qty-num').textContent = '1';
   $('note-area').value = '';
-  var pills = document.querySelectorAll('.spice-pill');
-  for(var i=0;i<pills.length;i++) pills[i].classList.remove('on');
   $('det-name').textContent = d.name;
   $('det-alias').textContent = d.category;
   $('det-price').textContent = fmtRM(d.price_cents);
-  $('det-sold').textContent = '月售 ' + (d.monthly_sold||0);
-  $('det-desc').textContent = d.description || '';
+  var sold = d.monthly_sold||0;
+  $('det-sold').style.display = sold >= 10 ? '' : 'none';
+  $('det-sold').textContent = '月售 ' + sold;
+  var key = d.animation_key || '';
+  var c = COPY[key];
+  $('det-desc').textContent = (c && c.intro) ? c.intro : (d.description || '');
   fillAvoid(d);
-  var isSignature = (d.animation_key === 'ywk' || d.name === '农家一碗香');
+  buildTastePanel(d);
+  // 工序三步
+  var stepsBox = document.querySelector('.cook-steps');
+  if(stepsBox){
+    if(c && c.steps){
+      stepsBox.innerHTML = c.steps.map(function(st,i){
+        return '<div class="cook-step"><span class="step-no">'+(i+1)+'</span><div><b>'+esc(st[0])+'</b><p>'+esc(st[1])+'</p></div></div>';
+      }).join('');
+    }else if(key === 'C03'){
+      stepsBox.innerHTML = C03_STEPS;
+    }
+  }
+  // 舞台：注册表命中 → 装配；C03 → 基线还原；否则简单盘
   var stageBox = document.querySelector('.stage');
-  if(stageBox) stageBox.style.display = isSignature ? '' : 'none';
+  var hasAnim = false;
+  if(stageBox){
+    stageBox.style.display = '';
+    if(key === 'C03'){ restoreC03(); hasAnim = true; }
+    else if(ANIMS[key]){ hasAnim = buildStage(key); }
+    if(!hasAnim){
+      stageBox.style.display = 'none';
+    }
+    var hint = document.querySelector('.stage-hint');
+    if(hint && hasAnim){ hint.textContent = (key==='C03') ? '点一下，把这一碗拆开看个明白' : (ANIMS[key].hint || '点一下，把这盘菜拆开看个明白'); }
+  }
   var xb = $('xbtn');
   if(xb){
-    xb.style.display = isSignature ? '' : 'none';
+    xb.style.display = hasAnim ? '' : 'none';
     xb.classList.remove('exploded-tag');
   }
-  $('dish-simple').style.display = isSignature ? 'none' : 'block';
-  if(!isSignature){
-    $('ds-plate').textContent = d.name.slice(0,1);
-    $('ds-ing').textContent = (d.description || '') + (d.avoid_options && d.avoid_options.length ? '　·　可定制：' + d.avoid_options.join('、') : '');
-    if(stageBox) stageBox.closest('.stage-wrap') && (stageBox.closest('.stage-wrap').style.minHeight = '0');
-  }
+  var sw = stageBox ? stageBox.closest('.stage-wrap') : null;
+  if(sw){ sw.style.minHeight = hasAnim ? '' : '0'; }
   showView('dish');
   setTabActive('menu');
 }
@@ -1329,8 +3698,9 @@ function showView(name){
     $('view-'+ids[i]).classList.toggle('active', ids[i]===name);
   }
   $('dish-cta').classList.toggle('show', name==='dish');
-  var app = document.querySelector('.app');
-  if(app) app.scrollTop = 0;
+  // 修复（10-13）：真正的滚动容器是body/document——菜单深处点菜后详情页必须回顶部
+  window.scrollTo(0, 0);
+  if(document.documentElement) document.documentElement.scrollTop = 0;
   if(name==='dish') entrance();
 }
 function setTabActive(tab){
@@ -1350,15 +3720,20 @@ function buildPeppers(){
   }
   $('peppers').innerHTML = html;
 }
-function setSpice(level, silent){
-  state.dish.spice = level; // null=未选, 0=不辣 .. 4=湖南辣
+function setSpice(level, btn, silent){
+  // 菜品=辣度（btn空按序高亮）/ 饮品=甜度+冰度（btn=点击的那颗）
+  var isIce = btn && btn.classList && btn.classList.contains('icepill');
+  if(isIce){ state.dish.ice = level; }
+  else { state.dish.spice = level; }
+  var drink = CUR && isDrink(CUR);
   var pills = document.querySelectorAll('.spice-pill');
   for(var i=0;i<pills.length;i++) pills[i].classList.remove('on');
-  if(level!==null && level!==undefined){
-    pills[level].classList.add('on');
-  }
+  if(btn){ btn.classList.add('on'); }
+  else if(level!==null && level!==undefined && pills[level]){ pills[level].classList.add('on'); }
   var peps = document.querySelectorAll('.pep');
-  var litCount = (level===4) ? 5 : level; // 湖南辣（第5档）=5颗全亮；不辣=0颗
+  var peppersBox = $('peppers');
+  if(peppersBox) peppersBox.style.display = (drink || isIce) ? 'none' : '';
+  var litCount = (!drink && !isIce && level===4) ? 5 : ((!drink && !isIce) ? level : 0);
   for(var j=0;j<peps.length;j++){
     var lit = (level!==null && level!==undefined) && j < litCount;
     if(lit && !peps[j].classList.contains('lit') && !silent && !reducedMotion){
@@ -1386,9 +3761,15 @@ function toggleAvoid(name, on){
 }
 function flavorText(){
   var parts = [];
-  if(state.dish.spice!==null && state.dish.spice!==undefined) parts.push(SPICE_NAMES[state.dish.spice]);
+  var drink = CUR && isDrink(CUR);
+  if(drink){
+    if(state.dish.spice!==null && state.dish.spice!==undefined) parts.push(SWEET_NAMES[state.dish.spice] || '');
+    if(state.dish.ice!==null && state.dish.ice!==undefined) parts.push(ICE_NAMES[state.dish.ice] || '');
+  }else{
+    if(state.dish.spice!==null && state.dish.spice!==undefined) parts.push(SPICE_NAMES[state.dish.spice]);
+  }
   if(state.dish.avoid.length) parts.push(state.dish.avoid.join('/'));
-  return parts.length ? parts.join(' · ') : '原味';
+  return parts.length ? parts.join(' · ') : (drink ? '标准口味' : '原味');
 }
 
 /* ================= localStorage 口味记忆 ================= */
@@ -1588,14 +3969,19 @@ function bind(){
 
   // 详情
   $('back-home').addEventListener('click', function(){ showView('menu'); setTabActive('menu'); });
-  $('btn-archive').addEventListener('click', function(){ showView('archive'); });
+  $('btn-archive').addEventListener('click', function(){ renderArchive((CUR && CUR.animation_key) || ''); showView('archive'); });
   $('back-dish').addEventListener('click', function(){ showView('dish'); });
 
-  // 爆炸/合拢
-  $('xbtn').addEventListener('click', function(){
+  // 爆炸/合拢（事件委托：舞台重建后依然有效；文案按菜品取）
+  document.addEventListener('click', function(e){
+    var xb2 = e.target && e.target.closest ? e.target.closest('#xbtn') : null;
+    if(!xb2) return;
+    var key2 = (CUR && CUR.animation_key) || '';
+    var pair = (key2 && ANIMS[key2] && ANIMS[key2].xbtn) || ['拆开看看','合起来看'];
+    if(key2 === 'C03') pair = ['拆开看看','合成一碗香'];
     var on = stage.classList.toggle('exploded');
-    if(on){ explode(); this.textContent = '合成一碗香'; this.classList.remove('breath'); }
-    else{ collapse(); this.textContent = '拆开看看'; }
+    if(on){ explode(); xb2.textContent = pair[1]; xb2.classList.remove('breath'); }
+    else{ collapse(); xb2.textContent = pair[0]; }
   });
 
   // 辣度
