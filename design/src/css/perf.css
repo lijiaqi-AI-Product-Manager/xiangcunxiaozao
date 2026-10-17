@@ -1,0 +1,63 @@
+/* ============================================================
+   性能三档 + reduced-motion（红线 #7 #8 #9）
+   normal：全开
+   minimal：backdrop-filter 全关（换实底渐变），呼吸保留
+   lite：毛玻璃 0 + 常驻动画 0（呼吸/云斑停）
+   档位判定：JS（内存/核数/UA）自动 + ?perf= 手动，写 <html data-perf>
+   ============================================================ */
+
+/* —— minimal：关毛玻璃，给实底，层次不塌 —— */
+html[data-perf="minimal"] .banner-card,
+html[data-perf="minimal"] .checkout-bar {
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  background: linear-gradient(160deg, #2E4437 0%, #1C2B22 100%);
+}
+html[data-ink="black"][data-perf="minimal"] .banner-card,
+html[data-ink="black"][data-perf="minimal"] .checkout-bar {
+  background: linear-gradient(160deg, #38322C 0%, #211D19 100%);
+}
+html[data-perf="minimal"] .dock {
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  background: #FCF9F0;
+}
+html[data-perf="minimal"] .cat-bar { background: linear-gradient(180deg, rgba(var(--paper-rgb), 0.97) 70%, transparent); }
+html[data-perf="minimal"] .ver-switch { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(250, 247, 238, 0.97); }
+html[data-perf="minimal"] .dt-back,
+html[data-perf="minimal"] .dt-bar { -webkit-backdrop-filter: none; backdrop-filter: none; }
+html[data-perf="minimal"] .dt-bar { background: var(--paper); }
+
+/* —— lite：毛玻璃 0 + 常驻动画 0 —— */
+html[data-perf="lite"] .banner-card,
+html[data-perf="lite"] .checkout-bar {
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  background: linear-gradient(160deg, #2E4437 0%, #1C2B22 100%);
+}
+html[data-ink="black"][data-perf="lite"] .banner-card,
+html[data-ink="black"][data-perf="lite"] .checkout-bar {
+  background: linear-gradient(160deg, #38322C 0%, #211D19 100%);
+}
+html[data-perf="lite"] .dock,
+html[data-perf="lite"] .dt-back,
+html[data-perf="lite"] .dt-bar,
+html[data-perf="lite"] .ver-switch { -webkit-backdrop-filter: none; backdrop-filter: none; }
+html[data-perf="lite"] .dock { background: #FCF9F0; }
+html[data-perf="lite"] .dt-bar { background: var(--paper); }
+html[data-perf="lite"] .cat-bar { background: rgba(var(--paper-rgb), 0.97); }
+/* 常驻氛围动效全停（一次性过渡仍允许） */
+html[data-perf="lite"] .breathe-a,
+html[data-perf="lite"] .breathe-b,
+html[data-perf="lite"] .cloud-spot { animation: none !important; }
+html[data-perf="lite"] .zone-light,
+html[data-perf="lite"] .paper-inkwash { transition: none; }
+
+/* ============ reduced-motion：一键全静（红线 #8） ============ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001s !important;
+    scroll-behavior: auto !important;
+  }
+  .breathe-a, .breathe-b, .cloud-spot { animation: none !important; }
+  .banner-card, .checkout-bar, .dock, .fly-drop { transition: none !important; animation: none !important; }
+}

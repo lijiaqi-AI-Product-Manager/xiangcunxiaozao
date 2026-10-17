@@ -1,0 +1,411 @@
+/* ============================================================
+   组件层：门店区双模态 / 横幅卡 / 分类条 / 菜卡 /
+   朱砂印 / 算盘珠 / 结算条V2 / Dock V1 / 水滴飞行
+   ============================================================ */
+
+/* ============ 1. 顶部门店区 · 无图态（默认） ============ */
+.shop-head { padding: 14px 20px 8px; text-align: left; }
+.shop-head .brand-row { display: flex; align-items: flex-end; gap: 10px; }
+.shop-head .brand-cn {
+  font-family: var(--font-cn);
+  font-size: 30px; font-weight: 700; line-height: 1.05;
+  letter-spacing: 0.06em; color: var(--ink);
+}
+.shop-head .brand-seal {
+  width: 26px; height: 26px; flex: none;
+  display: grid; place-items: center;
+  background: var(--cinnabar);
+  color: #FBF6EA; font-size: 11px; font-weight: 700;
+  border-radius: 5px; line-height: 1;
+  font-family: var(--font-cn);
+  box-shadow: 0 2px 5px var(--cinnabar-shadow);
+  transform: rotate(3deg);
+}
+.shop-head .brand-en { margin-top: 6px; letter-spacing: 0.22em; }
+.shop-head .shop-meta {
+  margin-top: 6px; font-size: 13px; color: var(--ink-soft);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.shop-head .shop-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--gold); }
+
+/* ============ 1b. 顶部门店区 · 大画态（240px hero，V4/V5/V6） ============ */
+.shop-head.hero-head { padding: 0 0 10px; }
+.hero-visual {
+  position: relative; height: 240px; overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 70% 0%, rgba(255, 246, 220, 0.55) 0%, transparent 60%),
+    radial-gradient(90% 70% at 20% 100%, rgba(24, 46, 34, 0.35) 0%, transparent 70%),
+    linear-gradient(178deg, #E9DFC4 0%, #EFE7D0 55%, #E4D9BC 100%);
+}
+/* 程序化水墨远山（真图未到货的无图态升级：布局/滚动行为/价格锚均为真实） */
+.hero-visual .mountain-svg {
+  position: absolute; inset: auto 0 -2px 0; width: 100%; height: 62%;
+}
+/* 竖排英文压图（绿茶锚点） */
+.hero-visual .hero-en {
+  position: absolute; top: 18px; right: 16px;
+  writing-mode: vertical-rl;
+  font-family: var(--font-en); font-size: 11px; letter-spacing: 0.34em;
+  color: rgba(43, 38, 34, 0.55); text-transform: uppercase;
+}
+.hero-visual .hero-badge {
+  position: absolute; top: 18px; left: 16px;
+  font-family: var(--font-en); font-size: 10px; letter-spacing: 0.2em;
+  color: #FBF6EA; background: rgba(31, 61, 46, 0.78);
+  padding: 5px 9px; border-radius: 3px; text-transform: uppercase;
+}
+.hero-visual .hero-dishname {
+  position: absolute; left: 18px; bottom: 44px;
+  font-family: var(--font-cn); font-size: 32px; font-weight: 700;
+  color: #23392C; letter-spacing: 0.08em;
+  text-shadow: 0 1px 3px rgba(245, 239, 224, 0.85), 0 0 14px rgba(245, 239, 224, 0.55);
+}
+/* 金棕书签条（无图占位规格：32×13px 圆角1px） */
+.hero-visual .hero-bookmark {
+  position: absolute; left: 18px; bottom: 20px;
+  width: 32px; height: 13px; border-radius: 1px;
+  background: #C9A05A; opacity: 0.85;
+  box-shadow: 0 1px 2px rgba(43, 38, 34, 0.18);
+}
+.hero-visual .hero-price {
+  position: absolute; left: 58px; bottom: 18px;
+  font-family: var(--font-en); font-size: 15px; font-weight: 700;
+  color: var(--ink); letter-spacing: 0.04em;
+}
+.hero-head .shop-head-inner { padding: 12px 20px 2px; }
+
+/* ============ 2. 滚动触发横幅卡（IO 落下/收起，仅大画态） ============ */
+html[data-hero="off"] .banner-card { display: none; }
+.banner-card {
+  position: fixed; top: 10px; left: 12px; right: 12px; z-index: 50;
+  max-width: 456px; margin: 0 auto;
+  display: flex; align-items: center; gap: 11px;
+  padding: 9px 12px;
+  border-radius: 16px;
+  background: var(--glass-bg-ink);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-bright));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-bright));
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-top-color: var(--glass-edge-top);
+  box-shadow: 0 10px 26px rgba(20, 24, 20, 0.30);
+  transform: translateY(-160%);
+  opacity: 0;
+  pointer-events: none;
+}
+.banner-card::after { /* 墨玻璃噪点 0.05 */
+  content: ""; position: absolute; inset: 0; border-radius: inherit; opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.banner-card .bc-thumb {
+  width: 40px; height: 40px; flex: none; border-radius: 10px;
+  display: grid; place-items: center;
+  background: rgba(251, 246, 234, 0.94);
+  font-family: var(--font-cn); font-size: 21px; font-weight: 700; color: var(--ink);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+.banner-card .bc-info { flex: 1; min-width: 0; color: #F3EEDF; }
+.banner-card .bc-info b { display: block; font-size: 14.5px; font-weight: 700; letter-spacing: 0.02em; }
+.banner-card .bc-info span { display: block; font-size: 11px; opacity: 0.66; margin-top: 1px; }
+.banner-card .bc-price { font-size: 15px; font-weight: 700; color: #F3EEDF; }
+.banner-card .bc-go {
+  flex: none; border: none; cursor: pointer;
+  font-family: var(--font-cn); font-size: 13px; font-weight: 700; color: #FBF6EA;
+  background: linear-gradient(135deg, var(--cinnabar-hi), var(--cinnabar) 55%, var(--cinnabar-deep));
+  padding: 8px 13px; border-radius: 11px;
+  box-shadow: 0 3px 7px var(--cinnabar-shadow);
+}
+.banner-card.show {
+  transform: translateY(0); opacity: 1; pointer-events: auto;
+  transition: transform var(--dur-drop) var(--t-stamp), opacity 0.3s ease;
+}
+.banner-card.fold {
+  transform: translateY(-160%); opacity: 0; pointer-events: none;
+  transition: transform var(--dur-fold) ease-in, opacity 0.2s ease-in;
+}
+
+/* ============ 3. 分类条（谷雨式：白玻璃胶囊横滚 + 当前锚点） ============ */
+.cat-bar {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; gap: 8px; overflow-x: auto;
+  padding: 6px 16px;
+  background: linear-gradient(180deg, rgba(var(--paper-rgb), 0.92) 70%, transparent 100%);
+  scrollbar-width: none;
+}
+.cat-bar::-webkit-scrollbar { display: none; }
+.cat-pill {
+  flex: none; cursor: pointer; border: none;
+  font-family: var(--font-cn); font-size: 14px; font-weight: 600;
+  color: var(--ink-soft);
+  padding: 8px 15px; border-radius: 999px;
+  background: rgba(253, 251, 243, 0.86);
+  box-shadow: 0 1px 4px rgba(31, 61, 46, 0.08), inset 0 0 0 1px rgba(31, 61, 46, 0.05);
+  transition: transform 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+.cat-pill.on {
+  color: #FBF6EA; font-weight: 700;
+  background: linear-gradient(150deg, var(--ink) 0%, rgba(var(--ink-rgb), 0.86) 100%);
+  box-shadow: 0 3px 8px rgba(var(--ink-rgb), 0.28), inset 0 0 0 1px rgba(212, 181, 138, 0.35);
+  transform: translateY(-1px);
+}
+
+/* ============ 4. 分类块 + 菜卡（一屏 ≥6 道） ============ */
+.menu-list { padding: 0 14px; }
+.cat-block { margin-bottom: 6px; }
+.cat-head {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 6px 6px 4px;
+}
+.cat-head h2 { font-family: var(--font-cn); font-size: 17px; font-weight: 700; letter-spacing: 0.05em; }
+.cat-head .en-cap { letter-spacing: 0.2em; }
+.cat-head .gold-rule { flex: 1; margin: 0; align-self: center; }
+
+.dish-card {
+  display: flex; align-items: center; gap: 11px;
+  padding: 4px 11px;
+  background: var(--card);
+  border-radius: var(--r-card);
+  box-shadow: 0 2px 7px rgba(31, 61, 46, 0.075), 0 1px 2px rgba(31, 61, 46, 0.05), inset 0 0 0 1px rgba(31, 61, 46, 0.045);
+  margin-bottom: 2px;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+.dish-card:active { transform: scale(0.985); }
+.dish-card.sold-out { opacity: 0.52; }
+
+/* 首字缩略图：白底墨字（V1并入/V2墨字）或马卡龙底（V2马卡龙） */
+.dc-thumb {
+  width: 38px; height: 38px; flex: none;
+  border-radius: 9px;
+  display: grid; place-items: center;
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px rgba(31, 61, 46, 0.07), 0 1px 2px rgba(31, 61, 46, 0.04);
+  font-family: var(--font-cn); font-size: 20px; font-weight: 700; color: var(--ink);
+  position: relative;
+}
+/* 书法首字的"纸感"：轻微旋转与不均匀墨色 */
+.dc-thumb .dc-char {
+  transform: rotate(-2deg);
+  background: linear-gradient(172deg, var(--ink) 20%, rgba(var(--ink-rgb), 0.82) 90%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* 马卡龙版缩略图（构建时 html[data-thumb="macaron"]） */
+html[data-thumb="macaron"] .dc-thumb[data-macaron="0"] { background: var(--macaron-0); }
+html[data-thumb="macaron"] .dc-thumb[data-macaron="1"] { background: var(--macaron-1); }
+html[data-thumb="macaron"] .dc-thumb[data-macaron="2"] { background: var(--macaron-2); }
+html[data-thumb="macaron"] .dc-thumb[data-macaron="3"] { background: var(--macaron-3); }
+
+.dc-main { flex: 1; min-width: 0; }
+.dc-name {
+  font-family: var(--font-cn); font-size: 15px; font-weight: 700;
+  letter-spacing: 0.02em; line-height: 1.18;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dc-copy {
+  font-size: 11.5px; color: var(--ink-soft); line-height: 1.35;
+  margin-top: 1px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dc-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
+.dc-price { font-family: var(--font-en); font-size: 14.5px; font-weight: 700; letter-spacing: 0.02em; }
+.dc-price small { font-size: 10.5px; font-weight: 600; margin-right: 2px; }
+.dc-tags { display: inline-flex; gap: 4px; margin-left: 6px; vertical-align: 1px; }
+.dc-tag {
+  font-size: 9px; padding: 2px 5px; border-radius: 4px; line-height: 1;
+  color: var(--cinnabar); background: rgba(179, 58, 43, 0.08);
+  border: 1px solid rgba(179, 58, 43, 0.18);
+}
+
+/* 触控热区扩展（红线#5：核心交互≥44px） */
+.cat-pill { position: relative; }
+.cat-pill::after, .qty button::after, .dock-item::after { content: ""; position: absolute; inset: -7px; }
+.qty button, .dock-item { position: relative; }
+
+/* ============ 5. 朱砂印加购按钮（squircle + 135°渐变 + 噪点） ============ */
+.stamp-add {
+  width: 36px; height: 36px; flex: none;
+  border: none; cursor: pointer; position: relative;
+  border-radius: 30% / 32%;                 /* squircle 近似 */
+  background: linear-gradient(135deg, var(--cinnabar-hi) 0%, var(--cinnabar) 48%, var(--cinnabar-deep) 100%);
+  color: #FBF6EA;
+  font-family: var(--font-cn); font-size: 17px; font-weight: 700; line-height: 1;
+  box-shadow: 0 4px 8px var(--cinnabar-shadow),
+              inset 0 1px 1px rgba(255, 255, 255, 0.30),
+              inset 0 -2px 3px rgba(95, 18, 8, 0.22);
+  position: relative; overflow: hidden;
+  transition: transform 0.12s ease;
+  display: grid; place-items: center;
+}
+.stamp-add::after {
+  content: ""; position: absolute; inset: -5px; opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.stamp-add:active { transform: scale(0.92); }   /* 落印 · 按压微反馈 */
+
+/* ============ 6. 算盘珠数量器（白0.9 + 斜向柔光包浆） ============ */
+.qty {
+  display: inline-flex; align-items: center; gap: 0;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  box-shadow: 0 1px 4px rgba(31, 61, 46, 0.10), inset 0 0 0 1px rgba(31, 61, 46, 0.05);
+  position: relative; overflow: hidden;
+}
+.qty::before {   /* 120° 对角高光 = 包浆 */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.75) 0%, transparent 42%, rgba(214, 206, 186, 0.16) 100%);
+}
+.qty button {
+  border: none; background: none; cursor: pointer;
+  width: 27px; height: 27px;
+  font-family: var(--font-en); font-size: 14px; font-weight: 600;
+  color: var(--ink); display: grid; place-items: center;
+  transition: transform 0.12s ease;
+}
+.qty button:active { transform: scale(0.88); }
+.qty .qty-n {
+  min-width: 17px; text-align: center;
+  font-family: var(--font-en); font-size: 14px; font-weight: 700;
+  position: relative; z-index: 1;
+}
+.qty .qty-minus { color: var(--ink-soft); }
+
+/* ============ 7. 底部结算条 V2（墨玻璃独立托盘） ============ */
+.checkout-bar {
+  position: fixed; z-index: 55;
+  bottom: calc(80px + var(--safe-btm));
+  left: 14px; right: 14px; max-width: 452px; margin: 0 auto;
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 13px;
+  border-radius: 19px;
+  background: var(--glass-bg-ink);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-bright));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-bright));
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-top-color: var(--glass-edge-top);
+  box-shadow: 0 12px 30px rgba(18, 22, 18, 0.32);
+  transform: translateY(140%);
+  opacity: 0;
+  transition: transform 0.42s var(--t-stamp), opacity 0.3s ease;
+}
+.checkout-bar::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; opacity: 0.05; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.checkout-bar.has { transform: translateY(0); opacity: 1; }
+.cb-cart {
+  width: 42px; height: 42px; flex: none; position: relative;
+  border-radius: 13px;
+  background: rgba(251, 246, 234, 0.14);
+  display: grid; place-items: center;
+  font-family: var(--font-cn); font-size: 18px; font-weight: 700; color: #F3EEDF;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+.cb-count {
+  position: absolute; top: -5px; right: -5px;
+  min-width: 17px; height: 17px; padding: 0 4px;
+  border-radius: 999px;
+  background: var(--cinnabar-hi); color: #fff;
+  font-size: 11px; font-weight: 700; line-height: 17px; text-align: center;
+  font-family: var(--font-en);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+}
+.cb-total { flex: 1; color: #F3EEDF; font-size: 12px; }
+.cb-total b { font-family: var(--font-en); font-size: 19px; font-weight: 700; margin-left: 2px; }
+.cb-go { min-height: 44px;
+  flex: none; border: none; cursor: pointer;
+  font-family: var(--font-cn); font-size: 15px; font-weight: 700; color: #FBF6EA;
+  background: linear-gradient(135deg, var(--cinnabar-hi), var(--cinnabar) 55%, var(--cinnabar-deep));
+  padding: 11px 20px; border-radius: 13px;
+  box-shadow: 0 4px 9px var(--cinnabar-shadow);
+  transition: transform 0.12s ease;
+}
+.cb-go:active { transform: scale(0.94); }
+
+/* ============ 8. Dock V1（白玻璃浮动胶囊 + 药丸印章选中态） ============ */
+.dock {
+  position: fixed; z-index: 55;
+  bottom: calc(9px + var(--safe-btm));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 2px;
+  padding: 5px;
+  border-radius: 999px;
+  background: rgba(252, 250, 243, 0.90);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+  box-shadow: 0 8px 22px rgba(31, 61, 46, 0.16), 0 2px 5px rgba(31, 61, 46, 0.08),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+  transition: transform 0.42s var(--t-stamp);
+}
+.dock-item {
+  position: relative; border: none; background: none; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  min-width: 54px; padding: 4px 9px 3px;
+  border-radius: 999px;
+  color: var(--ink-soft);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.dock-item i {
+  font-style: normal; font-family: var(--font-cn);
+  font-size: 17px; font-weight: 700; line-height: 1.1;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);   /* 微立体图标 */
+}
+.dock-item span { font-size: 10px; line-height: 1; letter-spacing: 0.05em; }
+/* 药丸印章选中态 */
+.dock-item.on {
+  color: #FBF6EA;
+  background: linear-gradient(150deg, var(--ink) 0%, rgba(var(--ink-rgb), 0.85) 100%);
+  box-shadow: 0 3px 8px rgba(var(--ink-rgb), 0.30);
+}
+.dock-item.on i { text-shadow: none; }
+.dock-badge {
+  position: absolute; top: 1px; right: 8px;
+  min-width: 16px; height: 16px; padding: 0 4px;
+  border-radius: 999px;
+  background: var(--cinnabar-hi); color: #fff;
+  font-size: 10px; font-weight: 700; line-height: 16px; text-align: center;
+  font-family: var(--font-en);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+  transform: scale(0); transition: transform 0.24s var(--t-stamp);
+}
+.dock-badge.has { transform: scale(1); }
+/* V1-dock 版：结算并入 Dock —— 购物车 tab 激活时展开迷你结算胶囊 */
+.dock-item.cart-tab b.dock-price {
+  position: absolute; bottom: 1px; right: 6px;
+  font-family: var(--font-en); font-size: 9.5px; font-weight: 700;
+  color: var(--cinnabar); letter-spacing: 0;
+}
+.dock .dock-checkout {
+  display: none; align-items: center; gap: 8px;
+  padding: 8px 14px; margin-left: 4px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--cinnabar-hi), var(--cinnabar) 55%, var(--cinnabar-deep));
+  color: #FBF6EA; font-family: var(--font-cn); font-size: 13.5px; font-weight: 700;
+  border: none; cursor: pointer;
+  box-shadow: 0 3px 8px var(--cinnabar-shadow);
+}
+html[data-checkout="dock"] .dock .dock-checkout.has { display: inline-flex; }
+
+/* ============ 9. 水滴飞行 +1（合成层动画） ============ */
+.fly-drop {
+  position: fixed; z-index: 90; pointer-events: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--cinnabar-hi) 0%, var(--cinnabar) 60%, var(--cinnabar-deep) 100%);
+  box-shadow: 0 2px 6px var(--cinnabar-shadow);
+  will-change: transform, opacity;
+  animation: fly-drop 0.62s cubic-bezier(.5, -0.2, .6, 1) forwards;
+}
+@keyframes fly-drop {
+  0%   { transform: translate(0, 0) scale(1.15, 0.85); opacity: 1; }
+  30%  { transform: translate(calc(var(--fx) * 0.3), calc(var(--fy) * 0.3 - 36px)) scale(1, 1); opacity: 1; }
+  100% { transform: translate(var(--fx), var(--fy)) scale(0.25, 0.25); opacity: 0; }
+}
+
+/* ============ 10. 售罄态 ============ */
+.sold-out .dc-thumb { filter: grayscale(0.55); }
+.sold-out-tag {
+  font-size: 10px; color: var(--ink-soft);
+  border: 1px solid var(--ink-faint); border-radius: 5px;
+  padding: 3px 8px; letter-spacing: 0.1em;
+}

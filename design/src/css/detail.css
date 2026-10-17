@@ -1,0 +1,170 @@
+/* ============================================================
+   详情页：大图区 / 双层标题 / 拆开看看 / 食材档案 /
+   源流卡 / 工序三步 / 风味之路 / 底部加购栏
+   ============================================================ */
+.dt-visual {
+  position: relative; height: 300px; overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 70% 0%, rgba(255, 246, 220, 0.55) 0%, transparent 60%),
+    radial-gradient(90% 70% at 20% 100%, rgba(24, 46, 34, 0.35) 0%, transparent 70%),
+    linear-gradient(178deg, #E9DFC4 0%, #EFE7D0 55%, #E4D9BC 100%);
+}
+html[data-paper="green"] .dt-visual {
+  background:
+    radial-gradient(120% 90% at 70% 0%, rgba(240, 250, 236, 0.55) 0%, transparent 60%),
+    radial-gradient(90% 70% at 20% 100%, rgba(24, 46, 34, 0.35) 0%, transparent 70%),
+    linear-gradient(178deg, #E2EAD3 0%, #EAF0DE 55%, #DFE8CF 100%);
+}
+.dt-visual .mountain-svg { position: absolute; inset: auto 0 -2px 0; width: 100%; height: 60%; }
+.dt-visual .dt-en {
+  position: absolute; top: 64px; right: 18px;
+  writing-mode: vertical-rl;
+  font-family: var(--font-en); font-size: 12px; letter-spacing: 0.36em;
+  color: rgba(43, 38, 34, 0.5); text-transform: uppercase;
+}
+.dt-back {
+  position: absolute; top: 16px; left: 14px; z-index: 5;
+  width: 38px; height: 38px; cursor: pointer;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid rgba(251, 246, 234, 0.55);
+  color: #FBF6EA; font-size: 20px; line-height: 1;
+  display: grid; place-items: center; padding-bottom: 2px;
+  font-family: var(--font-en);
+  text-shadow: 0 1px 4px rgba(24, 46, 34, 0.45);
+  transition: background-color 0.2s ease;
+}
+.dt-back:active { background: rgba(251, 246, 234, 0.18); }
+.dt-visual .dt-hero-char {
+  position: absolute; right: 22px; bottom: 30px;
+  font-family: var(--font-cn); font-size: 110px; font-weight: 700;
+  color: rgba(31, 61, 46, 0.16); line-height: 1;
+  transform: rotate(-4deg);
+}
+
+/* 云斑聚光（详情页常驻：10-12s 缓移，28%，仅 transform） */
+.cloud-spot {
+  position: absolute; width: 88%; height: 46%;
+  top: 8%; left: 6%;
+  background: radial-gradient(52% 62% at 50% 42%, rgba(255, 248, 224, 0.34) 0%, transparent 74%);
+  animation: cloud-drift 11s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes cloud-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(7%, 3.5%) scale(1.08); }
+}
+
+/* ============ 双层标题（中文 + 英文全大写 + 细金线） ============ */
+.dt-head { padding: 18px 20px 4px; position: relative; z-index: 2; margin-top: -34px; }
+.dt-head .dt-card-top {
+  background: var(--card);
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  padding: 16px 16px 2px;
+  box-shadow: 0 -6px 18px rgba(31, 61, 46, 0.06);
+}
+.dt-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.dt-title-row h1 {
+  font-family: var(--font-cn); font-size: 25px; font-weight: 700;
+  letter-spacing: 0.04em; line-height: 1.18;
+}
+.dt-seal {
+  flex: none; width: 30px; height: 30px; margin-top: 3px;
+  display: grid; place-items: center;
+  background: var(--cinnabar); color: #FBF6EA;
+  font-family: var(--font-cn); font-size: 13px; font-weight: 700;
+  border-radius: 6px; transform: rotate(3deg);
+  box-shadow: 0 2px 5px var(--cinnabar-shadow);
+}
+.dt-en-cap { margin-top: 7px; letter-spacing: 0.22em; }
+.dt-price-row { display: flex; align-items: baseline; gap: 10px; margin-top: 10px; }
+.dt-price { font-family: var(--font-en); font-size: 26px; font-weight: 700; }
+.dt-sold { font-size: 11px; color: var(--ink-soft); }
+
+.dt-body { background: var(--card); border-radius: 0 0 var(--r-sheet) var(--r-sheet); padding: 6px 16px 18px; box-shadow: 0 6px 18px rgba(31, 61, 46, 0.05); }
+
+/* 详情简介 */
+.dt-intro { font-size: 14.5px; line-height: 1.85; color: var(--ink); padding: 12px 2px 4px; }
+
+/* 风味之路 */
+.dt-road {
+  margin: 14px 2px 4px; padding: 10px 14px;
+  border-left: 2px solid var(--gold);
+  background: linear-gradient(90deg, rgba(140, 106, 63, 0.07), transparent 80%);
+  border-radius: 0 10px 10px 0;
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+}
+.dt-road-label { font-size: 11px; color: var(--gold); letter-spacing: 0.2em; font-weight: 700; }
+.dt-road-place { font-family: var(--font-cn); font-size: 14px; font-weight: 700; }
+
+/* 区块标题 */
+.dt-sec { margin-top: 20px; }
+.dt-sec-h {
+  display: flex; align-items: baseline; gap: 9px;
+  font-family: var(--font-cn); font-size: 17px; font-weight: 700;
+  padding-bottom: 9px;
+}
+.dt-sec-h::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold-faint), transparent); }
+
+/* 拆开看看 · 食材档案卡 */
+.dt-ing-card {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 10px 2px;
+  border-bottom: 1px dashed var(--ink-faint);
+}
+.dt-ing-card:last-child { border-bottom: none; }
+.dt-ing-name { flex: none; width: 86px; font-family: var(--font-cn); font-size: 14.5px; font-weight: 700; }
+.dt-ing-why { flex: 1; font-size: 12.5px; color: var(--ink-soft); line-height: 1.6; }
+
+/* 源流卡 */
+.dt-origin {
+  font-size: 13.5px; line-height: 1.95; color: var(--ink);
+  background: rgba(31, 61, 46, 0.035);
+  border-radius: 12px; padding: 13px 14px;
+  position: relative;
+}
+.dt-origin::before {
+  content: "源"; position: absolute; top: -9px; left: 12px;
+  width: 22px; height: 22px; border-radius: 5px;
+  background: var(--gold); color: #FBF6EA;
+  display: grid; place-items: center;
+  font-family: var(--font-cn); font-size: 12px; font-weight: 700;
+  transform: rotate(-3deg);
+}
+
+/* 工序三步 */
+.dt-craft { list-style: none; counter-reset: step; }
+.dt-craft li {
+  counter-increment: step;
+  display: flex; align-items: center; gap: 13px;
+  padding: 9px 2px;
+}
+.dt-craft li b {
+  flex: none; width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: rgba(31, 61, 46, 0.06);
+  box-shadow: inset 0 0 0 1px var(--ink-faint);
+  font-family: var(--font-en); font-size: 13px; font-weight: 700;
+  color: var(--ink-soft);
+}
+.dt-craft li span { font-size: 14.5px; font-weight: 600; letter-spacing: 0.03em; }
+
+/* 底部加购栏（纸色托盘） */
+.dt-bar {
+  position: fixed; z-index: 55;
+  bottom: 0; left: 0; right: 0;
+  max-width: 480px; margin: 0 auto;
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px calc(11px + var(--safe-btm));
+  background: linear-gradient(180deg, rgba(var(--paper-rgb), 0.94) 20%, rgba(var(--paper-rgb), 1) 100%);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border-top: 1px solid var(--ink-faint);
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+.dt-bar .dt-bar-price { font-family: var(--font-en); font-size: 22px; font-weight: 700; margin-right: auto; }
+.dt-bar .dt-bar-price small { font-size: 11px; display: block; color: var(--ink-soft); letter-spacing: 0.06em; font-family: var(--font-cn); }
+.dt-bar .stamp-add { width: 132px; height: 44px; font-size: 16.5px; border-radius: 24% / 30%; letter-spacing: 0.2em; }
+
+main.dt-main { padding-bottom: 110px; }

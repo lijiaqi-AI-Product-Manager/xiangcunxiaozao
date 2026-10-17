@@ -1,0 +1,105 @@
+{
+  "generated": "2026-10-17T20:38:01.261Z",
+  "versions": {
+    "v2-ink": {
+      "jsErrors": [],
+      "interact": {
+        "qty": "2",
+        "checkoutShown": true,
+        "dockBadge": "0",
+        "total": "RM 96"
+      },
+      "goBtnMinH44": true
+    },
+    "v2-macaron": {
+      "jsErrors": [],
+      "interact": {
+        "qty": "2",
+        "checkoutShown": true,
+        "dockBadge": "0",
+        "total": "RM 96"
+      },
+      "goBtnMinH44": true
+    },
+    "v1-dock": {
+      "jsErrors": [],
+      "interact": {
+        "qty": "2",
+        "checkoutShown": true,
+        "dockBadge": "2",
+        "total": "RM 96"
+      },
+      "goBtnMinH44": true
+    },
+    "hero": {
+      "jsErrors": [],
+      "interact": {
+        "qty": "2",
+        "checkoutShown": true,
+        "dockBadge": "0",
+        "total": "RM 96"
+      },
+      "goBtnMinH44": true
+    },
+    "green": {
+      "jsErrors": [],
+      "interact": {
+        "qty": "2",
+        "checkoutShown": true,
+        "dockBadge": "0",
+        "total": "RM 96"
+      },
+      "goBtnMinH44": true
+    },
+    "ink-black": {
+      "jsErrors": [],
+      "interact": {
+        "qty": "2",
+        "checkoutShown": true,
+        "dockBadge": "0",
+        "total": "RM 96"
+      },
+      "goBtnMinH44": true
+    }
+  },
+  "redlines": {
+    "r1_animProps": {
+      "total": 2,
+      "bad": []
+    },
+    "r4_firstScreenCards_plain": 6,
+    "r4_firstScreenCards_heroScrolled": {
+      "cards": 8,
+      "bannerShown": true
+    },
+    "r4_bannerFoldOnTop": true,
+    "r5_touchAndFont": {
+      "minTouch": [],
+      "smallFont": []
+    },
+    "r6_contrast": {
+      "name_on_card": 11.48,
+      "copy_on_card": 7.27,
+      "price_on_card": 11.48,
+      "total_on_glass": 9.74,
+      "go_on_cinnabar": 5.47,
+      "enCap_on_paper": 11.39
+    },
+    "r7_backdrop": 3,
+    "r8_reducedMotionRunning": 0,
+    "r9_lite": {
+      "perf": "lite",
+      "backdropCount": 0,
+      "infiniteAnims": 0
+    },
+    "r10_cpu6x": {
+      "worstFramePerClick": [
+        16.8,
+        16.7,
+        16.8,
+        16.7
+      ],
+      "worst": 16.8
+    }
+  }
+}

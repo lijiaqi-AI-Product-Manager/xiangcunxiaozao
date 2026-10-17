@@ -1,0 +1,133 @@
+/* ============================================================
+   基础 + 背景四层合成（考卷 §3.1.A）
+   L1 纸底 / L2 纸纹噪点+纤维 / L3 墨晕55% / L4 右上分区光
+   呼吸（§3.1.D-A1）：双色温层 24s 交叉淡化，ΔE00≈3，仅动 opacity
+   ============================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--paper);
+  max-width: 480px;            /* 移动优先，桌面居中收窄 */
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ============ L1 纸底（固定视口，滚动不动） ============ */
+.paper-stack {
+  position: fixed;
+  inset: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* L1 纸底色 */
+.paper-base { position: absolute; inset: 0; background: var(--paper); }
+
+/* L2 纸纹噪点（feTurbulence 生成，10%）+ 宣纸纤维（4%） */
+.paper-grain {
+  position: absolute; inset: 0; opacity: 0.10;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 260px 260px;
+}
+.paper-fiber {
+  position: absolute; inset: 0; opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='300'%3E%3Cg stroke='%23000' stroke-width='0.6' opacity='0.55'%3E%3Cpath d='M20 40 q80 -14 190 6 t190 -10'/%3E%3Cpath d='M0 120 q100 12 210 -6 t210 8'/%3E%3Cpath d='M40 210 q90 -16 200 4 t180 -8'/%3E%3Cpath d='M10 280 q110 10 220 -8'/%3E%3Cpath d='M60 70 q70 8 150 -4'/%3E%3Cpath d='M200 160 q80 -10 170 6'/%3E%3Cpath d='M90 250 q80 8 170 -6'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 420px 300px;
+}
+
+/* L3 墨晕层（55%，静态） */
+.paper-inkwash {
+  position: absolute; inset: -8%;
+  opacity: 0.55;
+  background:
+    radial-gradient(38% 26% at 12% 8%,  var(--zone-ink-hot) 0%, transparent 70%),
+    radial-gradient(30% 22% at 88% 96%, var(--zone-ink-cool) 0%, transparent 72%),
+    radial-gradient(50% 30% at 55% 45%, rgba(120, 100, 70, 0.05) 0%, transparent 76%);
+  transition: background 2.4s ease;
+}
+
+/* L4 右上分区光（色温随 body[data-zone] 联动，2.4s 过渡） */
+.zone-light {
+  position: absolute; inset: 0;
+  background: radial-gradient(64% 40% at 84% 6%, var(--zone-light-hot) 0%, transparent 72%);
+  transition: background 2.4s ease;
+}
+body[data-zone="cool"] .zone-light {
+  background: radial-gradient(64% 40% at 84% 6%, var(--zone-light-cool) 0%, transparent 72%);
+}
+
+/* 呼吸：双色温层交叉淡化（仅 opacity → 合成线程） */
+.breathe-a {
+  position: absolute; inset: 0; opacity: 1;
+  background:
+    radial-gradient(80% 60% at 30% 20%, rgba(255, 244, 214, 0.16) 0%, transparent 70%),
+    radial-gradient(70% 50% at 75% 80%, rgba(232, 222, 196, 0.10) 0%, transparent 72%);
+  animation: breathe-a 24s ease-in-out infinite;
+  will-change: opacity;
+}
+.breathe-b {
+  position: absolute; inset: 0; opacity: 0;
+  background:
+    radial-gradient(80% 60% at 32% 22%, rgba(240, 238, 224, 0.15) 0%, transparent 70%),
+    radial-gradient(70% 50% at 78% 78%, rgba(210, 216, 206, 0.11) 0%, transparent 72%);
+  animation: breathe-b 24s ease-in-out infinite;
+  will-change: opacity;
+}
+@keyframes breathe-a { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes breathe-b { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+
+/* ============ 版本切换条（仅演示态，发布版移除） ============ */
+.ver-switch {
+  position: sticky; top: 0; z-index: 60;
+  display: flex; gap: 5px; overflow-x: auto;
+  padding: 3px 12px;
+  background: rgba(250, 247, 238, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--ink-faint);
+  scrollbar-width: none;
+}
+.ver-switch::-webkit-scrollbar { display: none; }
+.ver-switch a {
+  flex: none; font-size: 11px; line-height: 1; opacity: 0.82;
+  padding: 5px 9px; border-radius: 999px;
+  color: var(--ink-soft); text-decoration: none;
+  border: 1px solid transparent; white-space: nowrap;
+}
+.ver-switch a.on {
+  color: var(--ink); font-weight: 700; opacity: 1;
+  border-color: var(--gold-faint);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+/* ============ 通用排版：中英混排（§3.1.B） ============ */
+.en-cap {
+  font-family: var(--font-en);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.gold-rule {
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-faint) 60%, transparent 100%);
+  border: none;
+  margin: 8px 0;
+}
+.num { font-family: var(--font-en); font-variant-numeric: lining-nums; }
+
+main { position: relative; z-index: 1; padding-bottom: 190px; }
+
+/* 可访问性兜底：字体未加载时中文降级链已在 token 定义 */

@@ -1,0 +1,86 @@
+/* ============================================================
+   湘村小灶 · 视觉小样 · 设计 Token
+   版本变量由构建时按六版配置注入 <html data-version data-ink data-paper>
+   ============================================================ */
+:root {
+  /* —— 结构色（墨）：默认深墨绿 #1F3D2E，V6 墨黑 #2B2622 由 data-ink 覆盖 —— */
+  --ink: #1F3D2E;
+  --ink-rgb: 31, 61, 46;
+  --ink-soft: rgba(28, 54, 40, 0.82);
+  --ink-faint: rgba(31, 61, 46, 0.14);
+
+  /* —— 纸底：淡黄宣纸 —— */
+  --paper: #F5EFE0;
+  --paper-rgb: 245, 239, 224;
+  --paper-deep: #EFE7D2;
+  --card: #FDFBF3;
+
+  /* —— 印泥红 —— */
+  --cinnabar: #B33A2B;
+  --cinnabar-hi: #D9573F;
+  --cinnabar-deep: #8F2A1E;
+  --cinnabar-shadow: rgba(139, 0, 0, 0.25);
+
+  /* —— 细金线 —— */
+  --gold: #8C6A3F;
+  --gold-faint: rgba(140, 106, 63, 0.35);
+
+  /* —— 分区色温（hot=暖赭 / cool=青翠）—— */
+  --zone-light-hot: rgba(255, 196, 128, 0.20);
+  --zone-light-cool: rgba(148, 196, 180, 0.20);
+  --zone-ink-hot: rgba(146, 96, 48, 0.10);
+  --zone-ink-cool: rgba(72, 108, 96, 0.10);
+
+  /* —— 墨玻璃（结算托盘/横幅卡）—— */
+  --glass-bg: linear-gradient(160deg, rgba(43, 38, 34, 0.68), rgba(26, 24, 21, 0.52));
+  --glass-bg-ink: linear-gradient(160deg, rgba(31, 61, 46, 0.68), rgba(18, 34, 26, 0.52));
+  --glass-blur: 18px;
+  --glass-saturate: 160%;
+  --glass-bright: 1.06;
+  --glass-edge-top: rgba(255, 255, 255, 0.28);
+  --glass-edge-btm: rgba(255, 255, 255, 0.06);
+
+  /* —— 字体栈 —— */
+  --font-cn: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', 'DFKai-SB', serif;
+  --font-en: 'Cinzel', 'Georgia', 'Times New Roman', serif;
+  --font-body: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+
+  /* —— 马卡龙四色（缩略图底，按菜品编号哈希固定）—— */
+  --macaron-0: #FFF9E1; /* 黄 */
+  --macaron-1: #F0F7E8; /* 绿 */
+  --macaron-2: #FFF3E6; /* 橙 */
+  --macaron-3: #F5EDE0; /* 赭 */
+
+  /* —— 几何 —— */
+  --r-card: 14px;
+  --r-btn: 10px;
+  --r-sheet: 20px;
+  --safe-top: env(safe-area-inset-top, 12px);
+  --safe-btm: env(safe-area-inset-bottom, 12px);
+
+  /* —— 动效参数 —— */
+  --t-stamp: cubic-bezier(.34, 1.56, .64, 1);
+  --dur-drop: 0.42s;
+  --dur-fold: 0.26s;
+}
+
+/* ============ 版本覆盖：V6 墨黑结构色 ============ */
+html[data-ink="black"] {
+  --ink: #2B2622;
+  --ink-rgb: 43, 38, 34;
+  --ink-soft: rgba(40, 35, 30, 0.84);
+  --ink-faint: rgba(43, 38, 34, 0.14);
+}
+
+/* ============ 版本覆盖：V5 淡绿纸底 ============ */
+html[data-paper="green"] {
+  --paper: #EDF2E4;
+  --paper-rgb: 237, 242, 228;
+  --paper-deep: #E3EBD6;
+  --card: #FBFDF6;
+}
+/* 分区色温与底色解耦：绿纸上湘菜区仍用暖赭 */
+html[data-paper="green"] {
+  --zone-light-hot: rgba(236, 186, 120, 0.22);
+  --zone-light-cool: rgba(140, 190, 168, 0.22);
+}

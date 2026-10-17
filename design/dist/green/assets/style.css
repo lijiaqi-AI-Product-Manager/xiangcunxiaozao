@@ -1,0 +1,968 @@
+/* ============================================================
+   湘村小灶 · 视觉小样 · 设计 Token
+   版本变量由构建时按六版配置注入 <html data-version data-ink data-paper>
+   ============================================================ */
+:root {
+  /* —— 结构色（墨）：默认深墨绿 #1F3D2E，V6 墨黑 #2B2622 由 data-ink 覆盖 —— */
+  --ink: #1F3D2E;
+  --ink-rgb: 31, 61, 46;
+  --ink-soft: rgba(28, 54, 40, 0.82);
+  --ink-faint: rgba(31, 61, 46, 0.14);
+
+  /* —— 纸底：淡黄宣纸 —— */
+  --paper: #F5EFE0;
+  --paper-rgb: 245, 239, 224;
+  --paper-deep: #EFE7D2;
+  --card: #FDFBF3;
+
+  /* —— 印泥红 —— */
+  --cinnabar: #B33A2B;
+  --cinnabar-hi: #D9573F;
+  --cinnabar-deep: #8F2A1E;
+  --cinnabar-shadow: rgba(139, 0, 0, 0.25);
+
+  /* —— 细金线 —— */
+  --gold: #8C6A3F;
+  --gold-faint: rgba(140, 106, 63, 0.35);
+
+  /* —— 分区色温（hot=暖赭 / cool=青翠）—— */
+  --zone-light-hot: rgba(255, 196, 128, 0.20);
+  --zone-light-cool: rgba(148, 196, 180, 0.20);
+  --zone-ink-hot: rgba(146, 96, 48, 0.10);
+  --zone-ink-cool: rgba(72, 108, 96, 0.10);
+
+  /* —— 墨玻璃（结算托盘/横幅卡）—— */
+  --glass-bg: linear-gradient(160deg, rgba(43, 38, 34, 0.68), rgba(26, 24, 21, 0.52));
+  --glass-bg-ink: linear-gradient(160deg, rgba(31, 61, 46, 0.68), rgba(18, 34, 26, 0.52));
+  --glass-blur: 18px;
+  --glass-saturate: 160%;
+  --glass-bright: 1.06;
+  --glass-edge-top: rgba(255, 255, 255, 0.28);
+  --glass-edge-btm: rgba(255, 255, 255, 0.06);
+
+  /* —— 字体栈 —— */
+  --font-cn: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', 'DFKai-SB', serif;
+  --font-en: 'Cinzel', 'Georgia', 'Times New Roman', serif;
+  --font-body: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+
+  /* —— 马卡龙四色（缩略图底，按菜品编号哈希固定）—— */
+  --macaron-0: #FFF9E1; /* 黄 */
+  --macaron-1: #F0F7E8; /* 绿 */
+  --macaron-2: #FFF3E6; /* 橙 */
+  --macaron-3: #F5EDE0; /* 赭 */
+
+  /* —— 几何 —— */
+  --r-card: 14px;
+  --r-btn: 10px;
+  --r-sheet: 20px;
+  --safe-top: env(safe-area-inset-top, 12px);
+  --safe-btm: env(safe-area-inset-bottom, 12px);
+
+  /* —— 动效参数 —— */
+  --t-stamp: cubic-bezier(.34, 1.56, .64, 1);
+  --dur-drop: 0.42s;
+  --dur-fold: 0.26s;
+}
+
+/* ============ 版本覆盖：V6 墨黑结构色 ============ */
+html[data-ink="black"] {
+  --ink: #2B2622;
+  --ink-rgb: 43, 38, 34;
+  --ink-soft: rgba(40, 35, 30, 0.84);
+  --ink-faint: rgba(43, 38, 34, 0.14);
+}
+
+/* ============ 版本覆盖：V5 淡绿纸底 ============ */
+html[data-paper="green"] {
+  --paper: #EDF2E4;
+  --paper-rgb: 237, 242, 228;
+  --paper-deep: #E3EBD6;
+  --card: #FBFDF6;
+}
+/* 分区色温与底色解耦：绿纸上湘菜区仍用暖赭 */
+html[data-paper="green"] {
+  --zone-light-hot: rgba(236, 186, 120, 0.22);
+  --zone-light-cool: rgba(140, 190, 168, 0.22);
+}
+
+/* ============================================================
+   基础 + 背景四层合成（考卷 §3.1.A）
+   L1 纸底 / L2 纸纹噪点+纤维 / L3 墨晕55% / L4 右上分区光
+   呼吸（§3.1.D-A1）：双色温层 24s 交叉淡化，ΔE00≈3，仅动 opacity
+   ============================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--paper);
+  max-width: 480px;            /* 移动优先，桌面居中收窄 */
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ============ L1 纸底（固定视口，滚动不动） ============ */
+.paper-stack {
+  position: fixed;
+  inset: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* L1 纸底色 */
+.paper-base { position: absolute; inset: 0; background: var(--paper); }
+
+/* L2 纸纹噪点（feTurbulence 生成，10%）+ 宣纸纤维（4%） */
+.paper-grain {
+  position: absolute; inset: 0; opacity: 0.10;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 260px 260px;
+}
+.paper-fiber {
+  position: absolute; inset: 0; opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='300'%3E%3Cg stroke='%23000' stroke-width='0.6' opacity='0.55'%3E%3Cpath d='M20 40 q80 -14 190 6 t190 -10'/%3E%3Cpath d='M0 120 q100 12 210 -6 t210 8'/%3E%3Cpath d='M40 210 q90 -16 200 4 t180 -8'/%3E%3Cpath d='M10 280 q110 10 220 -8'/%3E%3Cpath d='M60 70 q70 8 150 -4'/%3E%3Cpath d='M200 160 q80 -10 170 6'/%3E%3Cpath d='M90 250 q80 8 170 -6'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 420px 300px;
+}
+
+/* L3 墨晕层（55%，静态） */
+.paper-inkwash {
+  position: absolute; inset: -8%;
+  opacity: 0.55;
+  background:
+    radial-gradient(38% 26% at 12% 8%,  var(--zone-ink-hot) 0%, transparent 70%),
+    radial-gradient(30% 22% at 88% 96%, var(--zone-ink-cool) 0%, transparent 72%),
+    radial-gradient(50% 30% at 55% 45%, rgba(120, 100, 70, 0.05) 0%, transparent 76%);
+  transition: background 2.4s ease;
+}
+
+/* L4 右上分区光（色温随 body[data-zone] 联动，2.4s 过渡） */
+.zone-light {
+  position: absolute; inset: 0;
+  background: radial-gradient(64% 40% at 84% 6%, var(--zone-light-hot) 0%, transparent 72%);
+  transition: background 2.4s ease;
+}
+body[data-zone="cool"] .zone-light {
+  background: radial-gradient(64% 40% at 84% 6%, var(--zone-light-cool) 0%, transparent 72%);
+}
+
+/* 呼吸：双色温层交叉淡化（仅 opacity → 合成线程） */
+.breathe-a {
+  position: absolute; inset: 0; opacity: 1;
+  background:
+    radial-gradient(80% 60% at 30% 20%, rgba(255, 244, 214, 0.16) 0%, transparent 70%),
+    radial-gradient(70% 50% at 75% 80%, rgba(232, 222, 196, 0.10) 0%, transparent 72%);
+  animation: breathe-a 24s ease-in-out infinite;
+  will-change: opacity;
+}
+.breathe-b {
+  position: absolute; inset: 0; opacity: 0;
+  background:
+    radial-gradient(80% 60% at 32% 22%, rgba(240, 238, 224, 0.15) 0%, transparent 70%),
+    radial-gradient(70% 50% at 78% 78%, rgba(210, 216, 206, 0.11) 0%, transparent 72%);
+  animation: breathe-b 24s ease-in-out infinite;
+  will-change: opacity;
+}
+@keyframes breathe-a { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes breathe-b { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+
+/* ============ 版本切换条（仅演示态，发布版移除） ============ */
+.ver-switch {
+  position: sticky; top: 0; z-index: 60;
+  display: flex; gap: 5px; overflow-x: auto;
+  padding: 3px 12px;
+  background: rgba(250, 247, 238, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--ink-faint);
+  scrollbar-width: none;
+}
+.ver-switch::-webkit-scrollbar { display: none; }
+.ver-switch a {
+  flex: none; font-size: 11px; line-height: 1; opacity: 0.82;
+  padding: 5px 9px; border-radius: 999px;
+  color: var(--ink-soft); text-decoration: none;
+  border: 1px solid transparent; white-space: nowrap;
+}
+.ver-switch a.on {
+  color: var(--ink); font-weight: 700; opacity: 1;
+  border-color: var(--gold-faint);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+/* ============ 通用排版：中英混排（§3.1.B） ============ */
+.en-cap {
+  font-family: var(--font-en);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.gold-rule {
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-faint) 60%, transparent 100%);
+  border: none;
+  margin: 8px 0;
+}
+.num { font-family: var(--font-en); font-variant-numeric: lining-nums; }
+
+main { position: relative; z-index: 1; padding-bottom: 190px; }
+
+/* 可访问性兜底：字体未加载时中文降级链已在 token 定义 */
+
+/* ============================================================
+   组件层：门店区双模态 / 横幅卡 / 分类条 / 菜卡 /
+   朱砂印 / 算盘珠 / 结算条V2 / Dock V1 / 水滴飞行
+   ============================================================ */
+
+/* ============ 1. 顶部门店区 · 无图态（默认） ============ */
+.shop-head { padding: 14px 20px 8px; text-align: left; }
+.shop-head .brand-row { display: flex; align-items: flex-end; gap: 10px; }
+.shop-head .brand-cn {
+  font-family: var(--font-cn);
+  font-size: 30px; font-weight: 700; line-height: 1.05;
+  letter-spacing: 0.06em; color: var(--ink);
+}
+.shop-head .brand-seal {
+  width: 26px; height: 26px; flex: none;
+  display: grid; place-items: center;
+  background: var(--cinnabar);
+  color: #FBF6EA; font-size: 11px; font-weight: 700;
+  border-radius: 5px; line-height: 1;
+  font-family: var(--font-cn);
+  box-shadow: 0 2px 5px var(--cinnabar-shadow);
+  transform: rotate(3deg);
+}
+.shop-head .brand-en { margin-top: 6px; letter-spacing: 0.22em; }
+.shop-head .shop-meta {
+  margin-top: 6px; font-size: 13px; color: var(--ink-soft);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.shop-head .shop-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--gold); }
+
+/* ============ 1b. 顶部门店区 · 大画态（240px hero，V4/V5/V6） ============ */
+.shop-head.hero-head { padding: 0 0 10px; }
+.hero-visual {
+  position: relative; height: 240px; overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 70% 0%, rgba(255, 246, 220, 0.55) 0%, transparent 60%),
+    radial-gradient(90% 70% at 20% 100%, rgba(24, 46, 34, 0.35) 0%, transparent 70%),
+    linear-gradient(178deg, #E9DFC4 0%, #EFE7D0 55%, #E4D9BC 100%);
+}
+/* 程序化水墨远山（真图未到货的无图态升级：布局/滚动行为/价格锚均为真实） */
+.hero-visual .mountain-svg {
+  position: absolute; inset: auto 0 -2px 0; width: 100%; height: 62%;
+}
+/* 竖排英文压图（绿茶锚点） */
+.hero-visual .hero-en {
+  position: absolute; top: 18px; right: 16px;
+  writing-mode: vertical-rl;
+  font-family: var(--font-en); font-size: 11px; letter-spacing: 0.34em;
+  color: rgba(43, 38, 34, 0.55); text-transform: uppercase;
+}
+.hero-visual .hero-badge {
+  position: absolute; top: 18px; left: 16px;
+  font-family: var(--font-en); font-size: 10px; letter-spacing: 0.2em;
+  color: #FBF6EA; background: rgba(31, 61, 46, 0.78);
+  padding: 5px 9px; border-radius: 3px; text-transform: uppercase;
+}
+.hero-visual .hero-dishname {
+  position: absolute; left: 18px; bottom: 44px;
+  font-family: var(--font-cn); font-size: 32px; font-weight: 700;
+  color: #23392C; letter-spacing: 0.08em;
+  text-shadow: 0 1px 3px rgba(245, 239, 224, 0.85), 0 0 14px rgba(245, 239, 224, 0.55);
+}
+/* 金棕书签条（无图占位规格：32×13px 圆角1px） */
+.hero-visual .hero-bookmark {
+  position: absolute; left: 18px; bottom: 20px;
+  width: 32px; height: 13px; border-radius: 1px;
+  background: #C9A05A; opacity: 0.85;
+  box-shadow: 0 1px 2px rgba(43, 38, 34, 0.18);
+}
+.hero-visual .hero-price {
+  position: absolute; left: 58px; bottom: 18px;
+  font-family: var(--font-en); font-size: 15px; font-weight: 700;
+  color: var(--ink); letter-spacing: 0.04em;
+}
+.hero-head .shop-head-inner { padding: 12px 20px 2px; }
+
+/* ============ 2. 滚动触发横幅卡（IO 落下/收起，仅大画态） ============ */
+html[data-hero="off"] .banner-card { display: none; }
+.banner-card {
+  position: fixed; top: 10px; left: 12px; right: 12px; z-index: 50;
+  max-width: 456px; margin: 0 auto;
+  display: flex; align-items: center; gap: 11px;
+  padding: 9px 12px;
+  border-radius: 16px;
+  background: var(--glass-bg-ink);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-bright));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-bright));
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-top-color: var(--glass-edge-top);
+  box-shadow: 0 10px 26px rgba(20, 24, 20, 0.30);
+  transform: translateY(-160%);
+  opacity: 0;
+  pointer-events: none;
+}
+.banner-card::after { /* 墨玻璃噪点 0.05 */
+  content: ""; position: absolute; inset: 0; border-radius: inherit; opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.banner-card .bc-thumb {
+  width: 40px; height: 40px; flex: none; border-radius: 10px;
+  display: grid; place-items: center;
+  background: rgba(251, 246, 234, 0.94);
+  font-family: var(--font-cn); font-size: 21px; font-weight: 700; color: var(--ink);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+.banner-card .bc-info { flex: 1; min-width: 0; color: #F3EEDF; }
+.banner-card .bc-info b { display: block; font-size: 14.5px; font-weight: 700; letter-spacing: 0.02em; }
+.banner-card .bc-info span { display: block; font-size: 11px; opacity: 0.66; margin-top: 1px; }
+.banner-card .bc-price { font-size: 15px; font-weight: 700; color: #F3EEDF; }
+.banner-card .bc-go {
+  flex: none; border: none; cursor: pointer;
+  font-family: var(--font-cn); font-size: 13px; font-weight: 700; color: #FBF6EA;
+  background: linear-gradient(135deg, var(--cinnabar-hi), var(--cinnabar) 55%, var(--cinnabar-deep));
+  padding: 8px 13px; border-radius: 11px;
+  box-shadow: 0 3px 7px var(--cinnabar-shadow);
+}
+.banner-card.show {
+  transform: translateY(0); opacity: 1; pointer-events: auto;
+  transition: transform var(--dur-drop) var(--t-stamp), opacity 0.3s ease;
+}
+.banner-card.fold {
+  transform: translateY(-160%); opacity: 0; pointer-events: none;
+  transition: transform var(--dur-fold) ease-in, opacity 0.2s ease-in;
+}
+
+/* ============ 3. 分类条（谷雨式：白玻璃胶囊横滚 + 当前锚点） ============ */
+.cat-bar {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; gap: 8px; overflow-x: auto;
+  padding: 6px 16px;
+  background: linear-gradient(180deg, rgba(var(--paper-rgb), 0.92) 70%, transparent 100%);
+  scrollbar-width: none;
+}
+.cat-bar::-webkit-scrollbar { display: none; }
+.cat-pill {
+  flex: none; cursor: pointer; border: none;
+  font-family: var(--font-cn); font-size: 14px; font-weight: 600;
+  color: var(--ink-soft);
+  padding: 8px 15px; border-radius: 999px;
+  background: rgba(253, 251, 243, 0.86);
+  box-shadow: 0 1px 4px rgba(31, 61, 46, 0.08), inset 0 0 0 1px rgba(31, 61, 46, 0.05);
+  transition: transform 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+.cat-pill.on {
+  color: #FBF6EA; font-weight: 700;
+  background: linear-gradient(150deg, var(--ink) 0%, rgba(var(--ink-rgb), 0.86) 100%);
+  box-shadow: 0 3px 8px rgba(var(--ink-rgb), 0.28), inset 0 0 0 1px rgba(212, 181, 138, 0.35);
+  transform: translateY(-1px);
+}
+
+/* ============ 4. 分类块 + 菜卡（一屏 ≥6 道） ============ */
+.menu-list { padding: 0 14px; }
+.cat-block { margin-bottom: 6px; }
+.cat-head {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 6px 6px 4px;
+}
+.cat-head h2 { font-family: var(--font-cn); font-size: 17px; font-weight: 700; letter-spacing: 0.05em; }
+.cat-head .en-cap { letter-spacing: 0.2em; }
+.cat-head .gold-rule { flex: 1; margin: 0; align-self: center; }
+
+.dish-card {
+  display: flex; align-items: center; gap: 11px;
+  padding: 4px 11px;
+  background: var(--card);
+  border-radius: var(--r-card);
+  box-shadow: 0 2px 7px rgba(31, 61, 46, 0.075), 0 1px 2px rgba(31, 61, 46, 0.05), inset 0 0 0 1px rgba(31, 61, 46, 0.045);
+  margin-bottom: 2px;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+.dish-card:active { transform: scale(0.985); }
+.dish-card.sold-out { opacity: 0.52; }
+
+/* 首字缩略图：白底墨字（V1并入/V2墨字）或马卡龙底（V2马卡龙） */
+.dc-thumb {
+  width: 38px; height: 38px; flex: none;
+  border-radius: 9px;
+  display: grid; place-items: center;
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px rgba(31, 61, 46, 0.07), 0 1px 2px rgba(31, 61, 46, 0.04);
+  font-family: var(--font-cn); font-size: 20px; font-weight: 700; color: var(--ink);
+  position: relative;
+}
+/* 书法首字的"纸感"：轻微旋转与不均匀墨色 */
+.dc-thumb .dc-char {
+  transform: rotate(-2deg);
+  background: linear-gradient(172deg, var(--ink) 20%, rgba(var(--ink-rgb), 0.82) 90%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* 马卡龙版缩略图（构建时 html[data-thumb="macaron"]） */
+html[data-thumb="macaron"] .dc-thumb[data-macaron="0"] { background: var(--macaron-0); }
+html[data-thumb="macaron"] .dc-thumb[data-macaron="1"] { background: var(--macaron-1); }
+html[data-thumb="macaron"] .dc-thumb[data-macaron="2"] { background: var(--macaron-2); }
+html[data-thumb="macaron"] .dc-thumb[data-macaron="3"] { background: var(--macaron-3); }
+
+.dc-main { flex: 1; min-width: 0; }
+.dc-name {
+  font-family: var(--font-cn); font-size: 15px; font-weight: 700;
+  letter-spacing: 0.02em; line-height: 1.18;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dc-copy {
+  font-size: 11.5px; color: var(--ink-soft); line-height: 1.35;
+  margin-top: 1px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dc-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
+.dc-price { font-family: var(--font-en); font-size: 14.5px; font-weight: 700; letter-spacing: 0.02em; }
+.dc-price small { font-size: 10.5px; font-weight: 600; margin-right: 2px; }
+.dc-tags { display: inline-flex; gap: 4px; margin-left: 6px; vertical-align: 1px; }
+.dc-tag {
+  font-size: 9px; padding: 2px 5px; border-radius: 4px; line-height: 1;
+  color: var(--cinnabar); background: rgba(179, 58, 43, 0.08);
+  border: 1px solid rgba(179, 58, 43, 0.18);
+}
+
+/* 触控热区扩展（红线#5：核心交互≥44px） */
+.cat-pill { position: relative; }
+.cat-pill::after, .qty button::after, .dock-item::after { content: ""; position: absolute; inset: -7px; }
+.qty button, .dock-item { position: relative; }
+
+/* ============ 5. 朱砂印加购按钮（squircle + 135°渐变 + 噪点） ============ */
+.stamp-add {
+  width: 36px; height: 36px; flex: none;
+  border: none; cursor: pointer; position: relative;
+  border-radius: 30% / 32%;                 /* squircle 近似 */
+  background: linear-gradient(135deg, var(--cinnabar-hi) 0%, var(--cinnabar) 48%, var(--cinnabar-deep) 100%);
+  color: #FBF6EA;
+  font-family: var(--font-cn); font-size: 17px; font-weight: 700; line-height: 1;
+  box-shadow: 0 4px 8px var(--cinnabar-shadow),
+              inset 0 1px 1px rgba(255, 255, 255, 0.30),
+              inset 0 -2px 3px rgba(95, 18, 8, 0.22);
+  position: relative; overflow: hidden;
+  transition: transform 0.12s ease;
+  display: grid; place-items: center;
+}
+.stamp-add::after {
+  content: ""; position: absolute; inset: -5px; opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.stamp-add:active { transform: scale(0.92); }   /* 落印 · 按压微反馈 */
+
+/* ============ 6. 算盘珠数量器（白0.9 + 斜向柔光包浆） ============ */
+.qty {
+  display: inline-flex; align-items: center; gap: 0;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  box-shadow: 0 1px 4px rgba(31, 61, 46, 0.10), inset 0 0 0 1px rgba(31, 61, 46, 0.05);
+  position: relative; overflow: hidden;
+}
+.qty::before {   /* 120° 对角高光 = 包浆 */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.75) 0%, transparent 42%, rgba(214, 206, 186, 0.16) 100%);
+}
+.qty button {
+  border: none; background: none; cursor: pointer;
+  width: 27px; height: 27px;
+  font-family: var(--font-en); font-size: 14px; font-weight: 600;
+  color: var(--ink); display: grid; place-items: center;
+  transition: transform 0.12s ease;
+}
+.qty button:active { transform: scale(0.88); }
+.qty .qty-n {
+  min-width: 17px; text-align: center;
+  font-family: var(--font-en); font-size: 14px; font-weight: 700;
+  position: relative; z-index: 1;
+}
+.qty .qty-minus { color: var(--ink-soft); }
+
+/* ============ 7. 底部结算条 V2（墨玻璃独立托盘） ============ */
+.checkout-bar {
+  position: fixed; z-index: 55;
+  bottom: calc(80px + var(--safe-btm));
+  left: 14px; right: 14px; max-width: 452px; margin: 0 auto;
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 13px;
+  border-radius: 19px;
+  background: var(--glass-bg-ink);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-bright));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-bright));
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-top-color: var(--glass-edge-top);
+  box-shadow: 0 12px 30px rgba(18, 22, 18, 0.32);
+  transform: translateY(140%);
+  opacity: 0;
+  transition: transform 0.42s var(--t-stamp), opacity 0.3s ease;
+}
+.checkout-bar::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; opacity: 0.05; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.checkout-bar.has { transform: translateY(0); opacity: 1; }
+.cb-cart {
+  width: 42px; height: 42px; flex: none; position: relative;
+  border-radius: 13px;
+  background: rgba(251, 246, 234, 0.14);
+  display: grid; place-items: center;
+  font-family: var(--font-cn); font-size: 18px; font-weight: 700; color: #F3EEDF;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+.cb-count {
+  position: absolute; top: -5px; right: -5px;
+  min-width: 17px; height: 17px; padding: 0 4px;
+  border-radius: 999px;
+  background: var(--cinnabar-hi); color: #fff;
+  font-size: 11px; font-weight: 700; line-height: 17px; text-align: center;
+  font-family: var(--font-en);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+}
+.cb-total { flex: 1; color: #F3EEDF; font-size: 12px; }
+.cb-total b { font-family: var(--font-en); font-size: 19px; font-weight: 700; margin-left: 2px; }
+.cb-go { min-height: 44px;
+  flex: none; border: none; cursor: pointer;
+  font-family: var(--font-cn); font-size: 15px; font-weight: 700; color: #FBF6EA;
+  background: linear-gradient(135deg, var(--cinnabar-hi), var(--cinnabar) 55%, var(--cinnabar-deep));
+  padding: 11px 20px; border-radius: 13px;
+  box-shadow: 0 4px 9px var(--cinnabar-shadow);
+  transition: transform 0.12s ease;
+}
+.cb-go:active { transform: scale(0.94); }
+
+/* ============ 8. Dock V1（白玻璃浮动胶囊 + 药丸印章选中态） ============ */
+.dock {
+  position: fixed; z-index: 55;
+  bottom: calc(9px + var(--safe-btm));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 2px;
+  padding: 5px;
+  border-radius: 999px;
+  background: rgba(252, 250, 243, 0.90);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+  box-shadow: 0 8px 22px rgba(31, 61, 46, 0.16), 0 2px 5px rgba(31, 61, 46, 0.08),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+  transition: transform 0.42s var(--t-stamp);
+}
+.dock-item {
+  position: relative; border: none; background: none; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  min-width: 54px; padding: 4px 9px 3px;
+  border-radius: 999px;
+  color: var(--ink-soft);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.dock-item i {
+  font-style: normal; font-family: var(--font-cn);
+  font-size: 17px; font-weight: 700; line-height: 1.1;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);   /* 微立体图标 */
+}
+.dock-item span { font-size: 10px; line-height: 1; letter-spacing: 0.05em; }
+/* 药丸印章选中态 */
+.dock-item.on {
+  color: #FBF6EA;
+  background: linear-gradient(150deg, var(--ink) 0%, rgba(var(--ink-rgb), 0.85) 100%);
+  box-shadow: 0 3px 8px rgba(var(--ink-rgb), 0.30);
+}
+.dock-item.on i { text-shadow: none; }
+.dock-badge {
+  position: absolute; top: 1px; right: 8px;
+  min-width: 16px; height: 16px; padding: 0 4px;
+  border-radius: 999px;
+  background: var(--cinnabar-hi); color: #fff;
+  font-size: 10px; font-weight: 700; line-height: 16px; text-align: center;
+  font-family: var(--font-en);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+  transform: scale(0); transition: transform 0.24s var(--t-stamp);
+}
+.dock-badge.has { transform: scale(1); }
+/* V1-dock 版：结算并入 Dock —— 购物车 tab 激活时展开迷你结算胶囊 */
+.dock-item.cart-tab b.dock-price {
+  position: absolute; bottom: 1px; right: 6px;
+  font-family: var(--font-en); font-size: 9.5px; font-weight: 700;
+  color: var(--cinnabar); letter-spacing: 0;
+}
+.dock .dock-checkout {
+  display: none; align-items: center; gap: 8px;
+  padding: 8px 14px; margin-left: 4px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--cinnabar-hi), var(--cinnabar) 55%, var(--cinnabar-deep));
+  color: #FBF6EA; font-family: var(--font-cn); font-size: 13.5px; font-weight: 700;
+  border: none; cursor: pointer;
+  box-shadow: 0 3px 8px var(--cinnabar-shadow);
+}
+html[data-checkout="dock"] .dock .dock-checkout.has { display: inline-flex; }
+
+/* ============ 9. 水滴飞行 +1（合成层动画） ============ */
+.fly-drop {
+  position: fixed; z-index: 90; pointer-events: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--cinnabar-hi) 0%, var(--cinnabar) 60%, var(--cinnabar-deep) 100%);
+  box-shadow: 0 2px 6px var(--cinnabar-shadow);
+  will-change: transform, opacity;
+  animation: fly-drop 0.62s cubic-bezier(.5, -0.2, .6, 1) forwards;
+}
+@keyframes fly-drop {
+  0%   { transform: translate(0, 0) scale(1.15, 0.85); opacity: 1; }
+  30%  { transform: translate(calc(var(--fx) * 0.3), calc(var(--fy) * 0.3 - 36px)) scale(1, 1); opacity: 1; }
+  100% { transform: translate(var(--fx), var(--fy)) scale(0.25, 0.25); opacity: 0; }
+}
+
+/* ============ 10. 售罄态 ============ */
+.sold-out .dc-thumb { filter: grayscale(0.55); }
+.sold-out-tag {
+  font-size: 10px; color: var(--ink-soft);
+  border: 1px solid var(--ink-faint); border-radius: 5px;
+  padding: 3px 8px; letter-spacing: 0.1em;
+}
+
+/* ============================================================
+   详情页：大图区 / 双层标题 / 拆开看看 / 食材档案 /
+   源流卡 / 工序三步 / 风味之路 / 底部加购栏
+   ============================================================ */
+.dt-visual {
+  position: relative; height: 300px; overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 70% 0%, rgba(255, 246, 220, 0.55) 0%, transparent 60%),
+    radial-gradient(90% 70% at 20% 100%, rgba(24, 46, 34, 0.35) 0%, transparent 70%),
+    linear-gradient(178deg, #E9DFC4 0%, #EFE7D0 55%, #E4D9BC 100%);
+}
+html[data-paper="green"] .dt-visual {
+  background:
+    radial-gradient(120% 90% at 70% 0%, rgba(240, 250, 236, 0.55) 0%, transparent 60%),
+    radial-gradient(90% 70% at 20% 100%, rgba(24, 46, 34, 0.35) 0%, transparent 70%),
+    linear-gradient(178deg, #E2EAD3 0%, #EAF0DE 55%, #DFE8CF 100%);
+}
+.dt-visual .mountain-svg { position: absolute; inset: auto 0 -2px 0; width: 100%; height: 60%; }
+.dt-visual .dt-en {
+  position: absolute; top: 64px; right: 18px;
+  writing-mode: vertical-rl;
+  font-family: var(--font-en); font-size: 12px; letter-spacing: 0.36em;
+  color: rgba(43, 38, 34, 0.5); text-transform: uppercase;
+}
+.dt-back {
+  position: absolute; top: 16px; left: 14px; z-index: 5;
+  width: 38px; height: 38px; cursor: pointer;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid rgba(251, 246, 234, 0.55);
+  color: #FBF6EA; font-size: 20px; line-height: 1;
+  display: grid; place-items: center; padding-bottom: 2px;
+  font-family: var(--font-en);
+  text-shadow: 0 1px 4px rgba(24, 46, 34, 0.45);
+  transition: background-color 0.2s ease;
+}
+.dt-back:active { background: rgba(251, 246, 234, 0.18); }
+.dt-visual .dt-hero-char {
+  position: absolute; right: 22px; bottom: 30px;
+  font-family: var(--font-cn); font-size: 110px; font-weight: 700;
+  color: rgba(31, 61, 46, 0.16); line-height: 1;
+  transform: rotate(-4deg);
+}
+
+/* 云斑聚光（详情页常驻：10-12s 缓移，28%，仅 transform） */
+.cloud-spot {
+  position: absolute; width: 88%; height: 46%;
+  top: 8%; left: 6%;
+  background: radial-gradient(52% 62% at 50% 42%, rgba(255, 248, 224, 0.34) 0%, transparent 74%);
+  animation: cloud-drift 11s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes cloud-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(7%, 3.5%) scale(1.08); }
+}
+
+/* ============ 双层标题（中文 + 英文全大写 + 细金线） ============ */
+.dt-head { padding: 18px 20px 4px; position: relative; z-index: 2; margin-top: -34px; }
+.dt-head .dt-card-top {
+  background: var(--card);
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  padding: 16px 16px 2px;
+  box-shadow: 0 -6px 18px rgba(31, 61, 46, 0.06);
+}
+.dt-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.dt-title-row h1 {
+  font-family: var(--font-cn); font-size: 25px; font-weight: 700;
+  letter-spacing: 0.04em; line-height: 1.18;
+}
+.dt-seal {
+  flex: none; width: 30px; height: 30px; margin-top: 3px;
+  display: grid; place-items: center;
+  background: var(--cinnabar); color: #FBF6EA;
+  font-family: var(--font-cn); font-size: 13px; font-weight: 700;
+  border-radius: 6px; transform: rotate(3deg);
+  box-shadow: 0 2px 5px var(--cinnabar-shadow);
+}
+.dt-en-cap { margin-top: 7px; letter-spacing: 0.22em; }
+.dt-price-row { display: flex; align-items: baseline; gap: 10px; margin-top: 10px; }
+.dt-price { font-family: var(--font-en); font-size: 26px; font-weight: 700; }
+.dt-sold { font-size: 11px; color: var(--ink-soft); }
+
+.dt-body { background: var(--card); border-radius: 0 0 var(--r-sheet) var(--r-sheet); padding: 6px 16px 18px; box-shadow: 0 6px 18px rgba(31, 61, 46, 0.05); }
+
+/* 详情简介 */
+.dt-intro { font-size: 14.5px; line-height: 1.85; color: var(--ink); padding: 12px 2px 4px; }
+
+/* 风味之路 */
+.dt-road {
+  margin: 14px 2px 4px; padding: 10px 14px;
+  border-left: 2px solid var(--gold);
+  background: linear-gradient(90deg, rgba(140, 106, 63, 0.07), transparent 80%);
+  border-radius: 0 10px 10px 0;
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+}
+.dt-road-label { font-size: 11px; color: var(--gold); letter-spacing: 0.2em; font-weight: 700; }
+.dt-road-place { font-family: var(--font-cn); font-size: 14px; font-weight: 700; }
+
+/* 区块标题 */
+.dt-sec { margin-top: 20px; }
+.dt-sec-h {
+  display: flex; align-items: baseline; gap: 9px;
+  font-family: var(--font-cn); font-size: 17px; font-weight: 700;
+  padding-bottom: 9px;
+}
+.dt-sec-h::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold-faint), transparent); }
+
+/* 拆开看看 · 食材档案卡 */
+.dt-ing-card {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 10px 2px;
+  border-bottom: 1px dashed var(--ink-faint);
+}
+.dt-ing-card:last-child { border-bottom: none; }
+.dt-ing-name { flex: none; width: 86px; font-family: var(--font-cn); font-size: 14.5px; font-weight: 700; }
+.dt-ing-why { flex: 1; font-size: 12.5px; color: var(--ink-soft); line-height: 1.6; }
+
+/* 源流卡 */
+.dt-origin {
+  font-size: 13.5px; line-height: 1.95; color: var(--ink);
+  background: rgba(31, 61, 46, 0.035);
+  border-radius: 12px; padding: 13px 14px;
+  position: relative;
+}
+.dt-origin::before {
+  content: "源"; position: absolute; top: -9px; left: 12px;
+  width: 22px; height: 22px; border-radius: 5px;
+  background: var(--gold); color: #FBF6EA;
+  display: grid; place-items: center;
+  font-family: var(--font-cn); font-size: 12px; font-weight: 700;
+  transform: rotate(-3deg);
+}
+
+/* 工序三步 */
+.dt-craft { list-style: none; counter-reset: step; }
+.dt-craft li {
+  counter-increment: step;
+  display: flex; align-items: center; gap: 13px;
+  padding: 9px 2px;
+}
+.dt-craft li b {
+  flex: none; width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: rgba(31, 61, 46, 0.06);
+  box-shadow: inset 0 0 0 1px var(--ink-faint);
+  font-family: var(--font-en); font-size: 13px; font-weight: 700;
+  color: var(--ink-soft);
+}
+.dt-craft li span { font-size: 14.5px; font-weight: 600; letter-spacing: 0.03em; }
+
+/* 底部加购栏（纸色托盘） */
+.dt-bar {
+  position: fixed; z-index: 55;
+  bottom: 0; left: 0; right: 0;
+  max-width: 480px; margin: 0 auto;
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px calc(11px + var(--safe-btm));
+  background: linear-gradient(180deg, rgba(var(--paper-rgb), 0.94) 20%, rgba(var(--paper-rgb), 1) 100%);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border-top: 1px solid var(--ink-faint);
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+.dt-bar .dt-bar-price { font-family: var(--font-en); font-size: 22px; font-weight: 700; margin-right: auto; }
+.dt-bar .dt-bar-price small { font-size: 11px; display: block; color: var(--ink-soft); letter-spacing: 0.06em; font-family: var(--font-cn); }
+.dt-bar .stamp-add { width: 132px; height: 44px; font-size: 16.5px; border-radius: 24% / 30%; letter-spacing: 0.2em; }
+
+main.dt-main { padding-bottom: 110px; }
+
+/* ============================================================
+   motion.css —— 氛围动效
+   A1 纸的呼吸：双色温层 24s 交叉淡化（仅 opacity，合成层）
+   A2 分区色温联动：zone-light 2.4s 过渡（触发由 IO 写 body[data-zone]）
+   A3 云斑聚光：详情页常驻，径向光斑 11s 缓移（transform，28%）
+   ============================================================ */
+
+/* ============ A1 纸的呼吸（ΔE00≈3：暖纸 ⇄ 微冷纸） ============ */
+.breathe-a, .breathe-b {
+  position: absolute; inset: 0; will-change: opacity;
+}
+.breathe-a {
+  background: radial-gradient(140% 100% at 50% 0%, rgba(255, 242, 204, 0.10) 0%, transparent 55%),
+              radial-gradient(120% 90% at 30% 100%, rgba(236, 216, 168, 0.07) 0%, transparent 60%);
+  animation: breathe-a 24s ease-in-out infinite;
+}
+.breathe-b {
+  background: radial-gradient(140% 100% at 50% 0%, rgba(228, 240, 228, 0.10) 0%, transparent 55%),
+              radial-gradient(120% 90% at 70% 100%, rgba(214, 228, 220, 0.07) 0%, transparent 60%);
+  animation: breathe-b 24s ease-in-out infinite;
+}
+@keyframes breathe-a { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes breathe-b { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+
+/* ============ A2 分区色温联动（hot=暖赭 / cool=青翠，2.4s） ============ */
+.zone-light {
+  position: absolute; inset: 0;
+  background: radial-gradient(90% 60% at 82% -6%, var(--zone-light-hot) 0%, transparent 62%);
+  transition: background 2.4s ease;
+}
+body[data-zone="cool"] .zone-light {
+  background: radial-gradient(90% 60% at 82% -6%, var(--zone-light-cool) 0%, transparent 62%);
+}
+.paper-inkwash {
+  transition: background 2.4s ease;
+}
+body[data-zone="cool"] .paper-inkwash {
+  background:
+    radial-gradient(60% 34% at 12% 4%, var(--zone-ink-cool) 0%, transparent 100%),
+    radial-gradient(50% 26% at 96% 30%, var(--zone-ink-cool) 0%, transparent 100%),
+    radial-gradient(64% 30% at 50% 96%, rgba(58, 74, 66, 0.05) 0%, transparent 100%);
+}
+
+/* ============ A3 云斑聚光（详情页 · 11s · 28%） ============ */
+.cloud-spot {
+  position: absolute; top: 6%; left: -20%;
+  width: 88%; height: 38%;
+  background: radial-gradient(52% 62% at 50% 50%, rgba(255, 250, 232, 0.28) 0%, transparent 72%);
+  will-change: transform, opacity;
+  animation: cloud-drift 11s ease-in-out infinite;
+}
+@keyframes cloud-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }
+  50%  { transform: translate3d(18%, 3%, 0) scale(1.08); opacity: 1; }
+  100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }
+}
+
+/* ============ 横幅卡收展（0.42s 落下 / 0.26s 收起） ============ */
+.banner-card {
+  transition: transform 0.26s ease-in, opacity 0.2s ease-in;
+}
+.banner-card.show {
+  transition: transform var(--dur-drop) var(--t-stamp), opacity 0.3s ease-out;
+}
+
+/* ============ 结算条弹出（同落印曲线） ============ */
+.checkout-bar {
+  transition: transform 0.26s ease-in, opacity 0.2s ease-in;
+}
+.checkout-bar.has {
+  transition: transform var(--dur-drop) var(--t-stamp), opacity 0.3s ease-out;
+}
+
+/* ============ Dock 徽标脉冲（仅 count 变化时，0.5s 一次） ============ */
+.dock-badge.pulse { animation: badge-pop 0.5s var(--t-stamp); }
+@keyframes badge-pop { 0% { transform: scale(1.45); } 100% { transform: scale(1); } }
+
+/* ============ 朱砂印按压（落印 scale 0.92 → 回弹） ============ */
+.stamp-add { transition: transform 0.18s var(--t-stamp); }
+.stamp-add:active { transform: scale(0.92); }
+
+/* ============ 算盘珠按压 ============ */
+.qty-minus, .qty-plus { transition: transform 0.15s ease-out; }
+.qty-minus:active, .qty-plus:active { transform: scale(0.88); }
+
+/* ============ 菜卡点击涟漪（无 JS，active 态即可见） ============ */
+.dish-card { transition: background-color 0.2s ease; }
+.dish-card:active { background: rgba(255, 255, 255, 0.5); }
+
+/* ============================================================
+   性能三档 + reduced-motion（红线 #7 #8 #9）
+   normal：全开
+   minimal：backdrop-filter 全关（换实底渐变），呼吸保留
+   lite：毛玻璃 0 + 常驻动画 0（呼吸/云斑停）
+   档位判定：JS（内存/核数/UA）自动 + ?perf= 手动，写 <html data-perf>
+   ============================================================ */
+
+/* —— minimal：关毛玻璃，给实底，层次不塌 —— */
+html[data-perf="minimal"] .banner-card,
+html[data-perf="minimal"] .checkout-bar {
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  background: linear-gradient(160deg, #2E4437 0%, #1C2B22 100%);
+}
+html[data-ink="black"][data-perf="minimal"] .banner-card,
+html[data-ink="black"][data-perf="minimal"] .checkout-bar {
+  background: linear-gradient(160deg, #38322C 0%, #211D19 100%);
+}
+html[data-perf="minimal"] .dock {
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  background: #FCF9F0;
+}
+html[data-perf="minimal"] .cat-bar { background: linear-gradient(180deg, rgba(var(--paper-rgb), 0.97) 70%, transparent); }
+html[data-perf="minimal"] .ver-switch { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(250, 247, 238, 0.97); }
+html[data-perf="minimal"] .dt-back,
+html[data-perf="minimal"] .dt-bar { -webkit-backdrop-filter: none; backdrop-filter: none; }
+html[data-perf="minimal"] .dt-bar { background: var(--paper); }
+
+/* —— lite：毛玻璃 0 + 常驻动画 0 —— */
+html[data-perf="lite"] .banner-card,
+html[data-perf="lite"] .checkout-bar {
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  background: linear-gradient(160deg, #2E4437 0%, #1C2B22 100%);
+}
+html[data-ink="black"][data-perf="lite"] .banner-card,
+html[data-ink="black"][data-perf="lite"] .checkout-bar {
+  background: linear-gradient(160deg, #38322C 0%, #211D19 100%);
+}
+html[data-perf="lite"] .dock,
+html[data-perf="lite"] .dt-back,
+html[data-perf="lite"] .dt-bar,
+html[data-perf="lite"] .ver-switch { -webkit-backdrop-filter: none; backdrop-filter: none; }
+html[data-perf="lite"] .dock { background: #FCF9F0; }
+html[data-perf="lite"] .dt-bar { background: var(--paper); }
+html[data-perf="lite"] .cat-bar { background: rgba(var(--paper-rgb), 0.97); }
+/* 常驻氛围动效全停（一次性过渡仍允许） */
+html[data-perf="lite"] .breathe-a,
+html[data-perf="lite"] .breathe-b,
+html[data-perf="lite"] .cloud-spot { animation: none !important; }
+html[data-perf="lite"] .zone-light,
+html[data-perf="lite"] .paper-inkwash { transition: none; }
+
+/* ============ reduced-motion：一键全静（红线 #8） ============ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001s !important;
+    scroll-behavior: auto !important;
+  }
+  .breathe-a, .breathe-b, .cloud-spot { animation: none !important; }
+  .banner-card, .checkout-bar, .dock, .fly-drop { transition: none !important; animation: none !important; }
+}
+
+/* 自托管字体子集（构建时由 subset-fonts.py 生成） */
+@font-face {
+  font-family: 'LXGW WenKai';
+  src: url('fonts/wenkai-sub.woff2') format('woff2');
+  font-weight: 400 700; font-display: swap;
+}
+@font-face {
+  font-family: 'Cinzel';
+  src: url('fonts/cinzel-sub.woff2') format('woff2');
+  font-weight: 400 700; font-display: swap;
+}

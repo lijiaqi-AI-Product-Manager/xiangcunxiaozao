@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN" {{DATA_ATTRS}}>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>菜品详情 · 湘村小灶</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-zone="hot">
+
+<div class="ver-switch" id="verSwitch">{{VERSIONS_NAV}}</div>
+
+<!-- 背景四层 + 云斑聚光（详情页常驻氛围） -->
+<div class="paper-stack" aria-hidden="true">
+  <div class="paper-base"></div>
+  <div class="paper-grain"></div>
+  <div class="paper-fiber"></div>
+  <div class="paper-inkwash"></div>
+  <div class="breathe-a"></div>
+  <div class="breathe-b"></div>
+  <div class="zone-light"></div>
+  <div class="cloud-spot"></div>
+</div>
+
+<main class="dt-main">
+  <!-- 大图区：无图态·程序化水墨（真图到货后替换为此菜实拍） -->
+  <div class="dt-visual">
+    <svg class="mountain-svg" viewBox="0 0 375 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="dm1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="rgba(31,61,46,0.55)"/><stop offset="1" stop-color="rgba(31,61,46,0.05)"/>
+        </linearGradient>
+        <linearGradient id="dm2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="rgba(31,61,46,0.34)"/><stop offset="1" stop-color="rgba(31,61,46,0.02)"/>
+        </linearGradient>
+        <linearGradient id="dm3" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="rgba(43,38,34,0.22)"/><stop offset="1" stop-color="rgba(43,38,34,0)"/>
+        </linearGradient>
+      </defs>
+      <path fill="url(#dm3)" d="M0,150 L0,92 Q44,54 84,86 Q124,116 162,76 Q204,34 250,76 Q292,114 332,84 L375,90 L375,150 Z"/>
+      <path fill="url(#dm2)" d="M0,150 L0,116 Q54,82 106,104 Q152,122 198,94 Q246,64 294,98 Q336,126 375,106 L375,150 Z"/>
+      <path fill="url(#dm1)" d="M0,150 L0,132 Q62,104 120,124 Q172,140 226,114 Q282,88 328,118 Q354,132 375,126 L375,150 Z"/>
+      <ellipse cx="90" cy="66" rx="48" ry="13" fill="rgba(251,246,234,0.52)"/>
+      <ellipse cx="252" cy="44" rx="62" ry="14" fill="rgba(251,246,234,0.4)"/>
+    </svg>
+    <div class="dt-en en-cap" id="dtEn">Signature</div>
+    <div class="dt-bigchar" id="dtChar">鱼</div>
+    <button class="dt-back" type="button" aria-label="返回">‹</button>
+  </div>
+
+  <div class="dt-body">
+    <!-- 双层标题：中文大字 + 英文宽体全大写 + 细金线 -->
+    <div class="dt-title">
+      <div class="dt-row">
+        <h1 id="dtName">菜品名</h1>
+        <span class="dt-seal">湘</span>
+      </div>
+      <div class="dt-en-line en-cap" id="dtEnLine">XIANGCUN BISTRO</div>
+      <hr class="gold-rule">
+    </div>
+
+    <!-- 详情简介 -->
+    <p class="dt-intro" id="dtIntro"></p>
+
+    <!-- 风味之路 -->
+    <div class="dt-road">
+      <span class="dt-road-label">风味之路</span>
+      <span class="dt-road-place" id="dtRoad"></span>
+    </div>
+
+    <!-- 拆开看看 · 食材档案 -->
+    <section class="dt-sec">
+      <h2 class="dt-sec-h">拆开看看<span class="en-cap">Ingredients</span></h2>
+      <div class="dt-ing" id="dtIng"></div>
+    </section>
+
+    <!-- 源流卡 -->
+    <section class="dt-sec">
+      <h2 class="dt-sec-h">这道菜的来历<span class="en-cap">Origin</span></h2>
+      <div class="dt-origin" id="dtOrigin"></div>
+    </section>
+
+    <!-- 工序三步 -->
+    <section class="dt-sec">
+      <h2 class="dt-sec-h">灶上三步<span class="en-cap">Craft</span></h2>
+      <ol class="dt-craft" id="dtCraft"></ol>
+    </section>
+  </div>
+</main>
+
+<!-- 底部加购栏 -->
+<div class="dt-bar">
+  <div class="dt-bar-price">RM 0<small>湘灶价</small></div>
+  <button class="stamp-add dt-qty" data-add>加入</button>
+</div>
+
+<script>window.MENU_DATA = {{MENU_JSON}};</script>
+<script src="assets/app-detail.js"></script>
+</body>
+</html>

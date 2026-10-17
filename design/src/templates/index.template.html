@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN" {{DATA_ATTRS}}>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>湘村小灶 · 点单</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-zone="hot">
+
+<!-- 演示用版本切换条（仅小样，发布版移除） -->
+<div class="ver-switch" id="verSwitch">{{VERSIONS_NAV}}</div>
+
+<!-- 背景四层合成（固定，不随滚动） -->
+<div class="paper-stack" aria-hidden="true">
+  <div class="paper-base"></div>
+  <div class="paper-grain"></div>
+  <div class="paper-fiber"></div>
+  <div class="paper-inkwash"></div>
+  <div class="breathe-a"></div>
+  <div class="breathe-b"></div>
+  <div class="zone-light"></div>
+</div>
+
+<main id="main">
+
+  <!-- ====== 门店区 · 无图态（默认） ====== -->
+  <header class="shop-head plain-head">
+    <div class="brand-row">
+      <div class="brand-cn">湘村小灶</div>
+      <div class="brand-seal">湘</div>
+    </div>
+    <div class="brand-en en-cap">Xiangcun Bistro · Est. 2024</div>
+    <div class="shop-meta">{{BRAND_ADDR}} ｜ {{BRAND_HOURS}} ｜ {{BRAND_TAGLINE}}</div>
+  </header>
+
+  <!-- ====== 门店区 · 大画态（V4/V5/V6 生效，heroDish 240px） ====== -->
+  <header class="shop-head hero-head hero-mode">
+    <div class="hero-visual" data-href="detail.html?id={{HERO_ID}}">
+      <svg class="mountain-svg" viewBox="0 0 375 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="mtn1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="rgba(31,61,46,0.50)"/><stop offset="1" stop-color="rgba(31,61,46,0.06)"/>
+          </linearGradient>
+          <linearGradient id="mtn2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="rgba(31,61,46,0.32)"/><stop offset="1" stop-color="rgba(31,61,46,0.02)"/>
+          </linearGradient>
+          <linearGradient id="mtn3" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="rgba(43,38,34,0.24)"/><stop offset="1" stop-color="rgba(43,38,34,0.0)"/>
+          </linearGradient>
+        </defs>
+        <path fill="url(#mtn3)" d="M0,150 L0,96 Q40,58 78,88 Q120,120 158,80 Q200,38 246,78 Q290,112 330,86 L375,92 L375,150 Z"/>
+        <path fill="url(#mtn2)" d="M0,150 L0,118 Q52,84 104,106 Q150,124 196,96 Q244,66 292,100 Q334,128 375,108 L375,150 Z"/>
+        <path fill="url(#mtn1)" d="M0,150 L0,134 Q60,106 118,126 Q170,142 224,116 Q280,90 326,120 Q352,134 375,128 L375,150 Z"/>
+        <ellipse cx="94" cy="70" rx="46" ry="12" fill="rgba(251,246,234,0.5)"/>
+        <ellipse cx="250" cy="46" rx="60" ry="14" fill="rgba(251,246,234,0.38)"/>
+      </svg>
+      <div class="hero-en en-cap">Signature · No.1</div>
+      <div class="hero-name">{{HERO_NAME}}</div>
+      <div class="hero-anchor"><small>RM</small> {{HERO_PRICE}}</div>
+    </div>
+    <div class="hero-compact">
+      <div class="brand-row">
+        <div class="brand-cn sm">湘村小灶</div>
+        <div class="brand-seal">湘</div>
+      </div>
+      <div class="shop-meta">{{BRAND_ADDR}} ｜ {{BRAND_HOURS}}</div>
+    </div>
+  </header>
+
+  <!-- ====== 滚动触发横幅卡（墨玻璃） ====== -->
+  <div class="banner-card" id="bannerCard" role="complementary" aria-label="今日头牌"></div>
+
+  <!-- ====== 分类条（谷雨式毛玻璃胶囊） ====== -->
+  <nav class="cat-bar" id="catBar" aria-label="菜单分类"></nav>
+
+  <!-- ====== 菜单列表（48 道） ====== -->
+  <section class="menu-list" id="menuList"></section>
+</main>
+
+<!-- ====== 结算条 V2（墨玻璃独立托盘） ====== -->
+<div class="checkout-bar" id="checkoutBar">
+  <div class="cb-cart" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1.2 12.2a1.6 1.6 0 0 1-1.6 1.4H8.8a1.6 1.6 0 0 1-1.6-1.4L6 7z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
+    <span class="cb-count">0</span>
+  </div>
+  <div class="cb-total">合计 <b>RM 0</b></div>
+  <button class="cb-go" type="button">去结算</button>
+</div>
+
+<!-- ====== Dock V1（浮动胶囊 + 药丸印章选中态） ====== -->
+<nav class="dock" id="dock" aria-label="底部导航">
+  <button class="dock-item on" type="button"><i>菜</i><span>菜单</span></button>
+  <button class="dock-item" type="button"><i>牌</i><span>招牌</span></button>
+  <button class="dock-item cart-tab" type="button">
+    <i>车</i><span>购物车</span>
+    <b class="dock-badge">0</b>
+  </button>
+  <div class="dock-checkout"><span>合计</span><b>RM 0</b></div>
+</nav>
+
+<script>window.MENU_DATA = {{MENU_JSON}};</script>
+<script src="assets/app.js"></script>
+</body>
+</html>

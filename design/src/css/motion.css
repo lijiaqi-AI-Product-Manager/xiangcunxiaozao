@@ -1,0 +1,88 @@
+/* ============================================================
+   motion.css —— 氛围动效
+   A1 纸的呼吸：双色温层 24s 交叉淡化（仅 opacity，合成层）
+   A2 分区色温联动：zone-light 2.4s 过渡（触发由 IO 写 body[data-zone]）
+   A3 云斑聚光：详情页常驻，径向光斑 11s 缓移（transform，28%）
+   ============================================================ */
+
+/* ============ A1 纸的呼吸（ΔE00≈3：暖纸 ⇄ 微冷纸） ============ */
+.breathe-a, .breathe-b {
+  position: absolute; inset: 0; will-change: opacity;
+}
+.breathe-a {
+  background: radial-gradient(140% 100% at 50% 0%, rgba(255, 242, 204, 0.10) 0%, transparent 55%),
+              radial-gradient(120% 90% at 30% 100%, rgba(236, 216, 168, 0.07) 0%, transparent 60%);
+  animation: breathe-a 24s ease-in-out infinite;
+}
+.breathe-b {
+  background: radial-gradient(140% 100% at 50% 0%, rgba(228, 240, 228, 0.10) 0%, transparent 55%),
+              radial-gradient(120% 90% at 70% 100%, rgba(214, 228, 220, 0.07) 0%, transparent 60%);
+  animation: breathe-b 24s ease-in-out infinite;
+}
+@keyframes breathe-a { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes breathe-b { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+
+/* ============ A2 分区色温联动（hot=暖赭 / cool=青翠，2.4s） ============ */
+.zone-light {
+  position: absolute; inset: 0;
+  background: radial-gradient(90% 60% at 82% -6%, var(--zone-light-hot) 0%, transparent 62%);
+  transition: background 2.4s ease;
+}
+body[data-zone="cool"] .zone-light {
+  background: radial-gradient(90% 60% at 82% -6%, var(--zone-light-cool) 0%, transparent 62%);
+}
+.paper-inkwash {
+  transition: background 2.4s ease;
+}
+body[data-zone="cool"] .paper-inkwash {
+  background:
+    radial-gradient(60% 34% at 12% 4%, var(--zone-ink-cool) 0%, transparent 100%),
+    radial-gradient(50% 26% at 96% 30%, var(--zone-ink-cool) 0%, transparent 100%),
+    radial-gradient(64% 30% at 50% 96%, rgba(58, 74, 66, 0.05) 0%, transparent 100%);
+}
+
+/* ============ A3 云斑聚光（详情页 · 11s · 28%） ============ */
+.cloud-spot {
+  position: absolute; top: 6%; left: -20%;
+  width: 88%; height: 38%;
+  background: radial-gradient(52% 62% at 50% 50%, rgba(255, 250, 232, 0.28) 0%, transparent 72%);
+  will-change: transform, opacity;
+  animation: cloud-drift 11s ease-in-out infinite;
+}
+@keyframes cloud-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }
+  50%  { transform: translate3d(18%, 3%, 0) scale(1.08); opacity: 1; }
+  100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }
+}
+
+/* ============ 横幅卡收展（0.42s 落下 / 0.26s 收起） ============ */
+.banner-card {
+  transition: transform 0.26s ease-in, opacity 0.2s ease-in;
+}
+.banner-card.show {
+  transition: transform var(--dur-drop) var(--t-stamp), opacity 0.3s ease-out;
+}
+
+/* ============ 结算条弹出（同落印曲线） ============ */
+.checkout-bar {
+  transition: transform 0.26s ease-in, opacity 0.2s ease-in;
+}
+.checkout-bar.has {
+  transition: transform var(--dur-drop) var(--t-stamp), opacity 0.3s ease-out;
+}
+
+/* ============ Dock 徽标脉冲（仅 count 变化时，0.5s 一次） ============ */
+.dock-badge.pulse { animation: badge-pop 0.5s var(--t-stamp); }
+@keyframes badge-pop { 0% { transform: scale(1.45); } 100% { transform: scale(1); } }
+
+/* ============ 朱砂印按压（落印 scale 0.92 → 回弹） ============ */
+.stamp-add { transition: transform 0.18s var(--t-stamp); }
+.stamp-add:active { transform: scale(0.92); }
+
+/* ============ 算盘珠按压 ============ */
+.qty-minus, .qty-plus { transition: transform 0.15s ease-out; }
+.qty-minus:active, .qty-plus:active { transform: scale(0.88); }
+
+/* ============ 菜卡点击涟漪（无 JS，active 态即可见） ============ */
+.dish-card { transition: background-color 0.2s ease; }
+.dish-card:active { background: rgba(255, 255, 255, 0.5); }
