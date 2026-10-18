@@ -1,0 +1,14 @@
+node_modules/
+dist/
+data/
+backups/
+*.db
+*.db-wal
+*.db-shm
+.env.local
+.env
+test-results/
+playwright-report/
+dist-demo/
+*.webm
+*.mp4

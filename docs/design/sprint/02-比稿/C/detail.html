@@ -1,0 +1,97 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>C 纸本菜谱 · 详情</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&amp;display=swap"><style>:root{
+  --bg: #F7F7F5;
+  --surface: #FFFFFF;
+  --text: #333333;
+  --text-2: #666666;
+  --line: #E4E2DC;
+  --paper: #F1EEE8;
+  --red: #C8372D;
+  --red-line: #C8372D;
+  --red-10: rgba(200,55,45,0.10);
+  --ink: #333333;
+  --on-red: #FFFFFF;
+  --font-body: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-brush: "Ma Shan Zheng", "STKaiti", "KaiTi", "Kaiti SC", serif;
+  --wm-opacity: 0.05;
+  --wm-size: 179px;
+  --fs-1: 12px;
+  --fs-2: 14px;
+  --fs-3: 15px;
+  --fs-4: 20px;
+  --fs-5: 30px;
+  --fs-price: 16px;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --r-card: 0px;
+  --r-btn: 4px;
+  --r-thumb: 4px;
+  --shadow: none;
+  --motion-pop: 0ms;
+  --motion-stagger: 120ms;
+  --motion-enter: 0ms;
+}
+:root{--thumb-color:var(--ink)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg)}
+body{color:var(--text);font-family:var(--font-body);font-size:var(--fs-3);line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;border:0;background:none}
+.app{position:relative;z-index:1;max-width:375px;margin:0 auto;min-height:100vh}
+.wm{position:fixed;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:flex-end;overflow:hidden;z-index:0}
+.wm span{writing-mode:vertical-rl;font-family:var(--font-brush);font-size:var(--wm-size);line-height:1;color:var(--text);opacity:var(--wm-opacity)}
+.seal{display:inline-flex;align-items:center;justify-content:center;flex:none;border-radius:50%;color:var(--red);font-family:var(--font-brush);transform:rotate(-8deg);border:2px solid var(--red);box-shadow:inset 0 0 0 1.5px var(--surface),inset 0 0 0 3px var(--red);line-height:1}
+.brush{font-family:var(--font-brush);font-weight:400}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:5;max-width:375px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);background:var(--surface);border-top:1px solid var(--line)}
+.tabbar a{height:56px;display:flex;align-items:center;justify-content:center;color:var(--text-2);text-decoration:none;font-size:var(--fs-3)}
+.tabbar a.on{color:var(--ink);font-weight:700}
+.thumb{flex:none;display:flex;align-items:center;justify-content:center;background:var(--paper);font-family:var(--font-brush);line-height:1;color:var(--thumb-color)}
+.big-ph{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:var(--paper);overflow:hidden}
+.big-ph .n{font-family:var(--font-brush);color:var(--text);line-height:1.15;text-align:center;text-wrap:balance}
+.big-ph .c{font-size:var(--fs-1);color:var(--text-2)}
+.big-ph .seal{position:absolute;right:10px;bottom:10px;opacity:.85}
+.price{color:var(--red);font-weight:700;font-size:var(--fs-price);white-space:nowrap}
+.unit{color:var(--text-2);font-weight:400;font-size:var(--fs-1)}
+.add{width:32px;height:32px;border-radius:50%;background:var(--red);color:var(--on-red);font-size:22px;line-height:32px;text-align:center;flex:none}
+.add.line{background:none;border:1.5px solid var(--red-line);color:var(--red);line-height:29px}
+.qty{display:flex;align-items:center;gap:6px}.qty .m{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:20px;line-height:30px;text-align:center}.qty b{min-width:16px;text-align:center}
+.cartbar{position:fixed;left:0;right:0;bottom:56px;z-index:4;max-width:375px;margin:0 auto;display:flex;gap:8px;padding:8px 12px;background:var(--bg)}
+.add.q{position:relative}.add.q em{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--ink);color:var(--surface);font-size:11px;line-height:18px;font-style:normal;font-weight:700}
+.cart-sum{flex:1;display:flex;align-items:center;gap:12px;height:48px;padding:0 16px;border-radius:var(--r-btn);background:var(--ink);color:var(--surface);font-weight:700}
+.badge{min-width:24px;height:24px;padding:0 6px;border-radius:12px;background:var(--red);color:var(--on-red);font-size:var(--fs-2);display:inline-flex;align-items:center;justify-content:center}
+.cart-go{height:48px;padding:0 20px;border-radius:var(--r-btn);background:var(--red);color:var(--on-red);font-weight:700}
+.trust{font-size:var(--fs-1);color:var(--text-2);letter-spacing:1px}
+.trust i{font-style:normal;color:var(--red);margin:0 6px}
+.clip1{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.top{display:flex;align-items:center;justify-content:space-between;height:48px;padding:0 var(--sp-4);font-size:var(--fs-2);color:var(--text-2);border-bottom:1px solid var(--line)}
+.frame{margin:var(--sp-4);padding:6px;border:1px solid var(--line);outline:1px solid var(--line);outline-offset:3px}
+.ttl{text-align:center;padding:0 var(--sp-4)}
+.ttl h1{font-family:var(--font-brush);font-weight:400;font-size:var(--fs-5);line-height:1.2}
+.ttl .price{font-size:22px;margin-top:var(--sp-1)}
+.ttl .hook{margin-top:var(--sp-2);font-size:var(--fs-2);color:var(--text-2)}
+.xbtn{margin-top:var(--sp-3);height:40px;padding:0 var(--sp-5);border-radius:var(--r-btn);background:var(--red-10);color:var(--red);font-weight:700;font-size:var(--fs-2)}
+.sec{margin:var(--sp-4) var(--sp-4) 0;padding-top:var(--sp-4);border-top:1px dashed var(--line)}
+.sec h2{display:flex;align-items:center;gap:var(--sp-2);font-size:var(--fs-3);font-weight:700;margin-bottom:var(--sp-2)}
+.sec h2 i{width:8px;height:8px;background:var(--red);transform:rotate(45deg)}
+.sec p{font-size:var(--fs-2);line-height:1.8}
+.steps{list-style:none;display:flex;flex-direction:column;gap:var(--sp-2)}
+.steps li{display:flex;gap:var(--sp-3);align-items:center;font-size:var(--fs-2)}
+.steps i{flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--red-line);color:var(--red);font-style:normal;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:var(--fs-1)}
+.stamp{display:inline-block;padding:4px 12px;border:1.5px solid var(--red-line);color:var(--red);font-size:var(--fs-2);transform:rotate(-2deg)}
+.dbar{position:fixed;left:0;right:0;bottom:56px;z-index:4;max-width:375px;margin:0 auto;display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-2) var(--sp-4);background:var(--bg);border-top:1px solid var(--line)}
+.dbar .price{font-size:var(--fs-4);margin-right:auto}
+</style></head>
+<body><div class="wm" aria-hidden="true"><span>湘村小灶</span></div><div class="app">
+<div class="top"><span>‹ 返回菜单</span><span>招牌菜 · E06</span></div>
+<div class="frame"><div class="big-ph" style="width:100%;height:240px"><span class="n" style="font-size:30px">湘味油泼牛肉</span><span class="c">成品图上线中</span><span class="seal" style="width:22px;height:22px;font-size:12px">灶</span></div></div>
+<div class="ttl"><h1>湘味油泼牛肉</h1><p class="price">RM&nbsp;48</p><p class="hook">鲜牛肉切薄片，辣子堆上滚油一激。</p>
+  <button class="xbtn">拆开看看（4 样食材）</button></div>
+<section class="sec"><h2><i></i>详细介绍</h2><p>牛肉当日鲜切薄片、滑油锁嫩，装盘码上辣子面与花椒，滚油&quot;刺啦&quot;一泼——香气是靠这一泼激出来的。油泼的规矩是听声：响声越脆，油温越对。</p></section>
+<section class="sec"><h2><i></i>源流</h2><p>油泼是陕西面食的古法——滚油激香，一泼定味。湘人把它从面碗挪到牛肉上：陕派的技法，湘派的选肉和猛火，一菜两省的江湖气。</p></section>
+<section class="sec"><h2><i></i>工序</h2><ol class="steps"><li><i>1</i><span>鲜牛肉逆纹切片</span></li><li><i>2</i><span>滑油十秒锁嫩</span></li><li><i>3</i><span>码辣子花椒、滚油一泼上桌。</span></li></ol></section>
+<section class="sec"><h2><i></i>风味之路</h2><span class="stamp">陕西技法×湖南做</span></section>
+<div style="height:140px"></div>
+<div class="dbar"><span class="price">RM&nbsp;48</span><span class="qty"><span class="m">−</span><b>1</b><span class="add line">+</span></span><button class="cart-go">去结算 · 2</button></div><nav class="tabbar"><a class="on">点单</a><a>取餐</a><a>会员</a><a>我的</a></nav></div></body></html>

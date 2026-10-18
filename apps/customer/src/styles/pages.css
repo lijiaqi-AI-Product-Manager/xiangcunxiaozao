@@ -1,0 +1,195 @@
+/* ---------- 54号 第二批：取餐 / 会员 / 我的 / 结算——同一套设计语言（宣纸底、纸白轻透面板、马善政标题、朱砂点缀、大圆角） ---------- */
+.pagehead .head-en { margin-left: auto; }
+.brush-title { color: var(--ink-deep); }
+.panel.paper { background: linear-gradient(180deg, var(--paper), var(--paper-2)); box-shadow: var(--glass-edges); }
+.panel-title .req, .field-label .req { margin-left: 6px; font-style: normal; font-size: 14px; color: var(--price); font-family: var(--font-family-body); font-variation-settings: normal; }
+.step-no { margin-right: 8px; font-family: var(--font-family-latin); font-size: 15px; color: var(--gild-deep); }
+
+/* 小票：菜名书法 + 价格书法（数字衬线），合计一条细金线 */
+.receipt li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 6px 0; }
+.r-name { display: flex; align-items: baseline; gap: 4px; flex: 1; min-width: 0; font-family: var(--font-family-brush); font-size: 17px; color: var(--ink-deep); font-variation-settings: "wght" 600; }
+.r-name em { font-style: normal; font-size: 15px; color: var(--ink-2); font-family: var(--font-family-body); font-variation-settings: normal; }
+.receipt .price { font-size: 16px; }
+.receipt-total { margin-top: 4px; padding-top: 10px !important; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--gold-line) 50%, transparent); font-weight: 700; }
+.receipt-total .price { font-size: 20px; }
+.receipt-refund { color: var(--gild-deep); font-size: 14px; }
+.refunded { font-style: normal; color: var(--gild-deep); font-size: 14px; font-family: var(--font-family-body); }
+.refund { margin-top: 6px; color: var(--gild-deep); font-weight: 600; }
+
+/* ---------- 表单：大圆角浅玻璃输入框（不做「标签：值」一行行堆的表单感） ---------- */
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.field-label { font-size: 14px; color: var(--ink-2); }
+.field input, .field textarea {
+  min-height: 48px; padding: 10px 14px; border: 0; border-radius: 18px; color: var(--ink); background: color-mix(in srgb, var(--paper-white) 88%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line-strong), inset 0 2px 4px var(--line);
+}
+.field input:focus, .field textarea:focus { outline: none; box-shadow: inset 0 0 0 1.5px var(--price), 0 0 0 3px var(--red-10); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.note-preview { margin-top: -4px; }
+.mix { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; margin-bottom: 10px; border-radius: 18px; font-size: 14px; cursor: pointer; box-shadow: inset 0 0 0 1.5px var(--price-line); }
+.mix input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--price); flex: none; }
+.mix.on { background: var(--red-10); box-shadow: inset 0 0 0 1.5px var(--price); }
+.split { margin: 0 0 10px; color: var(--price); font-weight: 700; }
+.pay { display: grid; gap: 8px; }
+.pay-opt { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 16px; border-radius: 20px; cursor: pointer; background: color-mix(in srgb, var(--paper-white) 70%, transparent); box-shadow: inset 0 0 0 1px var(--line-strong); }
+.pay-opt input { width: 20px; height: 20px; accent-color: var(--price); flex: none; }
+.pay-opt .pay-name { font-size: 16px; }
+.pay-opt .small { margin-left: auto; }
+.pay-opt.on { background: var(--red-10); box-shadow: inset 0 0 0 1.5px var(--price); }
+.pay-opt.on .pay-name { color: var(--price); font-weight: 700; }
+.pay-opt.disabled { opacity: .6; cursor: not-allowed; }
+.inline-login { margin-top: 12px; padding-top: 12px; box-shadow: inset 0 1px 0 var(--line); }
+.member-login.compact .field { margin-bottom: 10px; }
+.submit-wrap, .logout-wrap { margin: 16px 16px 0; }
+.checkout-error { margin: 12px 16px 0; }
+.login-note { margin-top: 10px; }
+
+/* ---------- 取餐：三重编码（大字取餐号 + 兜底数字 + 语音播报）+ 三段进度 + 翻牌 ---------- */
+.ticket { text-align: center; padding: 22px 18px 18px; overflow: hidden; }
+.ticket-label { font-size: 20px; color: var(--ink-2); }
+.flip-card { perspective: 600px; }
+.hero-no { font-family: var(--font-family-latin); font-weight: 700; font-size: 76px; line-height: 1.05; letter-spacing: .06em; color: var(--ink-deep); font-variant-numeric: tabular-nums; }
+html:not([data-tier=static]) .flip-card .hero-no { animation: flip .6s cubic-bezier(.34, 1.56, .64, 1) both; transform-origin: 50% 60%; backface-visibility: hidden; }
+@keyframes flip { from { transform: rotateX(-90deg); opacity: 0; } 40% { opacity: 1; } }
+.ticket-fallback { margin-top: 2px; font-size: 14px; letter-spacing: .1em; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.ticket-status { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 6px 16px 6px 12px; border-radius: 999px; }
+.ticket-status .ico { width: 20px; height: 20px; }
+.hero-status { font-family: var(--font-family-brush); font-size: 22px; font-variation-settings: "wght" 600; }
+.status-pending .ticket-status { background: var(--st-pending-bg); color: var(--st-pending); }
+.status-cooking .ticket-status { background: var(--st-cooking-bg); color: var(--st-cooking); }
+.status-done .ticket-status { background: var(--st-done-bg); color: var(--st-done); }
+.status-cancelled .ticket-status { background: var(--line); color: var(--ink-2); }
+/* 「已取消」：整卡变灰去饱和 */
+.ticket.status-cancelled { filter: grayscale(1) saturate(0); }
+.progress { display: grid; grid-template-columns: repeat(3, 1fr); margin: 16px 4px 4px; position: relative; }
+.progress li { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; font-family: var(--font-family-brush); font-size: 16px; color: var(--ink-2); font-variation-settings: "wght" 600; }
+.progress li::before { content: ''; position: absolute; top: 8px; left: -50%; width: 100%; height: 2px; background: var(--line-strong); z-index: 0; }
+.progress li:first-child::before { display: none; }
+.progress li.done::before, .progress li.now::before { background: linear-gradient(90deg, var(--price), var(--price)); }
+.progress i { position: relative; z-index: 1; width: 18px; height: 18px; border-radius: 50%; background: var(--paper-white); box-shadow: inset 0 0 0 2px var(--line-strong); }
+.progress li.done i { background: var(--price); box-shadow: none; }
+.progress li.now i { background: var(--paper-white); box-shadow: inset 0 0 0 5px var(--price), 0 0 0 4px var(--red-10); }
+.progress li.now span { color: var(--price); }
+html:not([data-tier=static]):not([data-tier=lite]) .progress li.now i { animation: now-pulse 1.8s ease-in-out infinite; }
+@keyframes now-pulse { 50% { transform: scale(1.18); } }
+.eta { margin-top: 8px; }
+.eta b { font-family: var(--font-family-latin); font-size: 20px; color: var(--ink-deep); }
+.ticket-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 14px 0 6px; }
+.meta-chip { padding: 3px 12px; border-radius: 999px; font-size: 14px; color: var(--ink-2); background: color-mix(in srgb, var(--paper-white) 70%, transparent); box-shadow: inset 0 0 0 1px var(--line); }
+.ticket-note { margin-bottom: 6px; }
+.ticket .receipt { text-align: left; margin-top: 8px; }
+.voice-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 12px; padding: 0 18px; border-radius: 22px; font-size: 15px; color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line-strong); }
+.voice-btn .ico { width: 20px; height: 20px; }
+.voice-btn.on { color: var(--gild-deep); box-shadow: inset 0 0 0 1.5px var(--gild-deep); }
+.orders li { display: flex; align-items: center; gap: 12px; padding: 12px 0; box-shadow: inset 0 -1px 0 var(--line); }
+.orders li:last-child { box-shadow: none; }
+.order-no { flex: none; width: 58px; height: 58px; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-family: var(--font-family-latin); font-weight: 700; font-size: 20px; color: var(--ink-deep); background: var(--paper); }
+.order-row.status-cancelled .order-no { opacity: .55; }
+.order-body { flex: 1; min-width: 0; }
+.order-when { font-size: 15px; }
+
+/* ---------- 会员：会员卡 = 大画态小标签的放大版（白底大圆角 + 朱砂红 + 柔投影，浮在水墨上） ---------- */
+.rules .rule-text { font-size: 15px; line-height: 1.75; }
+.rules .rule-text + .rule-text { margin-top: 8px; }
+.ledger li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; box-shadow: inset 0 -1px 0 var(--line); }
+.ledger li:last-child { box-shadow: none; }
+.ledger-main strong { display: inline-block; margin-right: 8px; font-size: 18px; font-weight: 400; }
+.ledger-amt { display: flex; flex-direction: column; align-items: flex-end; white-space: nowrap; }
+.ledger-amt .plus, .ledger-amt .minus { font-family: var(--font-family-latin); font-weight: 700; font-size: 17px; }
+.ledger-amt .plus { color: var(--gild-deep); }
+.ledger-amt .minus { color: var(--ink-deep); }
+.more-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px; margin-top: 4px; font-size: 15px; color: var(--ink-2); }
+.more-btn .ring-arrow { width: 22px; height: 22px; }
+.more-btn[aria-expanded="true"] .ring-arrow svg { transform: rotate(180deg); }
+
+/* ---------- 我的：深墨绿顶卡（顾客端三个深色锚点之一）+ 莫兰迪 2×2 功能区（大圆角、图标微立体、同色系渐变） ---------- */
+.me { padding-top: calc(4px + env(safe-area-inset-top, 0px)); }
+.me-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 16px 0; }
+.me-tile { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 104px; padding: 16px; border-radius: 26px; text-align: left; box-shadow: var(--tile-edges); overflow: hidden; }
+.tile-ico { width: 40px; height: 40px; border-radius: 16px; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--paper-white) 60%, transparent); box-shadow: var(--glass-edges); }
+.tile-ico .ico { width: 22px; height: 22px; }
+.tile-label { margin-top: 6px; font-size: 19px; }
+.tile-sub { font-size: 14px; color: var(--tile-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.store-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fact { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 20px; background: color-mix(in srgb, var(--paper) 55%, transparent); }
+.fact.wide { grid-column: 1 / -1; }
+a.fact { color: inherit; text-decoration: none; }
+.fact-k { font-size: 15px; color: var(--ink-2); }
+.fact-v { font-size: 16px; color: var(--ink-deep); }
+.faq { box-shadow: inset 0 1px 0 var(--line); }
+.faq summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 10px 0; font-weight: 600; cursor: pointer; list-style: none; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary .ring-arrow { flex: none; width: 24px; height: 24px; }
+.faq[open] summary .ring-arrow svg { transform: rotate(180deg); }
+html:not([data-tier=static]) .faq .ring-arrow svg { transition: transform .42s cubic-bezier(.34, 1.56, .64, 1); }
+.faq p { padding-bottom: 12px; color: var(--ink); line-height: 1.75; }
+html:not([data-tier=static]) .faq[open] p { animation: page-in .3s ease-out; }
+
+/* ---------- 56号 黑金：墨金黑底（暖调，不是纯黑）+ 哑光鎏金（低饱和，不是亮黄）+ 金细线 + 左上一抹暖光 ---------- */
+.bk { position: relative; overflow: hidden; color: var(--gild-soft); background: var(--bk-bg); box-shadow: var(--bk-edges); --seal-gap: var(--bk-solid); }
+.bk::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: var(--bk-spot); }
+.bk > * { position: relative; }
+.bk .brush-title { color: var(--gild); }
+.bk-wm { position: absolute !important; right: 16px; bottom: -6px; white-space: nowrap; font-family: var(--font-family-brush); font-size: 40px; line-height: 1; letter-spacing: .12em; color: var(--gild); opacity: .08; pointer-events: none; }
+.bk .panel-title .rule { background: linear-gradient(90deg, var(--gild-line), transparent); }
+.btn.bk-btn { background: var(--gild-btn); color: var(--gild); box-shadow: inset 0 0 0 1px var(--gild-line); white-space: nowrap; }
+.btn.gold-ghost { background: color-mix(in srgb, var(--paper-white) 70%, transparent); color: var(--gild-deep); box-shadow: inset 0 0 0 1.5px var(--gild-line); }
+
+/* 登录页：黑金卡 + 深色玻璃输入框（金细线描边）+「登录会员」黑条金字 */
+.login-card { padding: 22px 18px 18px; border-radius: 28px; }
+.login-card .field-label { color: var(--gild-soft); }
+.login-card .field input { color: var(--gild-soft); background: var(--bk-field); box-shadow: inset 0 0 0 1px var(--gild-line); }
+.login-card .field input::placeholder { color: color-mix(in srgb, var(--gild) 55%, transparent); }
+.login-card .field input:focus { box-shadow: inset 0 0 0 1.5px var(--gild), 0 0 0 3px color-mix(in srgb, var(--gild) 18%, transparent); }
+.login-card .btn { min-height: 50px; background: var(--gild-btn); color: var(--gild); box-shadow: inset 0 0 0 1px var(--gild-line), 0 8px 18px -10px var(--bk-solid); letter-spacing: .2em; font-family: var(--font-family-brush); font-size: 18px; font-weight: 400; font-variation-settings: "wght" 600; }
+.login-card .btn:disabled { opacity: .78; } /* 没填完时也要看得出是按钮，不是一块死字 */
+.login-card .form-error { background: color-mix(in srgb, var(--red) 22%, transparent); color: var(--gild-soft); }
+.login-card .login-note { color: var(--gild-soft); }
+
+/* 会员卡：信用卡比例，和大画态那张卡同一套语言（竖排 SIGNATURE、竖排书法水印、圆戳），宣纸纤维 + 远山底纹 */
+.member-card {
+  --fg: var(--mc-black-fg); --sub: var(--mc-black-sub); --line: var(--mc-black-line); --seal-gap: var(--mc-black-gap);
+  position: relative; overflow: hidden; margin: 14px 16px 0; aspect-ratio: 1.586; min-height: 200px; border-radius: 24px;
+  background: var(--mc-black-bg); box-shadow: var(--bk-edges); color: var(--sub);
+}
+.member-card.tone-earth { --fg: var(--mc-earth-fg); --sub: var(--mc-earth-sub); --line: var(--mc-earth-line); --seal-gap: var(--mc-earth-gap); background: var(--mc-earth-bg); }
+.member-card.tone-gold { --fg: var(--mc-gold-fg); --sub: var(--mc-gold-sub); --line: var(--mc-gold-line); --seal-gap: var(--mc-gold-gap); background: var(--mc-gold-bg); }
+.member-card.tone-platinum { --fg: var(--mc-platinum-fg); --sub: var(--mc-platinum-sub); --line: var(--mc-platinum-line); --seal-gap: var(--mc-platinum-gap); background: var(--mc-platinum-bg); }
+.member-card::after { content: ''; position: absolute; inset: 7px; border-radius: 18px; pointer-events: none; box-shadow: inset 0 0 0 1px var(--line); }
+.mc-ink { position: absolute; left: 0; right: 0; bottom: 0; height: 70%; background-image: var(--art-ink-wash-warm); background-size: cover; background-position: center bottom; opacity: .16; mix-blend-mode: multiply; pointer-events: none; }
+.tone-black .mc-ink { filter: invert(1) sepia(1) saturate(.7); mix-blend-mode: screen; opacity: .2; }
+.mc-tex { position: absolute; inset: 0; background-image: var(--art-xuan-fiber), var(--art-paper-grain); background-size: 320px 320px, 240px 240px; opacity: .12; mix-blend-mode: overlay; pointer-events: none; }
+.mc-sig { position: absolute; left: 20px; bottom: 22px; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 11px; letter-spacing: .24em; color: var(--fg); }
+.mc-wm { position: absolute; left: 42px; bottom: 18px; writing-mode: vertical-rl; font-family: var(--font-family-brush); font-size: 26px; line-height: 1; letter-spacing: .12em; color: var(--fg); opacity: .1; pointer-events: none; }
+.member-card .seal { position: absolute; right: 20px; top: 18px; }
+.mc-main { position: absolute; left: 80px; right: 72px; top: 24px; }
+.mc-label { font-size: 17px; color: var(--sub); }
+.member-card .mc-label { color: var(--sub); }
+.balance { margin-top: 2px; font-family: var(--font-family-latin); font-weight: 700; font-size: 44px; line-height: 1.1; letter-spacing: .01em; color: var(--fg); white-space: nowrap; }
+.tone-black .balance { background: var(--gild-text); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+html:not([data-tier=static]) .balance { animation: balance-in .5s cubic-bezier(.2, .8, .3, 1); }
+@keyframes balance-in { from { transform: translateY(40%); opacity: 0; } }
+.mc-foot { position: absolute; left: 80px; right: 20px; bottom: 18px; display: flex; flex-direction: column; gap: 6px; }
+.mc-no { font-size: 14px; color: var(--sub); padding-bottom: 6px; box-shadow: inset 0 -1px 0 var(--line); }
+.mc-no b { font-family: var(--font-family-latin); color: var(--fg); }
+.member-card .mc-brand { align-self: flex-end; font-size: 18px; color: var(--fg); letter-spacing: .12em; }
+
+/* 我的页：顶卡黑金（和会员卡同一套语言） */
+.me-card { display: flex; align-items: center; gap: 12px; margin: 12px 16px 0; padding: 22px 18px; border-radius: 28px; }
+.me-wm { position: absolute !important; left: 18px; bottom: -8px; white-space: nowrap; font-family: var(--font-family-brush); font-size: 40px; line-height: 1; letter-spacing: .12em; color: var(--gild); opacity: .08; pointer-events: none; }
+.me-who { flex: 1; min-width: 0; }
+.me-card .brush-title { font-size: 24px; }
+.me-sub { margin-top: 2px; font-size: 14px; color: var(--gild-soft); }
+.me-sub b { font-family: var(--font-family-latin); font-size: 16px; color: var(--gild); }
+/* 功能格：同一暖土色系的深浅（宣纸金 / 驼 / 赭），会员储值那格黑金 */
+.me-tile.tone-paper { background: var(--tone-paper); }
+.me-tile.tone-camel { background: var(--tone-camel); }
+.me-tile.tone-ochre { background: var(--tone-ochre); }
+.me-tile.tone-black { background: var(--bk-bg); box-shadow: var(--bk-edges); }
+.me-tile.tone-black .tile-label { color: var(--gild); }
+.me-tile.tone-black .tile-sub { color: var(--gild-soft); }
+.me-tile.tone-black .tile-ico { background: var(--bk-field); box-shadow: inset 0 0 0 1px var(--gild-line); }
+.me-tile.tone-black .ico .f { fill: var(--gild); }
+.me-tile.tone-black .ico { filter: none; }
+
+.order-when .st { white-space: nowrap; }

@@ -1,0 +1,3439 @@
+{
+  "generatedFrom": [
+    "source/menu-list-v2.0.md",
+    "source/copy-v1.3.md",
+    "copy-map.json"
+  ],
+  "categories": [
+    {
+      "key": "e",
+      "name": "招牌菜",
+      "pending": true
+    },
+    {
+      "key": "d",
+      "name": "精品肉菜",
+      "pending": true
+    },
+    {
+      "key": "c",
+      "name": "家常小炒",
+      "pending": true
+    },
+    {
+      "key": "b",
+      "name": "下饭小炒",
+      "pending": true
+    },
+    {
+      "key": "a",
+      "name": "开胃凉拌",
+      "pending": true
+    },
+    {
+      "key": "s",
+      "name": "小甜水",
+      "pending": true
+    },
+    {
+      "key": "l",
+      "name": "手打柠檬茶",
+      "pending": true
+    },
+    {
+      "key": "m",
+      "name": "轻乳茶",
+      "pending": true
+    },
+    {
+      "key": "v",
+      "name": "镇店硬菜",
+      "pending": true
+    },
+    {
+      "key": "xl",
+      "name": "一升霸王杯",
+      "pending": true
+    },
+    {
+      "key": "can",
+      "name": "罐装饮品",
+      "pending": true
+    },
+    {
+      "key": "staple",
+      "name": "主食",
+      "pending": true
+    }
+  ],
+  "dishes": [
+    {
+      "uid": "l01",
+      "code": "L01",
+      "name": "招牌手打柠檬茶",
+      "priceSen": 1990,
+      "unit": null,
+      "categoryKey": "l",
+      "hook": "香水柠檬捶出香，锡兰茶底镇场。",
+      "intro": "香水柠檬60克厚切，连皮捶打出皮油香——香而不苦靠的是捶打分寸：筋膜不破，苦味不出来。锡兰茶汤压轴，柠檬香在前、茶感在后。",
+      "ingredients": [
+        {
+          "name": "香水柠檬",
+          "note": "厚切捶打，皮油香是灵魂——普通柠檬只有酸没有香。"
+        },
+        {
+          "name": "锡兰红茶",
+          "note": "斯里兰卡高地茶底，茶感厚不压果香。"
+        }
+      ],
+      "origin": "手打柠檬茶是广东茶饮师傅的手艺——\"手打\"不是表演：捶打让柠檬皮油释出，香气比切片高出数倍。2019年起火遍全国，至今是新茶饮的长青款。",
+      "steps": [
+        "柠檬厚切捶打",
+        "锡兰茶汤冰镇",
+        "雪克摇匀。"
+      ],
+      "flavorRoute": "广东茶楼技法·锡兰茶底（R10 糖水铺，跨标注斯里兰卡）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [
+        "gauss:price"
+      ],
+      "sourceNote": null
+    },
+    {
+      "uid": "l02",
+      "code": "L02",
+      "name": "单枞鸭香手打柠檬茶",
+      "priceSen": 990,
+      "unit": null,
+      "categoryKey": "l",
+      "hook": "鸭屎香打底，\"茶中香水\"。",
+      "intro": "凤凰单丛鸭屎香做茶底——别被名字吓到，它是乌龙茶里的高香品种，花香到\"像加了香精\"的天然程度。柠檬捶香配单丛花香，一杯两香。",
+      "ingredients": [
+        {
+          "name": "鸭屎香单丛",
+          "note": "潮州凤凰山乌龙，花香高扬持久——名字土，香气雅。"
+        },
+        {
+          "name": "香水柠檬",
+          "note": "捶打释香，与花香相乘。"
+        }
+      ],
+      "origin": "鸭屎香产于潮州凤凰山——茶农怕人偷种，谎称\"鸭屎土\"种出，名字将错就错传百年。2020年代被新茶饮发掘成顶流茶底，人称\"茶中香水\"。",
+      "steps": [
+        "单丛闷泡出汤",
+        "柠檬捶香",
+        "茶汤冰镇混合。"
+      ],
+      "flavorRoute": "广东·潮州凤凰山（R5 凤凰茶山）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "l03",
+      "code": "L03",
+      "name": "山茶花手打柠檬茶",
+      "priceSen": 990,
+      "unit": null,
+      "categoryKey": "l",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "l04",
+      "code": "L04",
+      "name": "桃桃乌龙手打柠檬茶",
+      "priceSen": 990,
+      "unit": null,
+      "categoryKey": "l",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "l05",
+      "code": "L05",
+      "name": "芽碧茉莉手打柠檬茶",
+      "priceSen": 990,
+      "unit": null,
+      "categoryKey": "l",
+      "hook": "横县茉莉窨香，柠檬清透。",
+      "intro": "茉莉花茶底来自\"茉莉花都\"横县——鲜花窨制，茶引花香。柠檬的清酸把茉莉香托得更远，喝完杯底还留香。",
+      "ingredients": [
+        {
+          "name": "茉莉花茶",
+          "note": "广西横县茉莉窨制，花茶的经典底。"
+        },
+        {
+          "name": "香水柠檬",
+          "note": "捶香提清。"
+        }
+      ],
+      "origin": "横县（今横州）产了中国80%的茉莉花——全世界的茉莉花茶，十杯有六杯的香从这里来。窨制工艺：鲜花吐香、茶坯吸香，反复数次才算合格。",
+      "steps": [
+        "茉莉茶汤冲泡",
+        "柠檬捶香",
+        "冰镇混合。"
+      ],
+      "flavorRoute": "广西·横县花田（R6 茉莉花田）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "l06",
+      "code": "L06",
+      "name": "泰绿手打柠檬茶",
+      "priceSen": 990,
+      "unit": null,
+      "categoryKey": "l",
+      "hook": "手标绿茶，翠绿透凉。",
+      "intro": "泰式手标绿茶做底——那抹翠绿是泰国街头的标志色，茶香混着糯米香。柠檬捶香压阵，绿得透亮、凉得彻底。",
+      "ingredients": [
+        {
+          "name": "手标绿茶",
+          "note": "泰国经典绿茶，色泽翠绿、茶香带糯香。"
+        },
+        {
+          "name": "香水柠檬",
+          "note": "捶打释香，泰式配方的黄金搭档。"
+        }
+      ],
+      "origin": "手标绿茶（Cha Tra Mue）是泰国1945年创立的老字号——曼谷街头的泰式奶茶/绿茶都用它。泰绿柠檬茶是近两年茶饮店的爆款移植款。",
+      "steps": [
+        "手标绿茶冲泡",
+        "柠檬捶香",
+        "雪克摇匀出沫。"
+      ],
+      "flavorRoute": "泰国·曼谷街头（R10 糖水铺，跨标注泰国）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "l07",
+      "code": "L07",
+      "name": "海底椰冰柠茶",
+      "priceSen": 1190,
+      "unit": null,
+      "categoryKey": "l",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "l08",
+      "code": "L08",
+      "name": "栀子花手打柠檬茶",
+      "priceSen": 990,
+      "unit": null,
+      "categoryKey": "l",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "s01",
+      "code": "S01",
+      "name": "西瓜椰青茶",
+      "priceSen": 1190,
+      "unit": null,
+      "categoryKey": "s",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "s02",
+      "code": "S02",
+      "name": "西瓜海底椰",
+      "priceSen": 1190,
+      "unit": null,
+      "categoryKey": "s",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "s03",
+      "code": "S03",
+      "name": "奇异果冰柠茶",
+      "priceSen": 1190,
+      "unit": null,
+      "categoryKey": "s",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "s04",
+      "code": "S04",
+      "name": "芭乐甘露",
+      "priceSen": 1190,
+      "unit": null,
+      "categoryKey": "s",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "s05",
+      "code": "S05",
+      "name": "水蜜桃冰柠茶",
+      "priceSen": 1190,
+      "unit": null,
+      "categoryKey": "s",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "s06",
+      "code": "S06",
+      "name": "杨枝甘露海底椰",
+      "priceSen": 1390,
+      "unit": null,
+      "categoryKey": "s",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "s07",
+      "code": "S07",
+      "name": "白葡萄冰柠茶",
+      "priceSen": 1190,
+      "unit": null,
+      "categoryKey": "s",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "s08",
+      "code": "S08",
+      "name": "水晶葡萄波波",
+      "priceSen": 590,
+      "unit": null,
+      "categoryKey": "s",
+      "hook": "葡萄汁透亮，波波Q弹。",
+      "intro": "葡萄汁做底，波波沉底——吸管一口，Q弹的波波混着清甜果汁涌上来。小朋友和姑娘们的指定款。",
+      "ingredients": [
+        {
+          "name": "葡萄汁",
+          "note": "清甜透亮的果汁底。"
+        },
+        {
+          "name": "波波",
+          "note": "黑糖波波Q弹有嚼劲。"
+        }
+      ],
+      "origin": "波波是台式奶茶的招牌发明——\"珍珠\"到了新茶饮时代变成\"波波\"，从奶茶杯搬进果汁杯，Q弹不变。",
+      "steps": [
+        "波波现煮",
+        "果汁打底",
+        "摇匀装杯。"
+      ],
+      "flavorRoute": "台式饮品（R10 糖水铺）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "s09",
+      "code": "S09",
+      "name": "冰鲜薄荷柠檬水",
+      "priceSen": 390,
+      "unit": null,
+      "categoryKey": "s",
+      "hook": "三块九的清凉，当日鲜柠檬。",
+      "intro": "鲜柠檬片配薄荷叶，冰水直冲——三块九的定价是良心价，用料不打折：柠檬当日进货，薄荷现择。解辣神器，吃湘菜必备。",
+      "ingredients": [
+        {
+          "name": "柠檬",
+          "note": "当日鲜柠檬现切。"
+        },
+        {
+          "name": "薄荷",
+          "note": "鲜薄荷叶，清凉提神。"
+        }
+      ],
+      "origin": "柠檬水是佐辣的实用主义——湖南菜的辣度需要\"灭火器\"，这是餐桌上最便宜的那一杯。",
+      "steps": [
+        "柠檬现切",
+        "薄荷入杯",
+        "冰水直冲。"
+      ],
+      "flavorRoute": "本店小灶（指向本店标记）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "s10",
+      "code": "S10",
+      "name": "茉莉金柠茶",
+      "priceSen": 590,
+      "unit": null,
+      "categoryKey": "s",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "s11",
+      "code": "S11",
+      "name": "冰露酸梅汤",
+      "priceSen": 290,
+      "unit": null,
+      "categoryKey": "s",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "s12",
+      "code": "S12",
+      "name": "冰鲜柠檬汁",
+      "priceSen": 290,
+      "unit": null,
+      "categoryKey": "s",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "m01",
+      "code": "M01",
+      "name": "单枞鸭香轻乳茶",
+      "priceSen": 990,
+      "unit": null,
+      "categoryKey": "m",
+      "hook": "鸭屎香遇奶，香上加香。",
+      "intro": "鸭屎香单丛做茶底，轻乳收尾——茶香在前、奶香托底，\"轻乳\"的分寸是奶不压茶。一杯里花香、茶香、奶香三线并行。",
+      "ingredients": [
+        {
+          "name": "鸭屎香单丛",
+          "note": "潮州凤凰山高香乌龙，做奶茶底是\"降维打击\"。"
+        },
+        {
+          "name": "轻乳",
+          "note": "轻奶量配方，只托香不抢戏。"
+        }
+      ],
+      "origin": "新茶饮把凤凰单丛拉进奶茶杯——传统乌龙遇上轻乳，是潮州老茶山与新时代的和解。鸭屎香的香气浓度，恰好扛得住奶的包裹。",
+      "steps": [
+        "单丛闷泡出汤",
+        "加轻乳",
+        "冰镇摇匀。"
+      ],
+      "flavorRoute": "广东·潮州凤凰山（R5 凤凰茶山）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [
+        "gauss:name"
+      ],
+      "sourceNote": null
+    },
+    {
+      "uid": "m02",
+      "code": "M02",
+      "name": "桃桃乌龙轻乳茶",
+      "priceSen": 990,
+      "unit": null,
+      "categoryKey": "m",
+      "hook": "蜜桃果粒沉底，乌龙茶香托底。",
+      "intro": "水蜜桃果肉果粒沉底，乌龙茶汤做中层——每一口都有果肉惊喜。轻乳封顶，果甜、茶香、奶滑，三层口感递进。",
+      "ingredients": [
+        {
+          "name": "水蜜桃",
+          "note": "果肉果粒真实可见，不是香精味。"
+        },
+        {
+          "name": "乌龙茶",
+          "note": "茶感清爽，托住果甜不齁。"
+        }
+      ],
+      "origin": "桃桃乌龙是新茶饮的经典组合——乌龙配桃，是茶饮研发验证过无数次的\"天作之合\"：茶的焙香与桃的甜香互相成就。",
+      "steps": [
+        "蜜桃果肉沉底",
+        "乌龙茶汤",
+        "轻乳封顶摇匀。"
+      ],
+      "flavorRoute": "新茶饮经典（R10 糖水铺）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "m03",
+      "code": "M03",
+      "name": "山茶花轻乳茶",
+      "priceSen": 990,
+      "unit": null,
+      "categoryKey": "m",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "m04",
+      "code": "M04",
+      "name": "栀子花轻乳茶",
+      "priceSen": 990,
+      "unit": null,
+      "categoryKey": "m",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "m05",
+      "code": "M05",
+      "name": "锡兰红茶轻乳茶",
+      "priceSen": 1190,
+      "unit": null,
+      "categoryKey": "m",
+      "hook": "高地红茶，橙红透亮。",
+      "intro": "锡兰高地红茶做底——汤色橙红透亮，茶感厚实带柑橘调，轻乳入杯变焦糖色。这是奶茶的\"世界语\"，从斯里兰卡山丘到你的餐桌。",
+      "ingredients": [
+        {
+          "name": "锡兰红茶",
+          "note": "斯里兰卡高地茶，乌沃产区为上——汤面带金圈是高品的标志。"
+        },
+        {
+          "name": "轻乳",
+          "note": "轻奶配方，突出茶感。"
+        }
+      ],
+      "origin": "锡兰红茶自斯里兰卡（旧称锡兰）——英式下午茶的灵魂，香港丝袜奶茶的祖宗。上品汤色橙红、汤面金圈，行话叫\"加冕\"。",
+      "steps": [
+        "锡兰茶冲泡出汤",
+        "轻乳融合",
+        "冰镇或热饮。"
+      ],
+      "flavorRoute": "斯里兰卡·高地茶园（R10 糖水铺，跨标注斯里兰卡）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "m06",
+      "code": "M06",
+      "name": "芽碧茉莉轻乳茶",
+      "priceSen": 990,
+      "unit": null,
+      "categoryKey": "m",
+      "hook": "茉莉打底，青白可人。",
+      "intro": "横县茉莉花茶做底，轻乳入杯成青白色——茉莉香穿过奶层直达鼻腔，收口清甜不腻。四款轻乳茶里最\"仙\"的一杯。",
+      "ingredients": [
+        {
+          "name": "茉莉花茶",
+          "note": "横县茉莉窨制，花香的浓度扛得住奶。"
+        },
+        {
+          "name": "轻乳",
+          "note": "轻奶配方，保茉莉香的通透。"
+        }
+      ],
+      "origin": "茉莉花茶做奶茶底是\"花茶复兴\"——老北京的香片、新茶饮的茉莉奶，一条香的血脉。",
+      "steps": [
+        "茉莉茶汤",
+        "轻乳融合",
+        "摇匀装杯。"
+      ],
+      "flavorRoute": "广西·横县花田（R6 茉莉花田）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "xl01",
+      "code": "XL01",
+      "name": "单枞鸭香手打柠檬茶",
+      "priceSen": 1090,
+      "unit": null,
+      "categoryKey": "xl",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "xl02",
+      "code": "XL02",
+      "name": "招牌手打柠檬茶",
+      "priceSen": 1290,
+      "unit": null,
+      "categoryKey": "xl",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "xl03",
+      "code": "XL03",
+      "name": "西瓜海底椰",
+      "priceSen": 1290,
+      "unit": null,
+      "categoryKey": "xl",
+      "hook": "一升的量，西瓜的鲜。",
+      "intro": "整杯一升起——鲜西瓜果肉打底，配海底椰糖水底，清凉润燥。杯子比脸大，两个人分刚好。",
+      "ingredients": [
+        {
+          "name": "西瓜",
+          "note": "当日鲜西瓜现挖果肉，汁水饱满。"
+        },
+        {
+          "name": "海底椰",
+          "note": "广式糖水经典料，煲出清润底味。"
+        }
+      ],
+      "origin": "海底椰是广式糖水的元老——广东人煲糖水认它\"清润\"，配时令水果是糖水铺的老规矩。一升桶的规格，是夜宵江湖的豪爽。",
+      "steps": [
+        "鲜西瓜现挖",
+        "海底椰糖水打底",
+        "冰镇装杯。"
+      ],
+      "flavorRoute": "广式糖水（R10 糖水铺）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d01-can",
+      "code": "D01",
+      "name": "青岛啤酒（瓶装）",
+      "priceSen": 1200,
+      "unit": null,
+      "categoryKey": "can",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d02-can",
+      "code": "D02",
+      "name": "100 Plus",
+      "priceSen": 200,
+      "unit": null,
+      "categoryKey": "can",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d03-can",
+      "code": "D03",
+      "name": "Tiger啤酒",
+      "priceSen": 800,
+      "unit": null,
+      "categoryKey": "can",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "a01",
+      "code": "A01",
+      "name": "凉拌木耳",
+      "priceSen": 800,
+      "unit": null,
+      "categoryKey": "a",
+      "hook": "秋耳脆厚，酸辣开胃。",
+      "intro": "木耳泡发焯水，保留脆厚口感——醋香蒜辣一拌，冰凉上桌。这是整顿饭的开场白，也是检验凉菜台功底的照妖镜。",
+      "ingredients": [
+        {
+          "name": "木耳",
+          "note": "泡发黑木耳（秋耳为佳），肉厚脆爽。"
+        },
+        {
+          "name": "香菜+小米辣",
+          "note": "香辣组合提味。"
+        }
+      ],
+      "origin": "凉拌木耳是南北通吃的凉菜基本功——东北的秋耳配川湘的辣油，一黑一红，凉菜台的常青树。",
+      "steps": [
+        "木耳泡发焯水",
+        "过冰水保脆",
+        "酸辣汁拌匀。"
+      ],
+      "flavorRoute": "本店小灶（指向本店标记）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "a02",
+      "code": "A02",
+      "name": "凉拌海带丝",
+      "priceSen": 800,
+      "unit": null,
+      "categoryKey": "a",
+      "hook": "海带丝蒜香油激，爽脆酸辣。",
+      "intro": "海带丝焯熟过凉，蒜末辣椒面铺顶——热油一激，蒜香辣香同时炸开。海带的脆是\"咯吱\"级的，越嚼越上头。",
+      "ingredients": [
+        {
+          "name": "海带",
+          "note": "厚肉海带切细丝，焯熟过凉保脆。"
+        },
+        {
+          "name": "蒜末辣椒面",
+          "note": "热油激香，凉菜的热灵魂。"
+        }
+      ],
+      "origin": "凉拌海带是海味入凉菜的普及款——内陆湖南人对海带的执念：酸辣做法把它变成\"海里的酸菜\"，爽脆开胃。",
+      "steps": [
+        "海带丝焯熟过凉",
+        "蒜末辣椒铺顶",
+        "热油一激拌匀。"
+      ],
+      "flavorRoute": "本店小灶（指向本店标记）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "a03",
+      "code": "A03",
+      "name": "剁椒皮蛋",
+      "priceSen": 800,
+      "unit": null,
+      "categoryKey": "a",
+      "hook": "剁椒盖顶，皮蛋溏心。",
+      "intro": "皮蛋切瓣摆盘，剁椒铺顶——溏心蛋黄的绵密碰上剁椒的咸辣，一勺豉油提鲜。这道菜五分钟上桌，功夫全在前期的皮蛋上。",
+      "ingredients": [
+        {
+          "name": "皮蛋",
+          "note": "无铅工艺溏心皮蛋，蛋黄绵密起沙。"
+        },
+        {
+          "name": "剁椒",
+          "note": "湖南剁椒，发酵的咸辣酸香。"
+        }
+      ],
+      "origin": "剁椒配皮蛋是湖南凉菜的入门CP——两样\"湖南特产\"的强强联合，夜宵摊和家宴通吃。",
+      "steps": [
+        "皮蛋切瓣",
+        "剁椒铺顶",
+        "淋豉油麻油。"
+      ],
+      "flavorRoute": "湖南·农家灶屋（R1 湘江灶台）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "a04",
+      "code": "A04",
+      "name": "凉拌腐竹",
+      "priceSen": 800,
+      "unit": null,
+      "categoryKey": "a",
+      "hook": "腐竹筋道，花生增香。",
+      "intro": "腐竹泡发到筋道不硬，配花生米、黄瓜丝——麻香辣油拌匀。豆香、坚果香、辣油香三层叠上去，素凉菜也扛得起\"下饭\"二字。",
+      "ingredients": [
+        {
+          "name": "腐竹",
+          "note": "泡发到内软外筋，吸汁力强。"
+        },
+        {
+          "name": "花生米",
+          "note": "油炸酥脆，添坚果香。"
+        }
+      ],
+      "origin": "腐竹是豆制品里的\"干货王者\"——豆浆表面揭起的油膜晒干成腐竹，凉拌是它最清爽的归宿。",
+      "steps": [
+        "腐竹泡发焯水",
+        "配黄瓜丝花生",
+        "麻香辣油拌匀。"
+      ],
+      "flavorRoute": "本店小灶（指向本店标记）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "a05",
+      "code": "A05",
+      "name": "凉拌黄瓜",
+      "priceSen": 800,
+      "unit": null,
+      "categoryKey": "a",
+      "hook": "刀拍裂口，蒜香入缝。",
+      "intro": "黄瓜刀拍裂——裂口才吸蒜香，切块则汁水锁死。盐轻腌十分钟出水，蒜香糖醋一拌，脆到耳朵能听见。",
+      "ingredients": [
+        {
+          "name": "黄瓜",
+          "note": "当日鲜黄瓜，刀拍裂口。"
+        },
+        {
+          "name": "蒜",
+          "note": "足量蒜泥，拍黄瓜的黄金搭档。"
+        }
+      ],
+      "origin": "拍黄瓜是全国凉菜界的\"普通话\"——从大排档到米其林都有它。湘式版本蒜更狠、辣更直，配稀饭一绝。",
+      "steps": [
+        "刀拍裂口",
+        "盐腌出水",
+        "蒜香辣油拌匀。"
+      ],
+      "flavorRoute": "本店小灶（国民凉菜，指向本店标记）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "a06",
+      "code": "A06",
+      "name": "酒鬼花生米",
+      "priceSen": 800,
+      "unit": null,
+      "categoryKey": "a",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "a07",
+      "code": "A07",
+      "name": "油泼爆香黄金干",
+      "priceSen": 990,
+      "unit": null,
+      "categoryKey": "a",
+      "hook": "平江香干，乌黑油亮。",
+      "intro": "平江香干切方片——豆香、卤香、烤香、芝麻香四香合体，滚油一泼再激一层。这道菜是\"香干天花板\"的地域认证。",
+      "ingredients": [
+        {
+          "name": "平江香干",
+          "note": "湖南平江特产，方寸大小、铜钱厚薄、乌黑油亮，十余道工序卤烤而成。"
+        },
+        {
+          "name": "辣子+芝麻",
+          "note": "油泼激香，芝麻增香。"
+        }
+      ],
+      "origin": "平江香干是湖南平江的百年名产——一块香干要经过泡豆、磨浆、点卤、压榨、卤味、烘烤十余道工序。当地人说：香干香干，越嚼越香。",
+      "steps": [
+        "香干切方片",
+        "码辣子",
+        "滚油一泼。"
+      ],
+      "flavorRoute": "湖南·平江（R4 平江香干作坊）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [
+        "gauss:color"
+      ],
+      "sourceNote": "（金黄豆干\"金包玉\"，非黑色！）"
+    },
+    {
+      "uid": "a08",
+      "code": "A08",
+      "name": "冰糖红萝卜",
+      "priceSen": 800,
+      "unit": null,
+      "categoryKey": "a",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "b01",
+      "code": "B01",
+      "name": "干煸四季豆",
+      "priceSen": 1800,
+      "unit": null,
+      "categoryKey": "b",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "b02",
+      "code": "B02",
+      "name": "爆炒土豆丝",
+      "priceSen": 1300,
+      "unit": null,
+      "categoryKey": "b",
+      "hook": "细丝泡水去淀粉，猛火脆生。",
+      "intro": "土豆切细丝泡水去表面淀粉，猛火快炒不加一滴水——出锅根根分明，脆生生带酸香。这道菜是检验小灶火候的入门题。",
+      "ingredients": [
+        {
+          "name": "土豆",
+          "note": "当日现切细丝，泡水去淀粉才不粘不坨。"
+        },
+        {
+          "name": "干辣椒",
+          "note": "炝锅出香，微辣提味。"
+        },
+        {
+          "name": "醋",
+          "note": "沿锅边烹，酸香只在鼻尖不在舌尖。"
+        }
+      ],
+      "origin": "醋溜土豆丝是国民家常菜，湖南做法猛火脆生、酸香克制。大排档的土豆丝炒得欠火会回生，小灶的规矩：宁脆勿软。",
+      "steps": [
+        "细丝泡水",
+        "猛火快炒不加水",
+        "锅边烹醋出锅。"
+      ],
+      "flavorRoute": "本店小灶（国民家常菜，指向本店标记）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "b03",
+      "code": "B03",
+      "name": "肉末酸豆角",
+      "priceSen": 1500,
+      "unit": null,
+      "categoryKey": "b",
+      "hook": "酸豆角配肉末，一勺一饭。",
+      "intro": "酸豆角切碎煸干水汽，肉末煸出油脂——酸香裹油香，挖一勺盖饭上，这碗饭不需要别的菜。",
+      "ingredients": [
+        {
+          "name": "酸豆角",
+          "note": "坛子泡到酸香纯正，切碎煸干水汽，酸得干净。"
+        },
+        {
+          "name": "肉末",
+          "note": "肥瘦相间现剁，油脂润豆角。"
+        },
+        {
+          "name": "干辣椒",
+          "note": "增香配色。"
+        }
+      ],
+      "origin": "泡酸豆角是湖南家家户户的坛子功课——豆角旺季泡下坛，全年随取随炒。与外婆菜一样，是\"时间做的菜\"。",
+      "steps": [
+        "豆角出坛切碎",
+        "煸干水汽",
+        "肉末合炒。"
+      ],
+      "flavorRoute": "湘西·坛子菜（R2 湘西村寨）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "b04",
+      "code": "B04",
+      "name": "西红柿炒鸡蛋",
+      "priceSen": 1500,
+      "unit": null,
+      "categoryKey": "b",
+      "hook": "蛋炒散、汁拌饭，家常菜的尽头。",
+      "intro": "鸡蛋炒散成金穗，西红柿炒出浓汁——汤汁裹蛋，酸甜平衡。这道菜全国都有自己的做法，湖南版的执念：蛋要碎、汁要宽、拌饭要管够。",
+      "ingredients": [
+        {
+          "name": "鸡蛋",
+          "note": "ω-3富营养土鸡蛋，炒散成碎穗——碎蛋挂汁，勺勺带蛋。"
+        },
+        {
+          "name": "西红柿",
+          "note": "去皮切块，炒出浓汁。"
+        }
+      ],
+      "origin": "国民家常菜的\"最大公约数\"——每个中国厨房都会做、每个游子都想吃。不设源流，只认手艺。",
+      "steps": [
+        "鸡蛋炒散盛出",
+        "西红柿炒出汁",
+        "合炒收味。"
+      ],
+      "flavorRoute": "本店小灶（国民家常菜，指向本店标记）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "b05",
+      "code": "B05",
+      "name": "干锅包菜",
+      "priceSen": 1700,
+      "unit": null,
+      "categoryKey": "b",
+      "hook": "手撕大片配虾干，锅气脆甜。",
+      "intro": "包菜不用刀切、手撕成大片——断面毛糙才挂味；配虾干提鲜，干锅小火慢烧，边缘微焦、中心脆甜。素菜做出肉香，是这锅的本事。",
+      "ingredients": [
+        {
+          "name": "包菜",
+          "note": "当季包菜手撕大片，脆甜水分足——刀切断面光滑挂不住味，手撕是老规矩。"
+        },
+        {
+          "name": "虾干",
+          "note": "淡粉虾干3-4只提鲜，素菜的海味暗器。"
+        },
+        {
+          "name": "五花肉",
+          "note": "几片煸油增香。"
+        }
+      ],
+      "origin": "手撕包菜是湘菜馆的素菜头牌——湘谚\"素菜荤做\"：几片肉、几只虾干，把素菜抬上饭桌C位。",
+      "steps": [
+        "包菜手撕",
+        "虾干五花肉煸香",
+        "猛火快烧，锅气封盘。"
+      ],
+      "flavorRoute": "湖南·农家灶屋（R1 湘江灶台）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "b06",
+      "code": "B06",
+      "name": "大碗花菜",
+      "priceSen": 1500,
+      "unit": null,
+      "categoryKey": "b",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "b07",
+      "code": "B07",
+      "name": "麻婆豆腐",
+      "priceSen": 1500,
+      "unit": null,
+      "categoryKey": "b",
+      "hook": "麻、辣、烫、嫩，八字箴言。",
+      "intro": "豆腐嫩而不碎，牛肉末酥香，郫县豆瓣酱炒出红油——麻婆豆腐的八字标准：麻辣烫嫩、酥香鲜活。小灶版的自信：烫嘴才好吃。",
+      "ingredients": [
+        {
+          "name": "豆腐",
+          "note": "嫩豆腐切丁，久烧不散。"
+        },
+        {
+          "name": "牛肉末",
+          "note": "煸炒到酥香，与豆腐形成口感对照。"
+        },
+        {
+          "name": "郫县豆瓣酱",
+          "note": "川菜之魂，红油出香。"
+        }
+      ],
+      "origin": "清同治年间成都万福桥\"陈麻婆\"创制——为挑夫做的下饭豆腐，百余年火遍全球。川菜金字招牌，小灶致敬原版。",
+      "steps": [
+        "豆腐盐水焯",
+        "牛肉末煸酥",
+        "豆瓣酱炒红油，轻推收汁。"
+      ],
+      "flavorRoute": "四川·成都（R8 江湖码头）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "b08",
+      "code": "B08",
+      "name": "酸菜炒小笋",
+      "priceSen": 1700,
+      "unit": null,
+      "categoryKey": "b",
+      "hook": "嫩笋配坛酸，山里的时令。",
+      "intro": "小笋取嫩尖斜切，酸菜煸香同炒——笋的鲜甜碰上坛子的酸香，是山里人的时令智慧。笋比土豆丝厚、比冬笋嫩，一年只等这一季。",
+      "ingredients": [
+        {
+          "name": "小笋",
+          "note": "时令嫩笋尖斜切，鲜甜脆嫩。"
+        },
+        {
+          "name": "酸菜",
+          "note": "坛子酸菜切丝，酸香开胃。"
+        }
+      ],
+      "origin": "山里人的春鲜入馔——湘西多山多笋，鲜笋吃不完就入坛，坛酸菜配鲜笋，一座山的两种时间。",
+      "steps": [
+        "嫩笋焯水去涩",
+        "酸菜煸香",
+        "猛火合炒。"
+      ],
+      "flavorRoute": "湘西·山货（R2 湘西村寨）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "b10",
+      "code": "B10",
+      "name": "蒜蓉空心菜",
+      "priceSen": 1700,
+      "unit": null,
+      "categoryKey": "b",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "b11",
+      "code": "B11",
+      "name": "清炒油麦菜",
+      "priceSen": 1700,
+      "unit": null,
+      "categoryKey": "b",
+      "hook": "当日现采，猛火三分钟。",
+      "intro": "油麦菜娇气，过火即老。猛火快攻，断生就出锅，脆嫩全看灶上那几秒。",
+      "ingredients": [
+        {
+          "name": "时蔬",
+          "note": "当日现采，枝头到灶头不过夜。"
+        },
+        {
+          "name": "蒜",
+          "note": "两瓣拍碎，素菜提香的分寸。"
+        }
+      ],
+      "origin": "清炒是检验食材的照妖镜——没有酱汁遮丑，新鲜与否一口见分晓。湖南人炒青菜的执念：锅要辣、手要快、菜要脆。",
+      "steps": [
+        "猛火烧锅",
+        "下菜快炒",
+        "盐糖点到即止。"
+      ],
+      "flavorRoute": "本店小灶（指向本店标记）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "b12",
+      "code": "B12",
+      "name": "油泼牛肚丝",
+      "priceSen": 1700,
+      "unit": null,
+      "categoryKey": "b",
+      "hook": "卤肚丝配辣子，滚油一激。",
+      "intro": "卤牛肚切细丝，黄瓜丝垫底，辣子蒜末铺面——滚油\"刺啦\"一泼，香气炸开。凉菜热做，全靠这一泼。",
+      "ingredients": [
+        {
+          "name": "牛肚",
+          "note": "现卤切细丝，脆嫩弹牙。"
+        },
+        {
+          "name": "辣子",
+          "note": "辣椒面白芝麻铺面，热油激香。"
+        },
+        {
+          "name": "黄瓜丝",
+          "note": "垫底解腻，添脆口。"
+        }
+      ],
+      "origin": "油泼是陕西人对\"香气\"的物理开发——滚油激辣子，瞬间出香。陕西人泼面，小灶泼肚丝：技法跨省，原理一致。",
+      "steps": [
+        "牛肚卤透切丝",
+        "码辣子蒜末",
+        "滚油一泼拌匀。"
+      ],
+      "flavorRoute": "陕西技法（R9 油泼之路）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "b13",
+      "code": "B13",
+      "name": "外婆菜炒鸡蛋",
+      "priceSen": 1800,
+      "unit": null,
+      "categoryKey": "b",
+      "hook": "坛香碎蛋，一碗乡愁。",
+      "intro": "外婆菜坛香咸鲜，鸡蛋炒散成碎金裹住每一粒坛菜——两样\"碎\"物一锅合香，挖一勺能下半碗饭。",
+      "ingredients": [
+        {
+          "name": "外婆菜",
+          "note": "湘西坛子腌菜切丁，咸香有嚼头。"
+        },
+        {
+          "name": "鸡蛋",
+          "note": "ω-3土鸡蛋炒散，碎蛋裹坛菜，粒粒挂味。"
+        }
+      ],
+      "origin": "湘西外婆的坛子+农家的鸡——孙儿回家，外婆抓把坛菜打两个蛋，就是最惦记的那道菜。名字即菜谱：外婆的菜。",
+      "steps": [
+        "坛菜切碎",
+        "鸡蛋炒散",
+        "合炒收味。"
+      ],
+      "flavorRoute": "湘西·外婆的坛子（R2 湘西村寨）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "b14",
+      "code": "B14",
+      "name": "酸菜炒粉皮",
+      "priceSen": 1800,
+      "unit": null,
+      "categoryKey": "b",
+      "hook": "粉皮吸酸香，滑糯不烂。",
+      "intro": "宽粉皮煮到透亮，酸菜煸香合炒——粉皮吸饱酸汁，滑糯弹韧；酸菜脆、粉皮糯，一口两感。",
+      "ingredients": [
+        {
+          "name": "粉皮",
+          "note": "红薯宽粉皮，透亮弹韧，久炒不烂。"
+        },
+        {
+          "name": "酸菜",
+          "note": "坛子酸菜切丝，酸香提味。"
+        },
+        {
+          "name": "小米辣",
+          "note": "提辣配色。"
+        }
+      ],
+      "origin": "粉皮是湖南农家的主食边角料进化成的菜——红薯磨浆摊皮，配坛酸菜一炒，穷人家的巧思传成经典。",
+      "steps": [
+        "粉皮煮透",
+        "酸菜煸香",
+        "合炒收汁。"
+      ],
+      "flavorRoute": "湖南·农家灶屋（R1 湘江灶台）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（旧版保留）"
+    },
+    {
+      "uid": "b15",
+      "code": "B15",
+      "name": "清炒翡翠西兰花",
+      "priceSen": 1700,
+      "unit": null,
+      "categoryKey": "b",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c02",
+      "code": "C02",
+      "name": "日本豆腐",
+      "priceSen": 2000,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c03",
+      "code": "C03",
+      "name": "农家一碗香",
+      "priceSen": 2500,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": "鸡蛋炒碎、五花煸香、青椒虎皮，一碗里的三重火候。",
+      "intro": "鸡蛋炒散成碎金裹住油脂，五花肉煸到卷边，螺丝椒炒出虎皮纹——三种食材三重火候，一碗合香。湖南农家把最好的一碗菜叫\"一碗香\"，名不虚传。",
+      "ingredients": [
+        {
+          "name": "鸡蛋",
+          "note": "ω-3富营养土鸡蛋，炒散成碎块——碎蛋裹汁挂味，比整块煎蛋更下饭。"
+        },
+        {
+          "name": "五花肉",
+          "note": "当日鲜五花，煸出油脂卷边，肥而不腻。"
+        },
+        {
+          "name": "螺丝椒",
+          "note": "湖南螺丝椒，辣中带甜，炒出虎皮纹才香。"
+        },
+        {
+          "name": "木耳",
+          "note": "泡发黑木耳，添脆口。"
+        },
+        {
+          "name": "豆豉",
+          "note": "数粒提香，湘味的暗号。"
+        }
+      ],
+      "origin": "湖南农家家常菜——农家把地里现摘的椒、现捞的蛋、现割的肉一锅合炒，是\"一碗香\"名字的来路：一家人最馋的那一碗。百度百科载其核心即五花肉、鸡蛋、青红辣椒。",
+      "steps": [
+        "鸡蛋炒散盛出",
+        "五花肉煸出油",
+        "螺丝椒炒出虎皮，三者合炒三十秒。"
+      ],
+      "flavorRoute": "湖南·农家灶屋（R2 湘西村寨）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c04",
+      "code": "C04",
+      "name": "小炒牛肚",
+      "priceSen": 2500,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": "现卤牛肚配整段香菜，脆嫩裹香。",
+      "intro": "牛肚先卤后炒，脆韧两层。香菜段是灵魂，不吃香菜可备注去掉，锅气不减。",
+      "ingredients": [
+        {
+          "name": "牛肚",
+          "note": "现卤切条，纹理紧实弹牙。"
+        },
+        {
+          "name": "香菜",
+          "note": "整段下锅，梗脆叶香。"
+        },
+        {
+          "name": "小米辣",
+          "note": "鲜辣提味，量少而准。"
+        }
+      ],
+      "origin": "湘式炒下水是农家不浪费的智慧——牛肚卤了再炒，是湘菜\"变普通为惊艳\"的代表。北方有芫爆散丹，湖南人用香菜配卤肚，一个道理：香菜压腥提鲜。",
+      "steps": [
+        "牛肚卤透切条",
+        "猛火快炒断生",
+        "香菜最后下锅翻两下出锅。"
+      ],
+      "flavorRoute": "湖南·农家灶屋（R2 湘西村寨）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c05",
+      "code": "C05",
+      "name": "小炒黄牛肉",
+      "priceSen": 2500,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": "鲜牛肉逆纹切，香菜梗一起爆。",
+      "intro": "黄牛肉切薄片，猛火锁住汁水，香菜垫底吸油增香。湘菜馆考功力，先看这盘。",
+      "ingredients": [
+        {
+          "name": "牛肉",
+          "note": "当日鲜牛逆纹切片，嫩是刀工给的。"
+        },
+        {
+          "name": "香菜",
+          "note": "梗叶分开下锅，梗先叶后，各得其所。"
+        },
+        {
+          "name": "蒜",
+          "note": "拍碎爆香，垫住肉香。"
+        }
+      ],
+      "origin": "湘式小炒黄牛肉的农家版——黄牛肉配香菜，是湖南小炒的黄金组合。小炒的规矩：大火、快锅、不过夜。",
+      "steps": [
+        "牛肉逆纹切片",
+        "猛火三十秒",
+        "香菜梗叶分两次下锅。"
+      ],
+      "flavorRoute": "湖南·农家灶屋（R1 湘江灶台）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c06",
+      "code": "C06",
+      "name": "辣子鸡",
+      "priceSen": 2500,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c07",
+      "code": "C07",
+      "name": "酸辣鸡杂",
+      "priceSen": 2500,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": "鸡胗鸡心脆弹，酸菜解腻开胃。",
+      "intro": "鸡胗鸡心鸡肠改花刀，猛火爆炒脆弹；酸菜切丝同炒，酸香开胃。这道菜是\"下饭\"二字的具象化：汤汁浇饭能多吃一碗。",
+      "ingredients": [
+        {
+          "name": "鸡杂",
+          "note": "当日鲜鸡杂改花刀，脆弹无腥。"
+        },
+        {
+          "name": "酸菜",
+          "note": "坛子酸菜切丝，酸香解腻。"
+        },
+        {
+          "name": "姜蒜",
+          "note": "重手笔压腥提香。"
+        }
+      ],
+      "origin": "鸡杂上桌是中国厨房\"物尽其用\"的智慧——内脏不浪费，靠手艺变成宝。湖南人炒鸡杂必配酸菜或酸豆角，酸辣是这对组合的官方语言。",
+      "steps": [
+        "鸡杂改花刀焯水",
+        "酸菜煸香",
+        "猛火合炒一分钟出锅。"
+      ],
+      "flavorRoute": "湖南·农家灶屋（R2 湘西村寨）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c08",
+      "code": "C08",
+      "name": "肉末茄子煲",
+      "priceSen": 2800,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": "茄子吸肉汁，砂锅收浓香。",
+      "intro": "茄子炸软吸味，肉末炒香垫底，砂锅小火收汁——茄子是海绵，把肉香全吸进去。上桌揭盖那一股热气，是这道菜的开场白。",
+      "ingredients": [
+        {
+          "name": "茄子",
+          "note": "当日茄子切条，吸汁主力。"
+        },
+        {
+          "name": "肉末",
+          "note": "肥瘦相间现剁，煸出油脂。"
+        },
+        {
+          "name": "小米辣",
+          "note": "提辣配色，量点到即止。"
+        }
+      ],
+      "origin": "茄子煲是粤式啫啫煲与湘式肉末茄子的合流——砂锅上桌还在冒泡，是粤菜\"锅气\"的仪式感，内里是湖南的咸香辣。",
+      "steps": [
+        "茄子条炸软",
+        "肉末煸香",
+        "入砂锅小火收汁。"
+      ],
+      "flavorRoute": "本店小灶（粤湘合流，指向本店标记）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c09",
+      "code": "C09",
+      "name": "蒜香绝味凤爪",
+      "priceSen": 2800,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": "猛火蒸透再爆蒜，爪劲十足。",
+      "intro": "凤爪先蒸后爆，皮糯筋弹；蒜末用油慢慢焙香，蒜香渗进骨缝。青柠片解腻——酸香一压，一只接一只停不下来。",
+      "ingredients": [
+        {
+          "name": "凤爪",
+          "note": "当日鲜凤爪，蒸到皮糯骨香。"
+        },
+        {
+          "name": "蒜",
+          "note": "足量蒜末油焙金黄，蒜香不冲鼻。"
+        },
+        {
+          "name": "青柠",
+          "note": "鲜切解腻，是这盘的呼吸口。"
+        }
+      ],
+      "origin": "蒜香凤爪是粤式早茶凤爪的辣味远亲——广东人把它蒸得酥烂，湖南人给它加上蒜辣。绝味是街卤品牌带火的词，小灶的版本不靠老汤泡，靠现焙现炒。",
+      "steps": [
+        "凤爪蒸透",
+        "蒜末油焙",
+        "猛火合炒，青柠摆边。"
+      ],
+      "flavorRoute": "湖南·农家灶屋（R1 湘江灶台）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c10",
+      "code": "C10",
+      "name": "绝味小炒鸡",
+      "priceSen": 2800,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c11a",
+      "code": "C11",
+      "name": "姜辣口味凤爪",
+      "priceSen": 2800,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": "大量老姜配朝天椒，辣得有层次。",
+      "intro": "老姜切厚片与朝天椒同炝——姜辣在前、椒辣在后，两段辣感分明。凤爪久烧入味，连指缝里的胶质都辣得均匀。",
+      "ingredients": [
+        {
+          "name": "老姜",
+          "note": "厚片大量，姜香先行——这道菜的\"姜辣\"不是葱姜的姜，是主角的姜。"
+        },
+        {
+          "name": "朝天椒",
+          "note": "猛辣在后，与姜辣错峰。"
+        },
+        {
+          "name": "凤爪",
+          "note": "久烧入味，胶质厚。"
+        }
+      ],
+      "origin": "姜辣系列是岳阳新派湘菜的名片——洞庭湖边的人信\"姜能驱寒\"，把姜从调料提到主角。百度百科载：姜辣凤爪以大量生姜、干辣椒、大蒜为核心，源自湖南岳阳。",
+      "steps": [
+        "老姜朝天椒炝锅",
+        "凤爪下锅久烧",
+        "收汁亮油。"
+      ],
+      "flavorRoute": "湖南·岳阳（R3 洞庭湖畔）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c11b",
+      "code": "C11",
+      "name": "外婆菜炒肉末",
+      "priceSen": 2500,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": "坛子菜配肉末，专治没胃口。",
+      "intro": "外婆菜是坛子里腌出的咸香（萝卜干、干豆角切丁），配肉末一炒，咸鲜下饭——湖南人管这叫\"饭扫光\"级别的存在。",
+      "ingredients": [
+        {
+          "name": "外婆菜",
+          "note": "湘西坛子腌菜（萝卜干+干豆角+梅干菜），咸香有嚼头。"
+        },
+        {
+          "name": "肉末",
+          "note": "肥瘦相间，煸出油脂润坛菜。"
+        },
+        {
+          "name": "小米辣",
+          "note": "提辣点睛。"
+        }
+      ],
+      "origin": "\"外婆菜\"名字来自湘西：外婆在坛子里腌的菜，孙儿回家抓一把炒肉。坛子菜是山里人对抗时令的办法——蔬菜旺季腌进坛，淡季拿出来就是家味。",
+      "steps": [
+        "坛菜出坛切碎",
+        "肉末煸香",
+        "合炒收味。"
+      ],
+      "flavorRoute": "湘西·外婆的坛子（R2 湘西村寨）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c12",
+      "code": "C12",
+      "name": "红烧鱼块",
+      "priceSen": 2800,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c13",
+      "code": "C13",
+      "name": "红油猪耳尖",
+      "priceSen": 2800,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": "卤耳片红油拌，脆骨声先到。",
+      "intro": "猪耳卤透切薄片，红油、蒜泥、花椒油拌匀——入口先听见脆骨的\"咔嚓\"声，再尝到红油的香辣。这是下酒菜的天花板配置。",
+      "ingredients": [
+        {
+          "name": "猪耳尖",
+          "note": "卤到皮糯软骨脆，切薄片透光。"
+        },
+        {
+          "name": "红油",
+          "note": "辣椒面热油激出的红油，色亮香正。"
+        },
+        {
+          "name": "花椒油",
+          "note": "麻香点睛，与红油构成\"麻辣\"底。"
+        }
+      ],
+      "origin": "红油拌菜是川味凉菜的看家本领——一勺红油定乾坤。川湘一家，湖南人的凉菜碟里，红油耳片是酒桌常客。",
+      "steps": [
+        "猪耳卤透",
+        "切薄片",
+        "红油蒜泥拌匀装盘。"
+      ],
+      "flavorRoute": "川味红油（R8 江湖码头）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c14",
+      "code": "C14",
+      "name": "青椒爆炒猪耳尖",
+      "priceSen": 2800,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": "卤耳片配螺丝椒，猛火抢出脆。",
+      "intro": "卤耳片下猛火与螺丝椒同爆——耳片脆、椒皮虎皮纹，两脆相逢。这道菜抢的是时间：出锅慢十秒，耳片就韧了。",
+      "ingredients": [
+        {
+          "name": "猪耳尖",
+          "note": "现卤现切，厚度均匀。"
+        },
+        {
+          "name": "螺丝椒",
+          "note": "滚刀块，虎皮纹是香气的开关。"
+        },
+        {
+          "name": "蒜",
+          "note": "拍碎炝锅。"
+        }
+      ],
+      "origin": "湖南人炒一切下水都配青椒——青椒是湘菜的万能搭子，配猪耳是家常经典。卤味店买半只耳朵回家炒青椒，是湖南厨房的日常。",
+      "steps": [
+        "耳片卤好切薄",
+        "螺丝椒虎皮",
+        "猛火合炒三十秒。"
+      ],
+      "flavorRoute": "湖南·农家灶屋（R1 湘江灶台）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c15",
+      "code": "C15",
+      "name": "卤水猪耳尖",
+      "priceSen": 2800,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": "潮式白卤，吃本味。",
+      "intro": "猪耳入潮式卤水浸足时辰，卤香透骨而不夺本味——切薄片见层次：皮糯、肉紧、软骨脆，一口三感。蘸料另配，原味党直接开吃。",
+      "ingredients": [
+        {
+          "name": "猪耳尖",
+          "note": "只取耳尖厚肉部位，层次感最好。"
+        },
+        {
+          "name": "潮式卤水",
+          "note": "南姜、八角、桂皮等香料慢熬，咸鲜带甘。"
+        }
+      ],
+      "origin": "潮汕卤水是中国卤味的高地——一锅老卤传三代。潮汕人卤鹅卤到出神入化，猪耳浸进去是降维打击：本味派的极致。",
+      "steps": [
+        "香料熬卤",
+        "猪耳浸卤足时辰",
+        "放凉切薄片。"
+      ],
+      "flavorRoute": "广东·潮汕（R5 潮汕老卤，与凤凰山同区标注）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c16",
+      "code": "C16",
+      "name": "泡椒肚丝",
+      "priceSen": 2800,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c17",
+      "code": "C17",
+      "name": "香干炒肉",
+      "priceSen": 2500,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c18",
+      "code": "C18",
+      "name": "回锅肉",
+      "priceSen": 2800,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "c19",
+      "code": "C19",
+      "name": "山药烩云耳",
+      "priceSen": 2100,
+      "unit": null,
+      "categoryKey": "c",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "annotation",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d01-hot",
+      "code": "D01",
+      "name": "干锅鸭头",
+      "priceSen": 3800,
+      "unit": null,
+      "categoryKey": "d",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d02-hot",
+      "code": "D02",
+      "name": "干锅孜然羊肉",
+      "priceSen": 3800,
+      "unit": null,
+      "categoryKey": "d",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d03-hot",
+      "code": "D03",
+      "name": "豆笋红烧肉",
+      "priceSen": 3800,
+      "unit": null,
+      "categoryKey": "d",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d04",
+      "code": "D04",
+      "name": "油豆腐红烧肉",
+      "priceSen": 3800,
+      "unit": null,
+      "categoryKey": "d",
+      "hook": "五花肉煸出油，油豆腐吸饱汁。",
+      "intro": "五花肉先煸出油，冰糖上色，慢火烧到肥肉透亮——油豆腐最后下锅，孔隙吸饱肉汁，一口爆浆。这是\"一肉一素一锅出\"的智慧：素菜不是配菜，是吸汁的主力。",
+      "ingredients": [
+        {
+          "name": "五花肉",
+          "note": "肥瘦三七开，煸出油脂再烧，肥而不腻。"
+        },
+        {
+          "name": "油豆腐",
+          "note": "孔隙密的老式油豆腐，专吸汤汁——最后下锅，吸的是浓缩肉汁。"
+        },
+        {
+          "name": "冰糖",
+          "note": "炒糖色，给肉穿上琥珀外衣。"
+        }
+      ],
+      "origin": "红烧肉是江南的本帮技法（浓油赤酱），传到湖南变成小灶家常做法——湘版不靠酱油堆色，靠糖色与火候。一道菜里能吃出技法南迁的路。",
+      "steps": [
+        "五花肉煸出油",
+        "冰糖炒糖色",
+        "慢火烧至透亮，油豆腐最后下锅吸汁。"
+      ],
+      "flavorRoute": "江浙技法·湘做（R9 红烧之路，跨点标注江浙→湖南）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d05",
+      "code": "D05",
+      "name": "干锅手撕鸡",
+      "priceSen": 3800,
+      "unit": null,
+      "categoryKey": "d",
+      "hook": "盐焗鸡腿手撕成条，干锅慢慢烘出香。",
+      "intro": "整只盐焗鸡腿手工撕成粗条——机器切的总差一口气，手撕的边缘毛糙，才挂得住料汁。干锅端上桌小火慢烘，鸡皮渐渐收紧发亮，越吃越有嚼头。",
+      "ingredients": [
+        {
+          "name": "鸡腿",
+          "note": "盐焗工艺入味到骨，撕开纹理里都是咸香。"
+        },
+        {
+          "name": "香芹",
+          "note": "切段同烘，清香解腻。"
+        },
+        {
+          "name": "干辣椒",
+          "note": "整段配色，辣得克制。"
+        }
+      ],
+      "origin": "干锅手撕鸡是湖南株洲的传统名菜——手撕不是噱头，是老规矩：鸡块要顺着纹理撕才能保留嚼劲，刀切会斩断纤维口感发死。",
+      "steps": [
+        "盐焗鸡腿",
+        "手工撕条",
+        "干锅小火慢烘收香。"
+      ],
+      "flavorRoute": "湖南·株洲（R1 湘江灶台）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d06",
+      "code": "D06",
+      "name": "香辣虾",
+      "priceSen": 3800,
+      "unit": null,
+      "categoryKey": "d",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d08",
+      "code": "D08",
+      "name": "酸菜鱼片",
+      "priceSen": 3800,
+      "unit": null,
+      "categoryKey": "d",
+      "hook": "老坛酸菜配现杀鱼片，汤酸得干净。",
+      "intro": "鱼整条现杀取片，蛋清浆得嫩滑；老坛酸菜先煸炒出酸香，汤色奶白微黄。这锅汤的灵魂是\"酸得干净\"——不加醋，酸味全从酸菜里来。",
+      "ingredients": [
+        {
+          "name": "鱼",
+          "note": "整条现杀，鱼片薄而完整，刺少肉嫩。"
+        },
+        {
+          "name": "老坛酸菜",
+          "note": "坛子发酵的酸菜，酸香醇厚不刺口——速成酸菜没有这个层次。"
+        },
+        {
+          "name": "蛋清",
+          "note": "鱼片上浆，锁住嫩滑。"
+        }
+      ],
+      "origin": "酸菜鱼起于重庆江湖菜（江津渔家的老坛酸菜配江鱼），传到湖南小灶做了收敛：麻减辣收，突出汤酸。一道菜的迁徙史：川菜出身，湘菜脾气。",
+      "steps": [
+        "鱼片上浆",
+        "酸菜煸炒出香",
+        "骨汤烧开下鱼片，三分钟定型。"
+      ],
+      "flavorRoute": "重庆→湖南（R8 江湖码头，跨点标注）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d09",
+      "code": "D09",
+      "name": "凯里酸汤鱼",
+      "priceSen": 3800,
+      "unit": null,
+      "categoryKey": "d",
+      "hook": "苗家红酸汤，木姜子定调。",
+      "intro": "红酸汤以番茄与糟辣椒发酵而成，酸得立体；木姜子一股柠檬混姜的奇香，是这锅汤的身份证。凯里人常说：没得木姜子，就不算酸汤鱼。",
+      "ingredients": [
+        {
+          "name": "红酸汤",
+          "note": "番茄+糟辣椒自然发酵，酸味有层次——那是时间给的，不是醋。"
+        },
+        {
+          "name": "木姜子",
+          "note": "苗家酸汤的灵魂香料，柠檬香混着姜辛，认它一口就记住。"
+        },
+        {
+          "name": "鱼",
+          "note": "现杀整鱼，久煮不散。"
+        }
+      ],
+      "origin": "贵州凯里，苗族传了数百年的酸汤——\"三天不吃酸，走路打蹿蹿\"。2010年代酸汤鱼从苗寨火到全国，凯里酸汤如今是地理标志名菜。",
+      "steps": [
+        "红酸汤发酵",
+        "汤烧开下鱼",
+        "木姜子最后下锅定香。"
+      ],
+      "flavorRoute": "贵州·凯里苗寨（R7 苗家木楼）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d11",
+      "code": "D11",
+      "name": "红烧猪脚",
+      "priceSen": 3800,
+      "unit": null,
+      "categoryKey": "d",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d12",
+      "code": "D12",
+      "name": "干锅鹿茸菌",
+      "priceSen": 3800,
+      "unit": null,
+      "categoryKey": "d",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d13",
+      "code": "D13",
+      "name": "梅菜扣肉",
+      "priceSen": 3800,
+      "unit": null,
+      "categoryKey": "d",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "d19",
+      "code": "D19",
+      "name": "青椒炒腊肉",
+      "priceSen": 3800,
+      "unit": null,
+      "categoryKey": "d",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "e01",
+      "code": "E01",
+      "name": "招牌跳跳蛙",
+      "priceSen": 4800,
+      "unit": null,
+      "categoryKey": "e",
+      "hook": "现杀牛蛙，猛火快爆，肉嫩如蒜瓣。",
+      "intro": "牛蛙活体现杀、斩块即炒——蛙腿肉受热蜷缩成蒜瓣状，猛火锁汁，干辣椒与姜片借香不抢味。湖南人吃蛙讲究\"跳跳\"二字：肉一烫舌，就知道是不是活蛙。",
+      "ingredients": [
+        {
+          "name": "牛蛙",
+          "note": "活体现杀现斩，蛙腿肉嫩到起蒜瓣纹——死蛙肉松发柴，一炒就散，冒充不了。"
+        },
+        {
+          "name": "干辣椒",
+          "note": "整段炝锅出糊香，辣味挂在肉上不浮在油里。"
+        },
+        {
+          "name": "姜",
+          "note": "老姜厚片，压住水腥、提出蛙肉清甜。"
+        },
+        {
+          "name": "白菜垫底",
+          "note": "猛火断生即起，吸饱蛙汁——蛙吃完，这撮菜是老饕留给米饭的。"
+        }
+      ],
+      "origin": "吃蛙是湖南夜宵摊的半壁江山，长沙街头的\"跳跳蛙\"以活杀猛火爆炒立身。蛙肉嫩不嫩骗不了湖南舌头，这道菜在长沙夜宵界的地位，等于小龙虾之于簋街。",
+      "steps": [
+        "活蛙现杀斩块",
+        "料酒白胡椒腌十分钟",
+        "猛火快爆两分钟出锅（多一秒肉老）。"
+      ],
+      "flavorRoute": "湖南·长沙（R1 湘江灶台）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "e02",
+      "code": "E02",
+      "name": "招牌剁椒鱼",
+      "priceSen": 4800,
+      "unit": null,
+      "categoryKey": "e",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "e03",
+      "code": "E03",
+      "name": "金秋土豆烧排骨",
+      "priceSen": 3800,
+      "unit": null,
+      "categoryKey": "e",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "e04",
+      "code": "E04",
+      "name": "糖醋排骨",
+      "priceSen": 4800,
+      "unit": null,
+      "categoryKey": "e",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "e05",
+      "code": "E05",
+      "name": "湘西土匪鸭",
+      "priceSen": 4800,
+      "unit": null,
+      "categoryKey": "e",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "e06",
+      "code": "E06",
+      "name": "湘味油泼牛肉",
+      "priceSen": 4800,
+      "unit": null,
+      "categoryKey": "e",
+      "hook": "鲜牛肉切薄片，辣子堆上滚油一激。",
+      "intro": "牛肉当日鲜切薄片、滑油锁嫩，装盘码上辣子面与花椒，滚油\"刺啦\"一泼——香气是靠这一泼激出来的。油泼的规矩是听声：响声越脆，油温越对。",
+      "ingredients": [
+        {
+          "name": "牛肉",
+          "note": "当日鲜切，选嫩肉部位逆纹切薄片——顺纹嚼不烂，这是刀工的底线。"
+        },
+        {
+          "name": "辣子面",
+          "note": "香而不燥的辣子铺满肉面，油泼后红亮挂香。"
+        },
+        {
+          "name": "花椒",
+          "note": "麻香打底，与辣子构成\"麻辣\"二重奏。"
+        },
+        {
+          "name": "香菜",
+          "note": "现择现撒，油泼后的余温激出清香。"
+        }
+      ],
+      "origin": "油泼是陕西面食的古法——滚油激香，一泼定味。湘人把它从面碗挪到牛肉上：陕派的技法，湘派的选肉和猛火，一菜两省的江湖气。",
+      "steps": [
+        "鲜牛肉逆纹切片",
+        "滑油十秒锁嫩",
+        "码辣子花椒、滚油一泼上桌。"
+      ],
+      "flavorRoute": "陕西技法×湖南做（R9 油泼之路，跨点标注陕西→湖南）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "e07",
+      "code": "E07",
+      "name": "特色干煸肥肠",
+      "priceSen": 4800,
+      "unit": null,
+      "categoryKey": "e",
+      "hook": "肥肠处理干净是底线，干锅越烧越入味。",
+      "intro": "肥肠洗七遍，先煮后煸，煸到边缘起泡才下辣椒。越嚼越香。",
+      "ingredients": [
+        {
+          "name": "肥肠",
+          "note": "翻洗数遍无异味，先煮后煸——肥而不腻靠的是处理，不是运气。"
+        },
+        {
+          "name": "青红椒",
+          "note": "双色辣椒段配色提香，解腻。"
+        },
+        {
+          "name": "整瓣大蒜",
+          "note": "整瓣下锅煸到金黄，蒜香融进油脂里。"
+        }
+      ],
+      "origin": "干锅是湘菜的重要一支，株洲干锅最有名——一口小锅端上桌，火在下面烧，菜在锅里滚。湖南人把\"边加热边吃\"吃成了社交：锅越热，话越多。",
+      "steps": [
+        "肥肠翻洗煮透",
+        "煸出油脂",
+        "配辣椒大蒜入干锅、小火续烧。"
+      ],
+      "flavorRoute": "湖南·株洲（R1 湘江灶台）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "e08",
+      "code": "E08",
+      "name": "清蒸罗非鱼",
+      "priceSen": 4800,
+      "unit": null,
+      "categoryKey": "e",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "e09",
+      "code": "E09",
+      "name": "西红柿炖牛腩",
+      "priceSen": 4800,
+      "unit": null,
+      "categoryKey": "e",
+      "hook": "带筋牛腩配沙瓤番茄，砂锅慢炖两小时。",
+      "intro": "牛腩选带筋的部位，砂锅慢炖两小时到筷子一拨就散；番茄炒出红油再入锅，酸甜全化进汤里。这道菜急不来——高压锅半小时出不来这个味。",
+      "ingredients": [
+        {
+          "name": "牛腩",
+          "note": "带筋带膜的好部位，炖足两小时，筋膜化成胶质——纯瘦肉炖再久也是柴的。"
+        },
+        {
+          "name": "番茄",
+          "note": "去皮切块先炒出红油，酸甜味才融得进汤。"
+        },
+        {
+          "name": "土豆",
+          "note": "去皮切块，炖到起沙吸汁，是汤底的第 二层味道。"
+        }
+      ],
+      "origin": "番茄炖牛腩是\"西菜东渐\"的家常典范——番茄明代传入、清代上桌，与中式炖肉结合成国民家常菜。砂锅版是湖南小灶的做法：慢火、宽汤、不留遗憾。",
+      "steps": [
+        "牛腩焯水去血沫",
+        "炒番茄出红油",
+        "入砂锅慢炖两小时，土豆最后半小时下。"
+      ],
+      "flavorRoute": "本店小灶（无籍贯家常菜，指向本店标记）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "e10",
+      "code": "E10",
+      "name": "肥肠鱼",
+      "priceSen": 5800,
+      "unit": null,
+      "categoryKey": "e",
+      "hook": "肥肠的厚、鱼肉的嫩，一锅麻辣收留。",
+      "intro": "鱼片浆得嫩滑，肥肠煸得香脆，麻辣汤底把两种口感收在一锅。这道菜是\"混搭\"的正面教材：肥肠的厚与鱼肉的嫩，口感一重一轻，互不抢戏。",
+      "ingredients": [
+        {
+          "name": "鱼",
+          "note": "整条现杀取片，鱼片嫩滑少刺。"
+        },
+        {
+          "name": "肥肠",
+          "note": "与E07同标准，翻洗煮透再煸香。"
+        },
+        {
+          "name": "麻辣底",
+          "note": "花椒干辣椒炝锅出香，汤色红亮。"
+        }
+      ],
+      "origin": "肥肠鱼是川湘江湖菜的代表——大排档起家，不讲出身讲味道。\"江湖菜\"三个字的含义就是：不问师承，好吃为王。",
+      "steps": [
+        "鱼片上浆",
+        "肥肠煸香打底",
+        "麻辣汤滚开下鱼片，三分钟起锅。"
+      ],
+      "flavorRoute": "川渝江湖菜（R8 江湖码头）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "e11a",
+      "code": "E11",
+      "name": "白灼老虎虾",
+      "priceSen": 5800,
+      "unit": null,
+      "categoryKey": "e",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "e11b",
+      "code": "E11",
+      "name": "椒盐排骨",
+      "priceSen": 4800,
+      "unit": null,
+      "categoryKey": "e",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（编号重复，照写）"
+    },
+    {
+      "uid": "e11c",
+      "code": "E11",
+      "name": "乡村老母鸡汤",
+      "priceSen": 1990,
+      "unit": null,
+      "categoryKey": "e",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "（编号重复，照写）"
+    },
+    {
+      "uid": "v01",
+      "code": "V01",
+      "name": "脆皮爆汁烤鱼",
+      "priceSen": 7800,
+      "unit": null,
+      "categoryKey": "v",
+      "hook": "整条现杀现烤，皮脆肉嫩。",
+      "intro": "整鱼现杀现烤，鱼皮烤到起泡酥脆、鱼肉锁住汁水——干辣椒花生铺顶，垫底的土豆块泡在汤里，先吃皮、再吃肉、最后涮配菜。",
+      "ingredients": [
+        {
+          "name": "鱼",
+          "note": "整条现杀现烤。先烤后炖是重庆烤鱼的规矩——烤不定型，炖不入味。"
+        },
+        {
+          "name": "干辣椒",
+          "note": "整段铺顶，热油一泼，辣香直接糊脸上。"
+        },
+        {
+          "name": "花生米",
+          "note": "油炸至金黄，泡在汤里半脆半糯，一勺一粒停不下来。"
+        },
+        {
+          "name": "土豆",
+          "note": "块状垫底，泡在鱼汤里越煮越沙越入味。"
+        }
+      ],
+      "origin": "重庆烤鱼又叫\"诸葛烤鱼\"，江湖菜的排面担当——万州一派把\"先烤后炖\"做成了规矩：炭火烤皮定形锁汁，再入汤底煨进滋味。一条鱼两吃法：上半段吃皮脆肉嫩，下半段涮配菜。",
+      "steps": [
+        "整鱼改刀",
+        "炭火烤皮起泡",
+        "红油汤底慢煨上桌。"
+      ],
+      "flavorRoute": "重庆·万州（R8 川渝江湖）",
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "v02",
+      "code": "V02",
+      "name": "香辣羊排",
+      "priceSen": 7800,
+      "unit": null,
+      "categoryKey": "v",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "dual-image",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "staple-rice",
+      "code": "",
+      "name": "米饭",
+      "priceSen": 200,
+      "unit": "位",
+      "categoryKey": "staple",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": "堂食自助不限量"
+    },
+    {
+      "uid": "staple-salted-egg",
+      "code": "",
+      "name": "下饭咸鸭蛋",
+      "priceSen": 200,
+      "unit": "个",
+      "categoryKey": "staple",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": true,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "delivery-fee-1",
+      "code": "",
+      "name": "配送费（一）",
+      "priceSen": 150,
+      "unit": null,
+      "categoryKey": "staple",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": false,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    },
+    {
+      "uid": "delivery-fee-2",
+      "code": "",
+      "name": "配送费（二）",
+      "priceSen": 500,
+      "unit": null,
+      "categoryKey": "staple",
+      "hook": null,
+      "intro": null,
+      "ingredients": [],
+      "origin": null,
+      "steps": [],
+      "flavorRoute": null,
+      "spice": null,
+      "images": {
+        "closed": null,
+        "exploded": null
+      },
+      "disassembly": "none",
+      "orderable": false,
+      "soldOut": false,
+      "annotations": [],
+      "pending": [],
+      "sourceNote": null
+    }
+  ],
+  "bundles": [
+    {
+      "name": "超值双人餐",
+      "rule": "B区田园时蔬任选1 + D区招牌烧菜任选1（干锅孜然羊肉/豆笋红烧肉等）+ 解暑饮品二选二（冰露酸梅汁/冰鲜柠檬汁）"
+    },
+    {
+      "name": "超值四人餐",
+      "rule": "A区+B区+D区+E区各选1 + 饮品四选四（冰鲜柠檬汁/冰露酸梅汤/茉莉金柠茶/冰鲜薄荷柠檬水）；茉莉金柠茶+3元，冰鲜薄荷柠檬水+1元"
+    },
+    {
+      "name": "套餐一~套餐六",
+      "rule": "只标名称，不配图不动画（内容待高斯提供，本期不上架）"
+    }
+  ]
+}

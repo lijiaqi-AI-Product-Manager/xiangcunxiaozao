@@ -1,0 +1,197 @@
+/* ---------- 点单页：大画态 = 唯一主基调（54号 问题二）。进店大画 → 滑过 240px 触发线收成「今日招牌」横幅卡 → 水墨印基底列表 ---------- */
+
+/* 门店框（纸白轻透 .72）：店标圆戳 + 书法店名 + 桌号 + 等待时间 + 招牌三句；水印 B 压在框内右下 */
+.store { position: relative; margin: 12px 16px 0; padding: 10px 14px; border-radius: 24px; overflow: hidden; container-type: inline-size; }
+.store.glass { --pg-a: .72; }
+.store > *:not(.store-wm) { position: relative; }
+.store-row { display: flex; align-items: center; gap: 10px; }
+.store-name { font-size: 24px; line-height: 1.2; color: var(--ink-deep); white-space: nowrap; }
+.chip-table { margin-left: 6px; padding: 1px 10px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px var(--red); color: var(--red); font-size: 16px; white-space: nowrap; }
+.wait { margin-left: auto; text-align: right; font-size: 14px; color: var(--ink-2); line-height: 1.25; white-space: nowrap; }
+.wait b { display: block; font-size: 21px; color: var(--ink); font-weight: 400; }
+.trust { margin-top: 6px; font-size: 16px; color: var(--ink-2); display: flex; align-items: center; flex-wrap: wrap; }
+.store-wm { position: absolute; right: 12px; bottom: 12px; font-family: var(--font-family-brush); font-size: 19px; line-height: 1; letter-spacing: .04em; color: var(--ink); opacity: .1; pointer-events: none; }
+@container (max-width: 314px) { .store-wm { display: none; } }
+
+/* ---------- 54号 问题三：真堆叠——堆叠在右侧，卡片和堆叠同一个手势驱动、同步移动 ----------
+   每张卡按「离当前张还差几张」（d）算位置：d < 0 向左滑出；d = 0 在最前；d = 1、2 叠在右边各露 14px、越往后越小越淡。
+   拖动时 d 连续变化，所以上面那张滑出去多少，下面的就跟上来多少；松手 0.42s ease-out-back 回弹或翻面（合成层，只动 transform / opacity） */
+.deck { --peek: 14px; --peek-room: 0px; position: relative; isolation: isolate; height: var(--hero-h, 240px); margin: 10px 14px 16px; touch-action: pan-y; -webkit-user-select: none; user-select: none; outline: none; }
+.deck[data-depth="2"] { --peek-room: 14px; }
+.deck[data-depth="3"] { --peek-room: 28px; }
+.deck:focus-visible .deck-card.front { box-shadow: var(--hero-shadow), 0 0 0 3px var(--focus-ring); }
+.deck-card {
+  position: absolute; top: 0; bottom: 0; left: 0; right: var(--peek-room); border-radius: 20px; overflow: hidden;
+  transform-origin: 100% 50%; will-change: transform, opacity; box-shadow: var(--hero-shadow-back); cursor: grab;
+}
+.deck-card.front { box-shadow: var(--hero-shadow); }
+.deck.dragging .deck-card { cursor: grabbing; }
+.deck-card::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; box-shadow: var(--hero-edges); }
+.deck-card .shade { position: absolute; inset: 0; z-index: 3; background: var(--deck-shade); opacity: 0; pointer-events: none; will-change: opacity; }
+.deck-card .hero-img { border-radius: inherit; }
+.deck-card .hero-img .n { display: none; } /* 菜名已经在小标签上，占位图里不再写一遍 */
+.hero-spot { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: var(--hero-vignette); }
+/* 49号①：进店屏铺极浅宣纸肌理 + 纸纹噪点；有真图时也盖一层，像印在宣纸上 */
+.hero-paper { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background-image: var(--art-xuan-fiber), var(--art-paper-grain); background-size: 320px 320px, 240px 240px; mix-blend-mode: multiply; opacity: .28; }
+.hero-wm { position: absolute; left: 42px; bottom: 16px; writing-mode: vertical-rl; font-family: var(--font-family-brush); font-size: 26px; line-height: 1; letter-spacing: .12em; color: var(--ink); opacity: .09; pointer-events: none; }
+.sig-v { position: absolute; left: 18px; bottom: 18px; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 11px; letter-spacing: .2em; }
+/* 大画态小标签：高斯点名「原样保留」——白 72% + 柔投影（也是会员卡的基准样式） */
+.price-anchor { position: absolute; right: 16px; bottom: 14px; z-index: 2; text-decoration: none; display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: baseline; gap: 0 8px; padding: 6px 14px; border-radius: 22px; background: var(--anchor-bg); box-shadow: var(--shadow); max-width: calc(100% - 88px); } /* 56号：名字放不下时价格换到下一行，菜名本身始终一行 */
+.pa-name { flex: 0 1 auto; min-width: 0; font-size: 18px; line-height: 1.2; color: var(--ink-deep); }
+.price-anchor b { color: var(--price); font-size: 18px; white-space: nowrap; }
+/* 门店框浮在最前那张卡上（不跟卡走）；第几张：门店框下面右侧一排小点 */
+.deck-store { position: absolute; z-index: 200; left: 0; right: 0; top: 0; pointer-events: none; } /* 门店框横跨整摞（右边露出的卡边在框下面继续露） */
+.deck-store .store { margin: 10px 10px 0; pointer-events: auto; }
+.deck-store .store.glass { --pg-a: .80; }
+.deck-dots { position: absolute; z-index: 200; right: calc(var(--peek-room) + 20px); top: 118px; display: flex; gap: 6px; pointer-events: none; }
+.deck-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--dot-off); }
+.deck-dots i.on { background: var(--red); }
+@media (min-width: 768px) { .deck { margin-left: 24px; margin-right: 24px; } }
+
+/* 大图：有图 = 真图 + 径向聚光；没图 = 水墨意境占位（浅墨晕 + 一缕墨痕） */
+.hero-img { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; background: var(--hero-ph-bg); }
+.hero-img.ph::before { content: ''; position: absolute; left: 10%; right: 6%; top: 46%; height: 24%; background-image: var(--art-brush-stroke); background-size: 100% 100%; opacity: .3; filter: blur(1.2px); }
+.hero-img .n { position: relative; font-family: var(--font-family-brush); font-size: 42px; color: var(--ink); line-height: 1.15; }
+.hero-img.img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero-img.img::after { content: ''; position: absolute; inset: 0; background: var(--hero-img-vignette); }
+
+/* ---------- 48号 C 方案：触发线（240px）滑出屏幕顶部 → 顶部换成「今日招牌」横幅卡，分类条往下让 102px（transform / opacity） ---------- */
+.hero-line { position: absolute; left: 0; width: 1px; height: 1px; pointer-events: none; }
+.today {
+  position: fixed; z-index: 7; left: 0; right: 0; margin: 0 auto; top: calc(8px + env(safe-area-inset-top, 0px)); width: calc(100% - 28px); max-width: 402px; height: 96px;
+  border-radius: 22px; display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 22px;
+  transform: translateY(calc(-100% - 16px - env(safe-area-inset-top, 0px))); opacity: 0; pointer-events: none; will-change: transform;
+}
+.today.glass { --pg-a: .80; }
+.today.has-img { padding: 8px 10px 8px 8px; gap: 12px; }
+.today-img { position: relative; flex: none; width: 80px; height: 80px; border-radius: 32px; overflow: hidden; }
+.today-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.today-mark { position: absolute; left: 10px; top: 16px; bottom: 16px; width: 4px; border-radius: 2px; background: linear-gradient(180deg, var(--gold), color-mix(in srgb, var(--gold) 20%, transparent)); }
+.today-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.today-label { display: flex; align-items: baseline; gap: 6px; font-size: 15px; color: var(--ink-2); }
+.today-label .en { font-size: 10px; letter-spacing: .2em; }
+.today-name { display: block; min-width: 0; font-size: 28px; line-height: 1.15; color: var(--ink-deep); }
+.today.has-img .today-name { font-size: 21px; line-height: 1.2; }
+.today-anchor { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.today-anchor b { color: var(--price); font-size: 18px; line-height: 1.2; padding-right: 6px; }
+.today-go { height: 44px; padding: 0 18px; display: flex; align-items: center; }
+body.collapsed .today { transform: translateY(0); opacity: 1; pointer-events: auto; }
+body.collapsed .cats-wrap { transform: translateY(102px); }
+/* 横幅卡 + 分类条后面垫一层纸色（底边渐隐），菜行从下面滑过时不会从缝里露出来 */
+.today-scrim { position: fixed; z-index: 4; left: 0; right: 0; top: 0; height: calc(172px + env(safe-area-inset-top, 0px)); pointer-events: none; opacity: 0; background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 78%, color-mix(in srgb, var(--bg-2) 0%, transparent) 100%); }
+body.collapsed .today-scrim { opacity: 1; }
+html:not([data-tier=static]) .today-scrim { transition: opacity .32s; }
+/* 49号③：收起（横幅卡落下）ease-out-back 轻轻过冲；展开干脆利落 */
+html:not([data-tier=static]) .today, html:not([data-tier=static]) .cats-wrap { transition: transform .26s cubic-bezier(.4, 0, 1, 1), opacity .2s; }
+html:not([data-tier=static]) body.collapsed .today, html:not([data-tier=static]) body.collapsed .cats-wrap { transition: transform .42s cubic-bezier(.34, 1.56, .64, 1), opacity .2s; }
+
+/* ---------- 谷雨式分类条（吸顶胶囊，纸白真毛玻璃）：字 + 选中朱红圆点；滚动联动高亮 ---------- */
+.cats-wrap { position: sticky; top: calc(6px + env(safe-area-inset-top, 0px)); z-index: 5; margin: 10px 16px 0; }
+.catbar {
+  display: flex; align-items: center; gap: 2px; height: 44px; padding: 0 50px 0 4px; overflow-x: auto; scrollbar-width: none; border-radius: 22px;
+  scroll-padding-inline: 32px 100px;
+  background: var(--glass-spot), var(--cats-glass);
+  -webkit-backdrop-filter: blur(12px) saturate(140%); backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: inset 0 1px 0 var(--edge-light), inset 0 -1px 0 color-mix(in srgb, var(--gold-line) 45%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, black calc(100% - 96px), transparent calc(100% - 52px));
+  mask-image: linear-gradient(90deg, black calc(100% - 96px), transparent calc(100% - 52px));
+}
+.catbar.fade-left {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, black 28px, black calc(100% - 96px), transparent calc(100% - 52px));
+  mask-image: linear-gradient(90deg, transparent 0, black 28px, black calc(100% - 96px), transparent calc(100% - 52px));
+}
+.catbar::-webkit-scrollbar { display: none; }
+html[data-tier=lite] .catbar { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--glass-lite); }
+.cat { position: relative; flex: none; height: 44px; padding: 0 12px; white-space: nowrap; }
+.cat-t { position: relative; display: block; font-size: 17px; color: var(--ink-2); }
+/* 高亮切换：选中样式是叠在上面的一层（同一个字的朱砂结构色 + 圆点），只淡入淡出——2.4s 缓动和墨晕色温同步，颜色过渡不上主线程 */
+.cat-on { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; }
+.cat-on .cat-t { color: var(--struct); }
+.cat-on::after { content: ''; position: absolute; left: 50%; bottom: 5px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--red); }
+.cat[aria-selected="true"] .cat-on { opacity: 1; }
+.cat[aria-selected="true"] > .cat-t { opacity: 0; }
+html:not([data-tier=static]) .cat-on, html:not([data-tier=static]) .cat > .cat-t { transition: opacity 2.4s cubic-bezier(.2, .7, .2, 1); }
+html:not([data-tier=static]) .catbar.instant .cat-on, html:not([data-tier=static]) .catbar.instant .cat > .cat-t { transition-duration: .2s; }
+.cat-more { position: absolute; right: 2px; top: 0; height: 44px; width: 44px; display: flex; align-items: center; justify-content: center; z-index: 6; }
+.ring-arrow { width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--ink-2); display: inline-flex; align-items: center; justify-content: center; }
+.ring-arrow svg { width: 12px; height: 12px; }
+html:not([data-tier=static]) .ring-arrow svg { transition: transform .42s cubic-bezier(.34, 1.56, .64, 1); }
+.cat-more[aria-expanded="true"] .ring-arrow svg { transform: rotate(180deg); }
+/* 展开按钮：真展开 / 收起（0.42s ease-out-back，只动 transform / opacity） */
+.cat-panel { position: absolute; left: 0; right: 0; top: 50px; display: flex; flex-wrap: wrap; gap: 8px; padding: 14px; border-radius: 22px; transform-origin: 50% 0; }
+html:not([data-tier=static]) .cat-panel { animation: panel-in .42s cubic-bezier(.34, 1.56, .64, 1) both; }
+html:not([data-tier=static]) .cat-panel.closing { animation: panel-out .2s cubic-bezier(.4, 0, 1, 1) both; }
+@keyframes panel-in { from { opacity: 0; transform: translateY(-8px) scale(.96); } }
+@keyframes panel-out { to { opacity: 0; transform: translateY(-6px) scale(.97); } }
+.chip { min-height: 44px; padding: 0 16px; border-radius: 22px; font-size: 16px; color: var(--ink); background: color-mix(in srgb, var(--paper-white) 80%, transparent); box-shadow: inset 0 0 0 1px var(--line-strong); }
+.chip.on { color: var(--price); box-shadow: inset 0 0 0 1.5px var(--price); }
+.cat-panel .chip { font-family: var(--font-family-brush); font-variation-settings: "wght" 600; font-size: 17px; }
+
+/* ---------- 分组 + 菜卡（纸白假玻璃 .68）---------- */
+.grp { margin: 12px 16px 0; }
+section.grp:first-of-type { margin-top: 8px; } /* 第一组和分类条之间 8px：和点分类跳过去时的落点一致 */
+.grp-head { display: flex; align-items: center; gap: 8px; margin: 0 4px 8px; }
+.grp-head h2 { font-size: 20px; color: var(--ink-deep); line-height: 1.3; }
+.grp-head .en { font-weight: 700; font-size: 11px; letter-spacing: .15em; margin-left: 2px; white-space: nowrap; }
+.grp-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold-line), color-mix(in srgb, var(--gold-line) 15%, transparent)); }
+.grp-head .count { font-size: 14px; color: var(--ink-2); white-space: nowrap; }
+.card { position: relative; isolation: isolate; border-radius: 24px; overflow: hidden; }
+.card.glass { --pg-a: .68; }
+/* 47号 G1 菜卡环境光：湘菜区暖橙侧逆光，饮品区换青绿冷光；和分区色温同一个开关 */
+.card::before, .card::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit; transition: opacity 2.4s ease; }
+.card::before { background: linear-gradient(180deg, var(--card-light-warm), transparent 72px), linear-gradient(90deg, var(--card-light-warm), transparent 56px); }
+.card::after { background: linear-gradient(180deg, var(--card-light-cool), transparent 72px), linear-gradient(90deg, var(--card-light-cool), transparent 56px); opacity: 0; }
+body.drinks .card::before { opacity: 0; }
+body.drinks .card::after { opacity: 1; }
+.card.still::before, .card.still::after { transition: none; }
+.dish { position: relative; display: flex; align-items: center; gap: 12px; padding: 6px 8px 6px 12px; }
+.dish + .dish { box-shadow: inset 0 1px 0 var(--line); }
+.dish.sig::before { content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 4px; border-radius: 0 4px 4px 0; background: linear-gradient(180deg, var(--gold), transparent); }
+.dish.sold-out .thumb, .dish.sold-out .row-body { opacity: .45; }
+.thumb-link { flex: none; display: block; text-decoration: none; }
+/* 缩略图：有图用真图；没图 = 水墨意境占位（首字 + 淡墨痕 + 小方印） */
+.thumb {
+  position: relative; flex: none; width: 64px; height: 64px; border-radius: 26px; overflow: hidden; display: flex; align-items: center; justify-content: center;
+  font-size: 32px; color: var(--ink); line-height: 1; background: var(--thumb-ink), var(--paper);
+}
+.thumb.ph::before { content: ''; position: absolute; left: -8px; right: -14px; top: 22px; height: 40px; background-image: var(--art-brush-stroke); background-size: 100% 100%; opacity: .26; }
+.thumb span { position: relative; }
+.thumb .mini-seal { position: absolute; right: 6px; bottom: 6px; width: 11px; height: 11px; border-radius: 2px; background: var(--red); transform: rotate(-6deg); box-shadow: inset 0 0 0 1.5px var(--paper); }
+.thumb.img { background: var(--paper); }
+.thumb.img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.soldout-tag { position: absolute; left: 6px; top: 6px; z-index: 2; padding: 2px 8px; border-radius: 10px; font-size: 12px; color: var(--on-dark); background: var(--tray-solid); }
+.row-body { flex: 1; min-width: 0; }
+.row-name { display: flex; align-items: center; gap: 6px; font-size: 18px; line-height: 22px; font-weight: 400; }
+.row-name a { display: block; flex: 1; min-width: 0; color: var(--ink-deep); text-decoration: none; }
+.row-hook { font-size: 14px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 21px; }
+.price { color: var(--price); font-size: 17px; line-height: 21px; white-space: nowrap; }
+.price small { font-family: var(--font-family-brush); font-size: 14px; color: var(--ink-2); }
+.soldout-note { flex: none; min-height: 44px; display: inline-flex; align-items: center; padding: 0 6px; font-size: 14px; color: var(--ink-2); }
+
+/* 加减：按钮本身 44×44（触控底线），图形画在里面；朱砂印加号（视觉 32px 正圆）+ 算盘珠容器 */
+.qty { position: relative; display: flex; align-items: center; flex: none; }
+.qty b { position: relative; min-width: 18px; text-align: center; font-family: var(--font-family-latin); font-weight: 700; font-size: 16px; color: var(--abacus-minus); }
+.qty [hidden] { display: none; }
+.btn-round { position: relative; isolation: isolate; width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; }
+.btn-round .g { position: relative; font-family: var(--font-family-latin); font-weight: 600; font-size: 24px; line-height: 1; margin-top: -2px; }
+.add::before, .add::after { content: ''; position: absolute; inset: 6px; border-radius: 50%; }
+.add::before { background: var(--zhu-solid); box-shadow: var(--zhu-hl); }
+.add::after { z-index: -1; box-shadow: var(--zhu-shadow); }
+.add .g { color: var(--on-red); }
+html:not([data-tier=static]) .add { transition: transform .32s cubic-bezier(.34, 1.56, .64, 1); }
+html:not([data-tier=static]) .add::after { transition: transform .32s cubic-bezier(.34, 1.56, .64, 1), opacity .2s; }
+html:not([data-tier=static]) .add:active { transform: scale(.92); transition-duration: .1s; }
+html:not([data-tier=static]) .add:active::after { transform: translateY(-2px) scale(.9); opacity: .55; transition-duration: .1s; }
+.qty .abacus { position: absolute; inset: 4px 0; border-radius: 14px; background: var(--abacus-sheen), var(--abacus-bg); box-shadow: var(--abacus-edges); opacity: 0; pointer-events: none; }
+.qty.on .abacus { opacity: 1; }
+html:not([data-tier=static]) .qty .abacus { transition: opacity .16s; }
+.minus .g { color: var(--abacus-minus); }
+/* 最后一组下面补一点高度，保证每个分类都能被点到正好贴在分类条下面（54号：分类跳转定位误差 ≤ 4px） */
+.menu-end { pointer-events: none; }
+
+/* 首次进入：分组依次淡入（只播一次） */
+html:not([data-tier=static]) .reveal { opacity: 0; transform: translateY(8px); }
+html:not([data-tier=static]) .reveal.in { opacity: 1; transform: none; transition: opacity .2s ease, transform .2s ease; }
+
+/* 56号：窄屏（≤360）缩略图让出 10px 给菜名（菜名一行的修正顺序第 3 步：容器加宽） */
+@media (max-width: 360px) { .thumb { width: 54px; height: 54px; border-radius: 22px; font-size: 27px; } .thumb.ph::before { top: 18px; height: 32px; } }

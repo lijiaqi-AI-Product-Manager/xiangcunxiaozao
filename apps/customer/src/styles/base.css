@@ -1,0 +1,232 @@
+/* 54号：小样六轮视觉定稿直接进主程序（大画态 = 唯一主基调）。颜色全部来自 tokens.json 注入的变量，这里不写色值。
+   动效只动 transform / opacity；html[data-tier] 四档：normal / minimal / lite / static（static = 系统「减弱动态效果」） */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--bg-3); -webkit-text-size-adjust: 100%; }
+body {
+  position: relative; min-height: 100vh; background: var(--bg-3); color: var(--ink);
+  font-family: var(--font-family-body); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+a { color: inherit; -webkit-tap-highlight-color: transparent; }
+input, textarea { font: inherit; color: inherit; }
+ol, ul { list-style: none; }
+.app { position: relative; z-index: 1; max-width: 430px; margin: 0 auto; min-height: 100vh; padding-bottom: calc(180px + env(safe-area-inset-bottom, 0px)); }
+.muted { color: var(--ink-2); }
+.small { font-size: 14px; }
+.center { text-align: center; padding: 32px 0; }
+.en { font-family: var(--font-family-latin); font-weight: 600; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--struct); line-height: 1.3; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- 背景：渐变 + 光源 + 墨晕（铁律 2：不是纯色）；墨晕团随页面滚动 ---------- */
+.bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; background: linear-gradient(180deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3)); }
+.bg-alt { position: absolute; inset: 0; background: linear-gradient(180deg, var(--alt-1), var(--alt-2) 45%, var(--bg-3)); opacity: 0; transition: opacity 2.4s ease; }
+body.drinks .bg-alt { opacity: 1; }
+.bg .light { position: absolute; width: 640px; height: 640px; right: -220px; top: -240px; border-radius: 50%; background: radial-gradient(circle, var(--light), transparent 66%); }
+.bg .light.alt { background: radial-gradient(circle, var(--light-alt), transparent 68%); opacity: 0; transition: opacity 2.4s ease; }
+body.drinks .bg .light.alt { opacity: 1; }
+.bg .ink { position: absolute; left: 0; right: 0; top: 0; height: 460px; opacity: var(--ink-opacity); will-change: transform; -webkit-mask-image: linear-gradient(180deg, black 62%, transparent); mask-image: linear-gradient(180deg, black 62%, transparent); } /* 下沿渐隐：宽屏上墨晕层不再有一条硬边 */
+.bg .ink i { position: absolute; inset: 0; background-size: cover; background-position: center top; }
+.bg .ink .warm { background-image: var(--art-ink-wash-warm); }
+.bg .ink .cool { background-image: var(--art-ink-wash-cool); }
+.bg .grain { position: absolute; inset: 0; background-image: var(--art-paper-grain); background-size: 240px 240px; opacity: var(--grain-opacity); mix-blend-mode: multiply; }
+.bloom { position: absolute; z-index: 0; left: 0; right: 0; top: 380px; height: calc(100% - 380px); opacity: var(--bloom-opacity); pointer-events: none; }
+.bloom i { position: absolute; inset: 0; background-size: 100% 900px; background-repeat: repeat-y; }
+.bloom .warm { background-image: var(--art-ink-bloom-warm); }
+.bloom .cool { background-image: var(--art-ink-bloom-cool); }
+/* 43号 A1 纸的呼吸：一层极淡的米橙，透明度往返一轮 20 秒（合成层）；lite / static 停在基准色 */
+.bg .breath { position: absolute; inset: 0; opacity: 0; will-change: opacity; }
+.bg .breath i { position: absolute; inset: 0; }
+.bg .breath .warm { background: var(--breath-warm); }
+.bg .breath .cool { background: var(--breath-cool); }
+html:not([data-tier=lite]):not([data-tier=static]) .bg .breath { animation: breath 10s ease-in-out infinite alternate; }
+@keyframes breath { to { opacity: 1; } }
+/* 43号 A2 分区色温：滑到饮品区，墨晕、墨团、呼吸层一起 2.4 秒交叉淡化到青绿 */
+.bg .ink .cool, .bloom .cool, .bg .breath .cool { opacity: 0; }
+.bg .ink i, .bloom i, .bg .breath i { transition: opacity 2.4s ease; }
+body.drinks .bg .ink .warm, body.drinks .bloom .warm, body.drinks .bg .breath .warm { opacity: 0; }
+body.drinks .bg .ink .cool, body.drinks .bloom .cool, body.drinks .bg .breath .cool { opacity: 1; }
+:root[data-skin=skeleton] .bg, :root[data-skin=skeleton] .bloom { display: none; }
+
+/* 53号（高斯）：大水印压在面板前面（店名框、分类条、列表之上，托盘、Dock 之下），浅墨 7%，不挡点按；手机上不会被面板盖死 */
+.watermark { position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; display: flex; align-items: center; justify-content: flex-end; }
+.watermark span { writing-mode: vertical-rl; font-family: var(--font-family-brush); line-height: 1; color: var(--ink); opacity: var(--watermark-opacity); white-space: nowrap; }
+
+/* ---------- 53号纸白毛玻璃家族（浅玻璃管信息）：纸白 + 顶边 1px 亮光 + 噪点 + 左上极淡柔光 ----------
+   真背景模糊只给「背后有滚动内容」的层（分类条、托盘、Dock、详情底栏），其余是假玻璃——同样的透和光、零 GPU 成本 */
+.glass {
+  --pg-a: .78;
+  background: var(--glass-spot),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E"),
+    color-mix(in srgb, var(--paper-white) calc(var(--pg-a) * 100%), transparent);
+  background-blend-mode: normal, overlay, normal;
+  box-shadow: var(--glass-edges), var(--shadow);
+}
+.glass.blur { -webkit-backdrop-filter: blur(12px) saturate(140%); backdrop-filter: blur(12px) saturate(140%); }
+html[data-tier=lite] .glass { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background: var(--glass-lite); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .glass.blur { background: var(--glass-lite); } }
+
+/* ---------- 印章：圆戳全站唯一组件（54号问题一）。56号 高斯：「还是原来那个两个环的章更有感觉」——回到小样原来的双环红文圆戳
+   （外环 2px + 纸色细缝 + 内环），不透明；三个尺寸（大画态 44 / 主页面、横幅卡、点按 28 / 详情落款 36），不允许第二种形态。
+   缝的颜色跟着印章所在的底走（--seal-gap，黑金卡上换成卡底色） ---------- */
+.seal {
+  --ring: 2px;
+  display: inline-flex; align-items: center; justify-content: center; flex: none; border-radius: 50%;
+  color: var(--red); font-family: var(--font-family-brush); font-weight: 400; line-height: 1;
+  border: var(--ring) solid var(--red); box-shadow: inset 0 0 0 1.5px var(--seal-gap), inset 0 0 0 3px var(--red); transform: rotate(-8deg);
+}
+.seal.sm { --ring: 1.5px; box-shadow: inset 0 0 0 1px var(--seal-gap), inset 0 0 0 2.2px var(--red); }
+.seal.lg { width: 44px; height: 44px; font-size: 25px; }
+.seal.md { width: 36px; height: 36px; font-size: 20px; }
+.seal.sm { width: 28px; height: 28px; font-size: 16px; }
+/* 按下像盖章：缩到 .96、淡到 .7（复用朱砂印动效语言） */
+html:not([data-tier=static]) .seal.pressable { transition: transform .12s, opacity .12s; }
+.seal.pressable:active { transform: rotate(-8deg) scale(.96); opacity: .7; }
+/* 方印：区块结束符、招牌标记（高斯：方形小印仍写「灶」）——文化物件，不算第二种圆戳 */
+.sq-seal {
+  display: inline-flex; align-items: center; justify-content: center; flex: none; border-radius: 3px;
+  background: var(--red); color: var(--on-red); font-family: var(--font-family-brush); line-height: 1;
+  transform: rotate(-5deg); box-shadow: inset 0 0 0 1.5px var(--sq-seal-edge);
+}
+.dot-seal { display: inline-block; width: 6px; height: 6px; border-radius: 2px; background: var(--red); transform: rotate(45deg); margin: 0 8px; vertical-align: middle; opacity: .85; }
+/* 点按印章（53号 高斯）：手指 / 鼠标点到哪里，哪里盖一枚红色小圆戳（同一个组件的 28px 版）；不挡点按 */
+.tap-seal { position: fixed; z-index: 60; left: 0; top: 0; margin: -14px 0 0 -14px; pointer-events: none; opacity: 0; background: var(--tap-seal-bg); will-change: transform, opacity; }
+
+/* ---------- 53号 T：书法（马善政）= 标题标签层字体；数字、英文走衬线（字体栈第一个就是只管 ASCII 的衬线体），字重 600 和笔画分量相当 ---------- */
+.brush, .store-name, .chip-table, .wait, .cat-t, .grp-head h2, .row-name a, .price, .tab span, .gilt, .sum, .d-price, .xbtn, .pill-btn,
+.today-label, .today-anchor b, .price-anchor b, .pa-name, .today-name, .thumb span, .brush-title {
+  font-family: var(--font-family-brush); font-weight: 400; font-synthesis: none; letter-spacing: .02em; font-variation-settings: "wght" 600;
+}
+.badge { font-family: var(--font-family-latin); font-weight: 700; }
+
+/* ---------- 51号墨玻璃（深玻璃管钱：托盘、Dock）：135° 渐变 + 模糊 + 饱和 + 亮度、不均匀边缘光、噪点、左上静态光斑 ---------- */
+.tray {
+  position: fixed; isolation: isolate; overflow: hidden; color: var(--on-dark);
+  background: var(--tray-spot), var(--tray);
+  -webkit-backdrop-filter: var(--tray-filter); backdrop-filter: var(--tray-filter); box-shadow: var(--tray-edges);
+}
+.tray::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none; background-repeat: repeat; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+}
+.dock.tray { background: var(--tray-spot), var(--tray-dock); -webkit-backdrop-filter: var(--tray-filter-dock); backdrop-filter: var(--tray-filter-dock); }
+html[data-tier=lite] .tray, html[data-tier=lite] .dock.tray { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background: var(--tray-solid); }
+html[data-tier=lite] .tray::before { display: none; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .tray, .dock.tray { background: var(--tray-solid); } }
+.tray .sum, .tray .gilt { text-shadow: var(--glass-text-shadow); }
+.tray .badge { text-shadow: none; }
+/* 烫金按钮：深红 → 暗红底 + 淡金字，和托盘同一家族的圆角长方形 */
+.gilt { background: var(--gilt-btn); color: var(--gilt-text); letter-spacing: .08em; border-radius: 20px; font-size: 17px; text-decoration: none; }
+.gilt .badge { background: var(--gilt-text); color: var(--gilt-badge-text); }
+.badge {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px;
+  background: var(--red); color: var(--on-red); font-size: 12px; font-variation-settings: "wght" 700;
+}
+html:not([data-tier=static]) .badge.pop { animation: pop .45s cubic-bezier(.34, 1.8, .5, 1); }
+@keyframes pop { 40% { transform: scale(1.45); } }
+html:not([data-tier=static]) .press:active { transform: scale(.96); transition: transform .12s; }
+
+/* ---------- 浮动 Dock：离底悬浮的墨玻璃胶囊；选中 = 浅色药丸滑过去 + 朱砂微立体图标 ---------- */
+.dock {
+  position: fixed; z-index: 20; left: 0; right: 0; margin: 0 auto; bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  width: calc(100% - 32px); max-width: 398px; height: 64px; border-radius: 26px; display: flex; align-items: center; padding: 0 8px;
+}
+.dock-pill { position: absolute; left: 0; top: 6px; bottom: 6px; width: 0; border-radius: 17px; background: var(--dock-pill-on); box-shadow: var(--dock-pill-shadow); will-change: transform; }
+html:not([data-tier=static]) .dock-pill.ready { transition: transform .18s cubic-bezier(.3, .7, .4, 1); } /* 只动 transform（四个页签等宽，宽度不变）*/
+.tab { position: relative; flex: 1; height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--on-dark); text-decoration: none; }
+.tab > * { position: relative; }
+.tab span { font-size: 14px; text-shadow: var(--glass-text-shadow-dock); }
+.tab.on span { color: var(--price); text-shadow: none; }
+.tab .ico { width: 22px; height: 22px; }
+.ico .f { fill: currentColor; }
+.ico .s { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.ico .hl { fill: url(#g-hl); opacity: 0; }
+.tab.on .ico .f { fill: url(#g-on); }
+.tab.on .ico .s { stroke: url(#g-on); }
+.tab.on .ico .hl { opacity: 1; }
+.tab.on .ico { filter: drop-shadow(0 1px .8px var(--ico-on-drop)); }
+.ico.ico-ink .f { fill: url(#g-ink); }
+.ico.ico-ink .hl { opacity: 1; }
+.ico.ico-ink { filter: drop-shadow(0 1px .8px var(--ico-ink-drop)); }
+.defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+/* 四页切换只淡入（禁止推挤位移：推挤在低端机上掉帧） */
+html:not([data-tier=static]) .page-in { animation: page-in .24s ease-out; } /* 不留 fill：动画结束后不残留合成层（留着会让背景层画到内容上面） */
+@keyframes page-in { from { opacity: 0; } }
+
+/* ---------- 去结算托盘（54号 问题四）：0 道菜不渲染；首菜弹入；清空隐去 ---------- */
+.cartbar {
+  position: fixed; z-index: 19; left: 0; right: 0; margin: 0 auto; bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  width: calc(100% - 32px); max-width: 398px; height: 56px; border-radius: 23px; display: flex; align-items: center; gap: 12px; padding: 0 6px 0 8px;
+}
+.cartbar-summary { height: 48px; flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 0 8px; border-radius: 18px; color: inherit; text-align: left; }
+.cartbar .sum { font-size: 19px; display: inline-block; }
+.cartbar-go { flex: none; height: 44px; padding: 0 24px; }
+/* 水滴「+1」飞进购物车 + 落点一团柔光扩散（transform / opacity，路径由 fx.ts 驱动） */
+.blob { position: fixed; z-index: 51; left: 0; top: 0; pointer-events: none; will-change: transform; }
+.blob i { display: block; will-change: transform; }
+.blob b {
+  display: flex; align-items: center; justify-content: center; width: 36px; height: 34px; margin: -17px 0 0 -18px;
+  font-family: var(--font-family-latin); font-size: 15px; font-weight: 700; color: var(--on-red); background: var(--zhu-solid);
+  border-radius: 52% 48% 46% 54% / 58% 56% 44% 42%; box-shadow: var(--blob-hl), var(--zhu-shadow); will-change: transform;
+}
+.land-glow { position: fixed; z-index: 52; left: 0; top: 0; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; pointer-events: none; background: var(--land-glow); opacity: 0; will-change: transform, opacity; }
+
+/* ---------- 通用件：页头、按钮、卡片（纸白轻透面板）、提示 ---------- */
+.panel { position: relative; margin: 14px 16px 0; padding: 18px 16px; border-radius: 24px; }
+.panel-title { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.panel-title h2 { font-size: 20px; color: var(--ink-deep); line-height: 1.3; }
+.panel-title .rule { flex: 1; height: 1px; align-self: center; background: linear-gradient(90deg, var(--gold-line), color-mix(in srgb, var(--gold-line) 15%, transparent)); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 20px; border-radius: 22px;
+  background: var(--red-solid); color: var(--on-red); font-weight: 700; box-shadow: var(--glow-red); text-decoration: none;
+}
+.btn.block { display: flex; width: 100%; }
+.btn.big { min-height: 56px; font-size: 18px; border-radius: 24px; }
+.btn.ghost { background: color-mix(in srgb, var(--paper-white) 70%, transparent); color: var(--price); box-shadow: inset 0 0 0 1.5px var(--price-line); white-space: nowrap; }
+.btn:disabled { opacity: .55; cursor: default; }
+.link { min-height: 44px; padding: 0 4px; color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
+.pagehead { display: flex; align-items: center; gap: 10px; padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 0; }
+.pagehead h1 { font-size: 26px; color: var(--ink-deep); line-height: 1.2; }
+.circle-btn { width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex: none; text-decoration: none; }
+.circle-btn svg { width: 18px; height: 18px; }
+.toast {
+  position: fixed; z-index: 40; left: 50%; bottom: calc(154px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  max-width: calc(100% - 32px); padding: 10px 18px; border-radius: 20px; font-size: 14px; color: var(--on-dark); background: var(--tray-solid); box-shadow: var(--dock-shadow);
+}
+html:not([data-tier=static]) .toast { animation: toast-in .3s cubic-bezier(.34, 1.56, .64, 1) both; }
+@keyframes toast-in { from { opacity: 0; transform: translate(-50%, 10px); } }
+.closed-notice { display: flex; flex-direction: column; gap: 2px; margin-top: 10px; padding: 10px 14px; border-radius: 18px; background: var(--red-10); box-shadow: inset 0 0 0 1px var(--price-line); }
+.closed-notice strong { color: var(--price); font-size: 16px; }
+.closed-notice span { color: var(--ink-2); font-size: 14px; }
+.form-error { margin-top: 12px; padding: 10px 14px; border-radius: 16px; background: var(--red-10); color: var(--price); font-size: 14px; }
+.empty-art { text-align: center; padding: 64px 24px 0; }
+.empty-art h2 { font-size: 24px; color: var(--ink-deep); margin: 12px 0 6px; }
+.empty-art .seal { margin-top: 16px; }
+
+/* ---------- 底部弹层（购物车）：纸白轻透 + 从下方升起 ---------- */
+.sheet-backdrop { position: fixed; inset: 0; z-index: 30; background: var(--scrim); display: flex; align-items: flex-end; justify-content: center; }
+.sheet.glass { --pg-a: .95; } /* 56号：购物车弹层再实一点，后面的菜不透出来抢字 */
+.sheet { width: 100%; max-width: 430px; max-height: 76vh; overflow-y: auto; border-radius: 26px 26px 0 0; padding: 18px 18px calc(18px + env(safe-area-inset-bottom, 0px)); }
+html:not([data-tier=static]) .sheet-backdrop { animation: page-in .3s ease-out both; }
+html:not([data-tier=static]) .sheet { animation: sheet-in .38s cubic-bezier(.32, .72, .28, 1) both; }
+@keyframes sheet-in { from { transform: translateY(40%); opacity: .4; } }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.sheet-head h2 { font-size: 24px; color: var(--ink-deep); }
+.lines { margin: 0 0 16px; }
+.line { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 0; box-shadow: inset 0 -1px 0 var(--line); }
+.line-name { display: flex; align-items: baseline; flex: 1; min-width: 0; font-size: 18px; color: var(--ink-deep); }
+.line.gone .line-name { color: var(--ink-2); }
+.line-right { display: flex; align-items: center; gap: 8px; flex: none; }
+.tag { margin-left: 8px; font-size: 14px; color: var(--price); font-family: var(--font-family-body); }
+.sheet-go { display: flex; width: 100%; height: 56px; align-items: center; justify-content: center; border-radius: 24px; box-shadow: var(--glow-red); }
+.closed-wrap { margin: 0 16px; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+html[data-tier=static] *, html[data-tier=static] *::before, html[data-tier=static] *::after { animation: none !important; transition: none !important; }
+
+/* ---------- 56号 菜名一行：.fit 由 FitText 量宽度、逐级降字号；实在放不下才 .fit-wrap 两行（只断在意思完整处） ---------- */
+.fit { display: block; min-width: 0; white-space: nowrap; overflow: hidden; }
+.fit.fit-wrap { white-space: normal; overflow: visible; }
+.fit-part { display: inline-block; white-space: nowrap; }
+
+/* 56号：窄屏上购物车每行的价格叠到加减上面，菜名多出一截宽度 */
+@media (max-width: 360px) { .line-right { flex-direction: column; align-items: flex-end; gap: 0; } }

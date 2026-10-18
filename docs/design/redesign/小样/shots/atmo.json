@@ -1,0 +1,288 @@
+{
+  "A1": {
+    "cycle": "20 秒一轮（10 秒变暖 + 10 秒回来）",
+    "bgOnly": {
+      "meanDE": 2.88,
+      "p95DE": 3.84,
+      "maxDE": 4.29,
+      "avgColor": [
+        [
+          232,
+          215,
+          184
+        ],
+        [
+          231,
+          207,
+          173
+        ]
+      ],
+      "hue": [
+        38.8,
+        35.2
+      ],
+      "avgDE": 3.1
+    },
+    "withContent": {
+      "meanDE": 1.1,
+      "p95DE": 3.06,
+      "maxDE": 4.58,
+      "avgColor": [
+        [
+          220,
+          204,
+          185
+        ],
+        [
+          220,
+          202,
+          182
+        ]
+      ],
+      "hue": [
+        32.6,
+        31.6
+      ],
+      "avgDE": 0.91
+    },
+    "maxPerSecondDE": 0.66,
+    "note": "bgOnly = 只看背景（菜卡隐藏）；withContent = 实际画面"
+  },
+  "A2": {
+    "autoSwitchedOnDrinks": true,
+    "transition": "2.4 秒",
+    "bgOnly": {
+      "meanDE": 7.07,
+      "p95DE": 13.71,
+      "maxDE": 17.27,
+      "avgColor": [
+        [
+          242,
+          223,
+          190
+        ],
+        [
+          229,
+          229,
+          196
+        ]
+      ],
+      "hue": [
+        38.1,
+        60
+      ],
+      "avgDE": 8.05
+    },
+    "withContent": {
+      "meanDE": 3,
+      "p95DE": 10.72,
+      "maxDE": 63.98,
+      "avgColor": [
+        [
+          221,
+          208,
+          189
+        ],
+        [
+          217,
+          210,
+          190
+        ]
+      ],
+      "hue": [
+        35.6,
+        44.4
+      ],
+      "avgDE": 3.11
+    },
+    "inkOnlyBg": {
+      "meanDE": 0.35,
+      "p95DE": 2.13,
+      "maxDE": 5.39,
+      "avgColor": [
+        [
+          230,
+          230,
+          196
+        ],
+        [
+          229,
+          229,
+          196
+        ]
+      ],
+      "hue": [
+        60,
+        60
+      ],
+      "avgDE": 0.35
+    },
+    "topRidgeBgOnly": {
+      "meanDE": 10.95,
+      "p95DE": 15.07,
+      "maxDE": 17.63,
+      "avgColor": [
+        [
+          223,
+          199,
+          162
+        ],
+        [
+          202,
+          207,
+          169
+        ]
+      ],
+      "hue": [
+        36.4,
+        67.9
+      ],
+      "avgDE": 11.6
+    }
+  },
+  "G2": {
+    "cycle": "11 秒一周期（左 → 右飘过，放大缩小，渐隐渐现）",
+    "frames": [
+      {
+        "t": 0,
+        "cloudCenter": [
+          -3,
+          159
+        ],
+        "opacity": 0,
+        "darkenAtCloud": "0.0%"
+      },
+      {
+        "t": 2.75,
+        "cloudCenter": [
+          93,
+          178
+        ],
+        "opacity": 0.902992,
+        "darkenAtCloud": "24.0%"
+      },
+      {
+        "t": 5.5,
+        "cloudCenter": [
+          188,
+          197
+        ],
+        "opacity": 1,
+        "darkenAtCloud": "28.2%"
+      },
+      {
+        "t": 8.25,
+        "cloudCenter": [
+          283,
+          182
+        ],
+        "opacity": 0.902992,
+        "darkenAtCloud": "24.1%"
+      },
+      {
+        "t": 11,
+        "cloudCenter": [
+          377,
+          167
+        ],
+        "opacity": 0.0000415472,
+        "darkenAtCloud": "0.0%"
+      }
+    ],
+    "travelPx": 380,
+    "cornerUnaffected": true
+  },
+  "G1": {
+    "warmCorner": 2.82,
+    "warmMiddle": 0,
+    "coolCorner": 2.69,
+    "coolMiddle": 0,
+    "note": "ΔE00：同一分区底色下加光前后的色差。角落 = 卡片左上 60×40；中间 = 卡片中部偏右（离顶 90px 以下）"
+  },
+  "animatedProperties": [
+    "opacity",
+    "transform"
+  ],
+  "compositorOnly": true,
+  "compositorTrace": {
+    "点单-淡黄-现状版.html": {
+      "合成线程": [
+        " @ .blob",
+        " @ .land-glow",
+        " @ .seal tap-seal",
+        " @ B",
+        " @ I",
+        "breath @ .breath",
+        "opacity @ .abacus",
+        "opacity @ .bg-alt",
+        "opacity @ .cool",
+        "opacity @ .grp reveal in",
+        "opacity @ .light alt",
+        "opacity @ .store glass reveal has-wm in",
+        "opacity @ .warm",
+        "opacity @ ::after",
+        "opacity @ ::before",
+        "pop @ .badge pop",
+        "transform @ .btn-round add press",
+        "transform @ .dock-pill",
+        "transform @ .grp reveal in",
+        "transform @ .store glass reveal has-wm in",
+        "transform @ ::after"
+      ],
+      "主线程": []
+    },
+    "详情-淡黄.html": {
+      "合成线程": [
+        " @ .seal tap-seal",
+        "breath @ .breath",
+        "cloud @ .cloud",
+        "opacity @ .ink-line in",
+        "opacity @ .layer",
+        "opacity @ .scrim",
+        "opacity @ .scrim on",
+        "transform @ .layer",
+        "transform @ .stage glass",
+        "transform @ .stage glass open"
+      ],
+      "主线程": []
+    },
+    "点单-淡黄-大画态结构.html": {
+      "合成线程": [
+        "breath @ .breath",
+        "deck @ .hero-slide",
+        "opacity @ .grp reveal in",
+        "opacity @ .hero-stack deck reveal in",
+        "opacity @ .today glass noimg",
+        "opacity @ .today-scrim",
+        "transform @ .cats-wrap",
+        "transform @ .grp reveal in",
+        "transform @ .hero-stack deck reveal in",
+        "transform @ .today glass noimg"
+      ],
+      "主线程": []
+    }
+  },
+  "tiers": {
+    "lite": {
+      "tier": "lite",
+      "breathRunning": 0,
+      "breathOpacity": "0",
+      "cloudRunning": 0,
+      "cloudOpacity": "0"
+    },
+    "minimal": {
+      "tier": "minimal",
+      "breathRunning": 1,
+      "breathOpacity": "0.0382916",
+      "cloudRunning": 1,
+      "cloudOpacity": "0.559606"
+    },
+    "reduced": {
+      "tier": "static",
+      "breathRunning": 0,
+      "breathOpacity": "0",
+      "cloudRunning": 0,
+      "cloudOpacity": "0"
+    }
+  }
+}

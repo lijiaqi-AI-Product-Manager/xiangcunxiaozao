@@ -1,0 +1,123 @@
+/* ---------- 详情页（41号批准规格 + 53号：大图位留给实物图；英文 + 书法菜名 + 一笔浓墨 + 方印当标题） ---------- */
+.detail-hero { position: relative; height: 440px; overflow: hidden; }
+.detail-hero .hero-img { will-change: transform; }
+.detail-hero .hero-img.ph .n, .detail-hero .hero-img.ph::before { display: none; } /* 没图时大图位只留水墨底 + 云斑，等实物图 */
+.detail-hero.sold-out .hero-img { opacity: .55; }
+.detail-hero .soldout-tag { left: 16px; top: auto; bottom: 86px; font-size: 14px; padding: 4px 12px; }
+/* 47号 G2 云斑：一团模糊的云影一边放大缩小一边从左往右飘过，一周期 11 秒；lite / static 不出现 */
+.hero-img .cloud { position: absolute; left: 50%; top: 42%; width: 300px; height: 230px; margin: -115px 0 0 -150px; border-radius: 50%; background: radial-gradient(closest-side, var(--cloud), var(--cloud-edge) 58%, transparent); opacity: 0; will-change: transform, opacity; }
+html:not([data-tier=lite]):not([data-tier=static]) .hero-img .cloud { animation: cloud 11s cubic-bezier(.45, .05, .55, .95) infinite; }
+@keyframes cloud {
+  0% { transform: translate(-190px, -26px) scale(.78); opacity: 0; }
+  22% { opacity: .9; }
+  50% { transform: translate(0, 12px) scale(1.12); opacity: 1; }
+  78% { opacity: .9; }
+  100% { transform: translate(190px, -18px) scale(.84); opacity: 0; }
+}
+.top-btns { position: absolute; z-index: 3; left: 16px; right: 16px; top: calc(14px + env(safe-area-inset-top, 0px)); display: flex; justify-content: space-between; align-items: center; }
+.code-chip { padding: 6px 12px; border-radius: 999px; font-size: 14px; color: var(--ink-2); }
+.xbtn-wrap { position: absolute; left: 0; right: 0; bottom: 40px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.xbtn { height: 48px; padding: 0 26px; border-radius: 999px; background: var(--red-solid); color: var(--on-red); font-size: 18px; letter-spacing: .12em; box-shadow: var(--glow-red); }
+.xbtn small { margin-left: 8px; font-family: var(--font-family-body); letter-spacing: 0; font-size: 14px; }
+
+.dsheet { position: relative; z-index: 2; margin-top: -24px; border-radius: 24px 24px 0 0; padding: 22px 20px 8px; background: linear-gradient(180deg, var(--bg-2), var(--bg-3)); }
+:root[data-skin=skeleton] .dsheet { background: var(--bg-3); }
+
+/* ---------- 54号 问题五：标题组（英文 + 书法菜名 + 一笔浓墨 + 方印 + 价格 + 一句话）三个变体，同一份结构，换类名 ----------
+   v1 侧边瘦身（主推）：竖排英文缩一号、收字距，变成整块标题组的「书脊」——和菜名、价格、一句话一样高，不再一个人把下面撑出空白
+   v2 底部横排：英文横排压在菜名下面，当菜名和价格之间的一条地平线（谷雨式字 + 细金线）
+   v3 顶部眉批：英文横排全大写 + 0.15em 字距，放在菜名上面 */
+.d-head { position: relative; margin: 2px 0 0; }
+.d-head-main { flex: 1; min-width: 0; } /* 56号：不给它撑满，标题框会缩成最窄宽度，短菜名也被断成两行 */
+.lockup-main { position: relative; display: inline-block; max-width: calc(100% - 8px); padding: 2px 40px 22px 2px; }
+.d-title { position: relative; display: block; font-family: var(--font-family-brush); font-weight: 400; font-size: 34px; line-height: 1.2; color: var(--ink-deep); }
+.lockup-stroke { position: absolute; left: -6px; right: 24px; bottom: -4px; height: 44px; background-image: var(--art-brush-stroke-wide); background-size: 100% 100%; opacity: .55; filter: blur(.5px); pointer-events: none; }
+.lockup-main .sq-seal { position: absolute; right: 0; bottom: 14px; }
+.d-price { margin-top: 4px; font-size: 26px; color: var(--price); line-height: 1.3; }
+.d-price .dish-unit { font-size: 16px; color: var(--ink-2); }
+.d-hook { margin-top: 6px; font-size: 16px; }
+.lockup-en { flex: none; }
+/* v1 侧边瘦身（主推） */
+.d-head.lockup-v1 { display: flex; align-items: stretch; gap: 10px; }
+.lockup-v1 .lockup-en { writing-mode: vertical-rl; font-size: 10px; letter-spacing: .12em; line-height: 1; padding: 6px 0 2px; position: relative; padding-right: 6px; }
+.lockup-v1 .lockup-en::after { content: ''; position: absolute; right: 0; top: 6px; bottom: 4px; width: 1px; background: linear-gradient(180deg, var(--gold-line), color-mix(in srgb, var(--gold-line) 10%, transparent)); }
+/* v2 底部横排 */
+.lockup-v2 .lockup-en { display: flex; align-items: center; gap: 10px; align-self: stretch; margin: 2px 0 0; font-size: 11px; letter-spacing: .2em; }
+.lockup-v2 .lockup-en::before, .lockup-v2 .lockup-en::after { content: ''; height: 1px; background: var(--gold-line); opacity: .7; }
+.lockup-v2 .lockup-en::before { width: 18px; }
+.lockup-v2 .lockup-en::after { flex: 1; background: linear-gradient(90deg, var(--gold-line), color-mix(in srgb, var(--gold-line) 10%, transparent)); }
+.lockup-v2 .lockup-main { padding-bottom: 16px; }
+.d-head.lockup-v2 { display: flex; flex-direction: column; }
+.lockup-v2 .lockup-en { order: 2; }
+.lockup-v2 .d-head-main { display: contents; }
+.lockup-v2 .lockup-main { order: 1; }
+.lockup-v2 .d-price { order: 3; }
+.lockup-v2 .d-hook { order: 4; }
+/* v3 顶部眉批 */
+.d-head.lockup-v3 { display: flex; flex-direction: column; }
+.lockup-v3 .lockup-en { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .15em; margin-bottom: 2px; }
+.lockup-v3 .lockup-en::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--red); }
+
+/* ---------- 区块：标题双层（中文粗黑大字 / 英文宽体衬线全大写 / 细金线横贯）；正文楷体，墨迹一句一句渐显 ---------- */
+.sec { margin-top: 26px; }
+.sec-head { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 12px; }
+.sec-head h2 { font-size: 26px; font-weight: 900; line-height: 1.25; letter-spacing: .04em; color: var(--ink-deep); }
+.sec-head .en { margin-top: 4px; font-size: 12px; font-weight: 700; letter-spacing: .18em; }
+.sec-head .rule { align-self: stretch; height: 1px; margin-top: 8px; background: linear-gradient(90deg, var(--gold-line) 0%, var(--gold-line) 60%, color-mix(in srgb, var(--gold-line) 10%, transparent)); }
+.sec p, .prose { font-family: var(--font-family-kai); font-size: 16px; line-height: 1.85; text-align: justify; }
+.sec.paper { margin-left: -20px; margin-right: -20px; padding: 18px 20px; background: linear-gradient(180deg, var(--paper), var(--paper-2)); border-radius: 20px; }
+.ink-line { opacity: 1; }
+html:not([data-tier=static]):not([data-tier=lite]) .ink-line { opacity: .25; transition: opacity .5s ease; }
+html:not([data-tier=static]):not([data-tier=lite]) .ink-line.in { opacity: 1; }
+/* 工序：大号衬线数字 + 细金线（42号⑤，不要「小学课件」卡片） */
+.steps { margin: 0; }
+.step { position: relative; display: grid; grid-template-columns: 52px 1fr; align-items: baseline; gap: 8px; padding: 12px 0 12px 12px; }
+.step::before { content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px; border-radius: 2px; background: linear-gradient(180deg, var(--gold), transparent); }
+.step::after { content: ''; position: absolute; left: 12px; right: 0; bottom: 0; height: 1px; background: linear-gradient(90deg, var(--gold), transparent 85%); opacity: .7; }
+.step b { font-family: var(--font-family-latin); font-weight: 600; font-size: 28px; color: var(--struct); line-height: 1; }
+.step span { font-family: var(--font-family-kai); font-size: 16px; }
+.route { display: flex; align-items: center; gap: 16px; }
+.route-tag { writing-mode: vertical-rl; font-size: 18px; font-weight: 700; letter-spacing: .2em; padding: 12px 10px; border-radius: 16px; color: var(--struct); }
+.ingredients li { padding: 10px 0; box-shadow: inset 0 -1px 0 var(--line); }
+.ingredients strong { font-family: var(--font-family-brush); font-weight: 400; font-size: 18px; color: var(--ink-deep); }
+.ingredients p { font-family: var(--font-family-kai); font-size: 14px; color: var(--ink-2); line-height: 1.6; }
+.pending-copy { margin-top: 22px; padding: 14px 16px; border-radius: 20px; }
+/* 落款：详情页末尾一枚中号圆戳 + 店名，像画末的落款 */
+.colophon { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin: 30px 4px 0; color: var(--ink-2); font-family: var(--font-family-brush); font-size: 18px; }
+
+/* 底部：价格 + 算盘珠 + 去结算（纸白真毛玻璃，背后有滚动内容） */
+.dbar {
+  position: fixed; z-index: 19; left: 0; right: 0; margin: 0 auto; bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  width: calc(100% - 32px); max-width: 398px; height: 60px; border-radius: 20px; display: flex; align-items: center; gap: 6px; padding: 0 6px 0 16px;
+}
+.dbar .price { font-size: 21px; margin-right: auto; }
+.dbar .cartbar-go { height: 46px; padding: 0 18px; border-radius: 999px; }
+
+/* ---------- 拆开看看舞台：从下方升起盖住大图（只用 transform），食材层错峰 120ms 升起、合拢倒序收回 ---------- */
+.scrim { position: fixed; inset: 0; z-index: 29; background: var(--scrim); opacity: 0; pointer-events: none; }
+html:not([data-tier=static]) .scrim { transition: opacity .3s; }
+.scrim.on { opacity: 1; pointer-events: auto; }
+.explode {
+  position: fixed; z-index: 30; left: 0; right: 0; margin: 0 auto; bottom: 0; width: 100%; max-width: 430px; height: 82vh; border-radius: 24px 24px 0 0;
+  padding: 18px 20px calc(120px + env(safe-area-inset-bottom, 0px)); overflow: auto; transform: translateY(100%);
+  background: linear-gradient(180deg, var(--glass), var(--glass-solid)), var(--art-paper-grain); background-size: auto, 240px 240px;
+  box-shadow: var(--glass-edges), var(--dock-shadow);
+}
+html:not([data-tier=static]) .explode { transition: transform .38s cubic-bezier(.32, .72, .28, 1); }
+.explode.open { transform: none; }
+.stage-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.stage-head h3 { font-size: 22px; color: var(--ink-deep); }
+.pill-btn { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 16px; border-radius: 999px; font-size: 16px; color: var(--ink); }
+.pill-btn svg { width: 12px; height: 12px; transform: rotate(180deg); }
+.explode-inner > * + * { margin-top: 12px; }
+.layer { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; box-shadow: inset 0 -1px 0 var(--line); }
+.layer-pic { flex: none; width: 56px; height: 56px; border-radius: 23px; background: var(--paper); display: flex; align-items: center; justify-content: center; text-align: center; font-family: var(--font-family-brush); font-size: 15px; line-height: 1.1; padding: 4px; text-wrap: balance; }
+.layer-name { display: block; font-size: 16px; }
+.layer-note { font-family: var(--font-family-kai); font-size: 14px; color: var(--ink-2); line-height: 1.6; }
+.layer { opacity: 0; transform: translateY(24px); transition: opacity .26s ease, transform .26s ease; transition-delay: calc(var(--r) * 120ms); }
+.explode.open .layer { opacity: 1; transform: none; transition-delay: calc(var(--i) * 120ms + 120ms); }
+.explode-caption { text-align: center; }
+.pinned { position: relative; }
+.pin { position: absolute; transform: translate(-50%, -50%); padding: 2px 8px; border-radius: 12px; white-space: nowrap; background: var(--anchor-bg); font-size: 12px; box-shadow: var(--shadow), inset 0 0 0 1px var(--price-line); }
+.explode-img { border-radius: 20px; overflow: hidden; }
+.explode-img img { display: block; width: 100%; }

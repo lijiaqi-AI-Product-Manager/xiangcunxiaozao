@@ -1,0 +1,18 @@
+# Litestream：把数据库的每一次写入实时复制到对象存储（服务器整台坏掉，最多丢几秒数据）。
+# 状态：模板已写好，未实际运行——要等「服务器 + 对象存储桶」定下来后填写下面三个变量。
+# 运行方式（Linux 服务器上）：litestream replicate -config /etc/litestream.yml
+#
+# 需要的环境变量：
+#   LITESTREAM_BUCKET            对象存储桶名
+#   LITESTREAM_ENDPOINT          S3 兼容服务地址（如 Cloudflare R2 / Backblaze B2 / AWS S3 新加坡区）
+#   LITESTREAM_ACCESS_KEY_ID / LITESTREAM_SECRET_ACCESS_KEY
+dbs:
+  - path: /srv/app/data/app.db
+    replicas:
+      - type: s3
+        bucket: ${LITESTREAM_BUCKET}
+        path: app-db
+        endpoint: ${LITESTREAM_ENDPOINT}
+        sync-interval: 1s
+        retention: 720h        # 保留 30 天历史，可回到任意时间点
+        snapshot-interval: 24h # 每天额外一份完整快照

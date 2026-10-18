@@ -1,0 +1,37 @@
+/* 方向 B「主次大卡」比稿 token（不进生产）。锚：底色/文字/品牌红取自 tokens.json；动效档位：仪式感（首次进入淡入一次 + 加购弹跳 + 拆开看看错峰与轻呼吸） */
+:root{
+  --bg: #F7F7F5;
+  --surface: #FFFFFF;
+  --text: #333333;
+  --text-2: #666666;
+  --line: #E4E2DC;
+  --paper: #F1EEE8;
+  --red: #C8372D;
+  --red-line: #C8372D;
+  --red-10: rgba(200,55,45,0.10);
+  --ink: #333333;
+  --on-red: #FFFFFF;
+  --font-body: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-brush: "Ma Shan Zheng", "STKaiti", "KaiTi", "Kaiti SC", serif;
+  --wm-opacity: 0.05;
+  --wm-size: 179px;
+  --fs-1: 12px;
+  --fs-2: 14px;
+  --fs-3: 16px;
+  --fs-4: 22px;
+  --fs-5: 32px;
+  --fs-price: 18px;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --r-card: 16px;
+  --r-btn: 24px;
+  --r-thumb: 12px;
+  --shadow: 0 4px 20px rgba(51,51,51,0.06);
+  --motion-pop: 450ms;
+  --motion-stagger: 120ms;
+  --motion-enter: 300ms;
+}

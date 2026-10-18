@@ -1,0 +1,382 @@
+{
+  "pages": {
+    "点单-淡黄-V1并入": {
+      "perScreen": 6,
+      "small": [],
+      "tiny": [],
+      "minContrast": "5.00",
+      "low": [],
+      "glassDepth": 1,
+      "byKind": {
+        "菜名": 15.87,
+        "价格": 6.3,
+        "分组标题": 15.09,
+        "分类条": 6.91,
+        "店名": 14.4,
+        "桌号": 5,
+        "等待时间": 6.92,
+        "描述": 6.9,
+        "角标": 8.73
+      }
+    },
+    "点单-淡黄-V2现状": {
+      "perScreen": 6,
+      "small": [],
+      "tiny": [],
+      "minContrast": "5.00",
+      "low": [],
+      "glassDepth": 1,
+      "byKind": {
+        "菜名": 15.87,
+        "价格": 6.3,
+        "分组标题": 15.09,
+        "分类条": 6.91,
+        "店名": 14.4,
+        "桌号": 5,
+        "等待时间": 6.92,
+        "描述": 6.9,
+        "选中页签": 5.89,
+        "角标": 5.2
+      }
+    },
+    "点单-淡黄-V2马卡龙": {
+      "perScreen": 6,
+      "small": [],
+      "tiny": [],
+      "minContrast": "5.00",
+      "low": [],
+      "glassDepth": 1,
+      "byKind": {
+        "菜名": 15.87,
+        "价格": 6.3,
+        "分组标题": 15.09,
+        "分类条": 6.91,
+        "店名": 14.4,
+        "桌号": 5,
+        "等待时间": 6.92,
+        "描述": 6.9,
+        "选中页签": 5.89,
+        "角标": 5.2
+      }
+    },
+    "点单-淡黄-大画态结构": {
+      "perScreen": 4,
+      "small": [],
+      "tiny": [],
+      "minContrast": "5.01",
+      "low": [],
+      "glassDepth": 1,
+      "byKind": {
+        "菜名": 15.87,
+        "价格": 6.3,
+        "分组标题": 15.09,
+        "分类条": 6.91,
+        "店名": 14.49,
+        "桌号": 5.03,
+        "等待时间": 6.96,
+        "描述": 6.9,
+        "选中页签": 5.89,
+        "角标": 5.2
+      }
+    },
+    "点单-淡黄-大画态-收起后": {
+      "perScreen": 6,
+      "small": [],
+      "tiny": [],
+      "minContrast": "5.01",
+      "low": [],
+      "glassDepth": 1,
+      "byKind": {
+        "菜名": 15.87,
+        "价格": 6.3,
+        "分组标题": 15.09,
+        "分类条": 6.91,
+        "描述": 6.9,
+        "选中页签": 5.89,
+        "角标": 5.2
+      }
+    },
+    "点单-淡绿-大画态结构": {
+      "perScreen": 4,
+      "small": [],
+      "tiny": [],
+      "minContrast": "5.01",
+      "low": [],
+      "glassDepth": 1,
+      "byKind": {
+        "菜名": 15.96,
+        "价格": 6.33,
+        "分组标题": 15.36,
+        "分类条": 6.94,
+        "店名": 14.54,
+        "桌号": 5.05,
+        "等待时间": 6.98,
+        "描述": 6.94,
+        "选中页签": 5.89,
+        "角标": 5.2
+      }
+    },
+    "点单-淡绿-大画态-收起后": {
+      "perScreen": 6,
+      "small": [],
+      "tiny": [],
+      "minContrast": "5.01",
+      "low": [],
+      "glassDepth": 1,
+      "byKind": {
+        "菜名": 15.96,
+        "价格": 6.33,
+        "分组标题": 15.36,
+        "分类条": 6.94,
+        "描述": 6.94,
+        "选中页签": 5.89,
+        "角标": 5.2
+      }
+    },
+    "点单-淡黄-墨黑-大画态结构": {
+      "perScreen": 4,
+      "small": [],
+      "tiny": [],
+      "minContrast": "5.01",
+      "low": [],
+      "glassDepth": 1,
+      "byKind": {
+        "菜名": 15.87,
+        "价格": 6.3,
+        "分组标题": 15.09,
+        "分类条": 6.91,
+        "店名": 14.49,
+        "桌号": 5.03,
+        "等待时间": 6.96,
+        "描述": 6.9,
+        "选中页签": 5.89,
+        "角标": 5.2
+      }
+    },
+    "点单-淡黄-墨黑-大画态-收起后": {
+      "perScreen": 6,
+      "small": [],
+      "tiny": [],
+      "minContrast": "5.01",
+      "low": [],
+      "glassDepth": 1,
+      "byKind": {
+        "菜名": 15.87,
+        "价格": 6.3,
+        "分组标题": 15.09,
+        "分类条": 6.91,
+        "描述": 6.9,
+        "选中页签": 5.89,
+        "角标": 5.2
+      }
+    },
+    "详情-淡绿": {
+      "perScreen": 0,
+      "small": [],
+      "tiny": [],
+      "minContrast": "5.01",
+      "low": [],
+      "glassDepth": 1,
+      "byKind": {
+        "选中页签": 5.89,
+        "详情价格": 6.09,
+        "详情底栏价格": 6.37
+      }
+    },
+    "详情-淡黄-墨黑结构色": {
+      "perScreen": 0,
+      "small": [],
+      "tiny": [],
+      "minContrast": "5.01",
+      "low": [],
+      "glassDepth": 1,
+      "byKind": {
+        "选中页签": 5.89,
+        "详情价格": 5.99,
+        "详情底栏价格": 6.35
+      }
+    },
+    "详情-淡黄": {
+      "perScreen": 0,
+      "small": [],
+      "tiny": [],
+      "minContrast": "5.01",
+      "low": [],
+      "glassDepth": 1,
+      "byKind": {
+        "选中页签": 5.89,
+        "详情价格": 5.99,
+        "详情底栏价格": 6.35
+      }
+    }
+  },
+  "motion": {
+    "reduced": {
+      "order": {
+        "tier": "static",
+        "running": 0
+      },
+      "detail": {
+        "running": 0,
+        "stageOpen": true
+      }
+    },
+    "lite": {
+      "blurred": 0,
+      "ambientLoop": 0
+    }
+  },
+  "fps": {
+    "setup": "CPU 限速 6 倍、360×780、2 倍像素、normal 档（毛玻璃、纸的呼吸、云斑、菜卡环境光、视差、落印、水滴角标全开）",
+    "scroll": {
+      "fps": 60,
+      "worstFrameMs": 17,
+      "longFrames": 0
+    },
+    "addBurst": {
+      "fps": 59,
+      "worstFrameMs": 33,
+      "longFrames": 0
+    },
+    "stage": {
+      "fps": 60,
+      "worstFrameMs": 17,
+      "longFrames": 0
+    },
+    "detailScroll": {
+      "fps": 60,
+      "worstFrameMs": 17,
+      "longFrames": 0
+    }
+  },
+  "glassText": {
+    "V2 托盘 + Dock": [
+      {
+        "text": "RM 96",
+        "shadow": true,
+        "ratio": 4.71
+      },
+      {
+        "text": "去结算",
+        "shadow": true,
+        "ratio": 8.34
+      },
+      {
+        "text": "点单",
+        "shadow": false,
+        "ratio": 5.92
+      },
+      {
+        "text": "取餐",
+        "shadow": true,
+        "ratio": 4.95
+      },
+      {
+        "text": "会员",
+        "shadow": true,
+        "ratio": 4.54
+      },
+      {
+        "text": "我的",
+        "shadow": true,
+        "ratio": 4.68
+      }
+    ],
+    "V1 并入 Dock": [
+      {
+        "text": "去结算",
+        "shadow": true,
+        "ratio": 7.96
+      },
+      {
+        "text": "RM 96",
+        "shadow": true,
+        "ratio": 8.8
+      }
+    ],
+    "详情页 Dock": [
+      {
+        "text": "点单",
+        "shadow": false,
+        "ratio": 5.92
+      },
+      {
+        "text": "取餐",
+        "shadow": true,
+        "ratio": 4.95
+      },
+      {
+        "text": "会员",
+        "shadow": true,
+        "ratio": 4.54
+      },
+      {
+        "text": "我的",
+        "shadow": true,
+        "ratio": 4.68
+      }
+    ]
+  },
+  "glassTextMin": 4.54,
+  "glassStructure": {
+    "cartbar": {
+      "background135": true,
+      "staticSpot": true,
+      "filter": "blur(18px) saturate(1.6) brightness(1.06)",
+      "unevenEdges": 3,
+      "noise": true
+    },
+    "dock": {
+      "background135": true,
+      "staticSpot": true,
+      "filter": "blur(14px) brightness(1.06)",
+      "unevenEdges": 3,
+      "noise": true
+    },
+    "movingHighlightsOnGlass": 0,
+    "cardsBlur": 0
+  },
+  "brushCheck": {
+    "点单-淡黄-现状版.html": {
+      "checked": 238,
+      "fallback": []
+    },
+    "点单-淡黄-Dock并入.html": {
+      "checked": 233,
+      "fallback": []
+    },
+    "点单-淡黄-大画态结构.html": {
+      "checked": 248,
+      "fallback": []
+    },
+    "详情-淡黄.html": {
+      "checked": 9,
+      "fallback": []
+    }
+  },
+  "realGlass": {
+    "点单-淡黄-现状版.html": [
+      "cats",
+      "cartbar",
+      "dock"
+    ],
+    "点单-淡黄-Dock并入.html": [
+      "cats",
+      "dock"
+    ],
+    "点单-淡黄-大画态结构.html": [
+      "cats",
+      "cartbar",
+      "dock"
+    ],
+    "点单-淡黄-大画态结构.html 收起后": [
+      "cats",
+      "cartbar",
+      "dock"
+    ],
+    "详情-淡黄.html": [
+      "dbar",
+      "dock"
+    ]
+  }
+}

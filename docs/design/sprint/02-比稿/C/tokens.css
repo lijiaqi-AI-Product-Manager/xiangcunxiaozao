@@ -1,0 +1,36 @@
+/* 方向 C「纸本菜谱」比稿 token（不进生产）。锚：底色/文字/品牌红取自 tokens.json；动效档位：近零动效（只保留拆开看看错峰，09号硬规定） */
+:root{
+  --bg: #F7F7F5;
+  --surface: #FFFFFF;
+  --text: #333333;
+  --text-2: #666666;
+  --line: #E4E2DC;
+  --paper: #F1EEE8;
+  --red: #C8372D;
+  --red-line: #C8372D;
+  --red-10: rgba(200,55,45,0.10);
+  --ink: #333333;
+  --on-red: #FFFFFF;
+  --font-body: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-brush: "Ma Shan Zheng", "STKaiti", "KaiTi", "Kaiti SC", serif;
+  --wm-opacity: 0.05;
+  --wm-size: 179px;
+  --fs-1: 12px;
+  --fs-2: 14px;
+  --fs-3: 15px;
+  --fs-4: 20px;
+  --fs-5: 30px;
+  --fs-price: 16px;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --r-card: 0px;
+  --r-btn: 4px;
+  --r-thumb: 4px;
+  --shadow: none;
+  --motion-pop: 0ms;
+  --motion-stagger: 120ms;
+  --motion-enter: 0ms;
+}

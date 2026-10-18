@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 900" preserveAspectRatio="xMidYMid slice"><defs>
+<filter id="b" x="-30%" y="-30%" width="160%" height="160%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="4" seed="11"/><feDisplacementMap in="SourceGraphic" scale="60"/><feGaussianBlur stdDeviation="14"/></filter>
+<radialGradient id="r"><stop offset="0" stop-color="#4E321F" stop-opacity="0.55"/><stop offset=".6" stop-color="#4E321F" stop-opacity="0.18"/><stop offset="1" stop-color="#4E321F" stop-opacity="0"/></radialGradient></defs>
+<g filter="url(#b)"><ellipse cx="-10" cy="300" rx="150" ry="110" fill="url(#r)"/><ellipse cx="420" cy="560" rx="170" ry="120" fill="url(#r)"/><ellipse cx="30" cy="820" rx="140" ry="90" fill="url(#r)"/></g></svg>

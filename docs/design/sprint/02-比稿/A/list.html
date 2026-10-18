@@ -1,0 +1,610 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A 紧凑效率 · 点单</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&amp;display=swap"><style>:root{
+  --bg: #F7F7F5;
+  --surface: #FFFFFF;
+  --text: #333333;
+  --text-2: #666666;
+  --line: #E4E2DC;
+  --paper: #F1EEE8;
+  --red: #C8372D;
+  --red-line: #C8372D;
+  --red-10: rgba(200,55,45,0.10);
+  --ink: #333333;
+  --on-red: #FFFFFF;
+  --font-body: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-brush: "Ma Shan Zheng", "STKaiti", "KaiTi", "Kaiti SC", serif;
+  --wm-opacity: 0.05;
+  --wm-size: 179px;
+  --fs-1: 12px;
+  --fs-2: 14px;
+  --fs-3: 16px;
+  --fs-4: 20px;
+  --fs-5: 28px;
+  --fs-price: 18px;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --r-card: 12px;
+  --r-btn: 8px;
+  --r-thumb: 8px;
+  --shadow: 0 1px 0 rgba(51,51,51,0.04);
+  --motion-pop: 450ms;
+  --motion-stagger: 120ms;
+  --motion-enter: 0ms;
+}
+:root{--thumb-color:var(--red)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg)}
+body{color:var(--text);font-family:var(--font-body);font-size:var(--fs-3);line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;border:0;background:none}
+.app{position:relative;z-index:1;max-width:375px;margin:0 auto;min-height:100vh}
+.wm{position:fixed;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:flex-end;overflow:hidden;z-index:0}
+.wm span{writing-mode:vertical-rl;font-family:var(--font-brush);font-size:var(--wm-size);line-height:1;color:var(--text);opacity:var(--wm-opacity)}
+.seal{display:inline-flex;align-items:center;justify-content:center;flex:none;border-radius:50%;color:var(--red);font-family:var(--font-brush);transform:rotate(-8deg);border:2px solid var(--red);box-shadow:inset 0 0 0 1.5px var(--surface),inset 0 0 0 3px var(--red);line-height:1}
+.brush{font-family:var(--font-brush);font-weight:400}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:5;max-width:375px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);background:var(--surface);border-top:1px solid var(--line)}
+.tabbar a{height:56px;display:flex;align-items:center;justify-content:center;color:var(--text-2);text-decoration:none;font-size:var(--fs-3)}
+.tabbar a.on{color:var(--ink);font-weight:700}
+.thumb{flex:none;display:flex;align-items:center;justify-content:center;background:var(--paper);font-family:var(--font-brush);line-height:1;color:var(--thumb-color)}
+.big-ph{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:var(--paper);overflow:hidden}
+.big-ph .n{font-family:var(--font-brush);color:var(--text);line-height:1.15;text-align:center;text-wrap:balance}
+.big-ph .c{font-size:var(--fs-1);color:var(--text-2)}
+.big-ph .seal{position:absolute;right:10px;bottom:10px;opacity:.85}
+.price{color:var(--red);font-weight:700;font-size:var(--fs-price);white-space:nowrap}
+.unit{color:var(--text-2);font-weight:400;font-size:var(--fs-1)}
+.add{width:32px;height:32px;border-radius:50%;background:var(--red);color:var(--on-red);font-size:22px;line-height:32px;text-align:center;flex:none}
+.add.line{background:none;border:1.5px solid var(--red-line);color:var(--red);line-height:29px}
+.qty{display:flex;align-items:center;gap:6px}.qty .m{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:20px;line-height:30px;text-align:center}.qty b{min-width:16px;text-align:center}
+.cartbar{position:fixed;left:0;right:0;bottom:56px;z-index:4;max-width:375px;margin:0 auto;display:flex;gap:8px;padding:8px 12px;background:var(--bg)}
+.add.q{position:relative}.add.q em{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--ink);color:var(--surface);font-size:11px;line-height:18px;font-style:normal;font-weight:700}
+.cart-sum{flex:1;display:flex;align-items:center;gap:12px;height:48px;padding:0 16px;border-radius:var(--r-btn);background:var(--ink);color:var(--surface);font-weight:700}
+.badge{min-width:24px;height:24px;padding:0 6px;border-radius:12px;background:var(--red);color:var(--on-red);font-size:var(--fs-2);display:inline-flex;align-items:center;justify-content:center}
+.cart-go{height:48px;padding:0 20px;border-radius:var(--r-btn);background:var(--red);color:var(--on-red);font-weight:700}
+.trust{font-size:var(--fs-1);color:var(--text-2);letter-spacing:1px}
+.trust i{font-style:normal;color:var(--red);margin:0 6px}
+.clip1{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.head{position:sticky;top:0;z-index:3;background:var(--bg)}
+.store{display:flex;align-items:center;gap:var(--sp-2);height:52px;padding:0 var(--sp-4)}
+.store .nm{font-size:var(--fs-4);font-weight:700}
+.store .meta{margin-left:auto;font-size:var(--fs-2);color:var(--text-2);text-align:right;line-height:1.3}
+.store .meta b{color:var(--red);font-size:var(--fs-3)}
+.cats{display:flex;gap:var(--sp-5);padding:0 56px 0 var(--sp-4);height:40px;align-items:stretch;overflow:hidden;position:relative;border-bottom:1px solid var(--line)}
+.cats span{display:flex;align-items:center;white-space:nowrap;color:var(--text-2);font-size:var(--fs-3);border-bottom:3px solid transparent}
+.cats span.on{color:var(--ink);font-weight:700;border-bottom-color:var(--red)}
+.cats .more{position:absolute;right:0;top:0;bottom:0;width:48px;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--text-2);font-size:var(--fs-1)}
+.head .trust{padding:4px var(--sp-4);border-bottom:1px solid var(--line)}
+.grp{padding:var(--sp-3) var(--sp-3) 0}
+.grp h2{font-size:var(--fs-2);color:var(--text-2);font-weight:400;padding:0 var(--sp-1) var(--sp-2)}
+.grp h2 b{color:var(--ink);font-weight:700;margin-right:var(--sp-2)}
+.box{background:var(--surface);border-radius:var(--r-card)}
+.row{display:flex;gap:var(--sp-3);align-items:center;padding:10px var(--sp-3);border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row .thumb{width:64px;height:64px;border-radius:var(--r-thumb);font-size:32px}
+.row .body{flex:1;min-width:0}
+.row .nm{font-weight:700;font-size:var(--fs-3);display:flex;gap:var(--sp-2);align-items:baseline}
+.row .nm small{font-weight:400;font-size:var(--fs-1);color:var(--text-2)}
+.row .hook{font-size:var(--fs-1);color:var(--text-2);margin-top:2px}
+.row .price{display:block;margin-top:2px;line-height:1.3}
+.cats{-webkit-mask-image:linear-gradient(to right,black calc(100% - 96px),transparent calc(100% - 48px));mask-image:linear-gradient(to right,black calc(100% - 96px),transparent calc(100% - 48px))}
+</style></head>
+<body><div class="wm" aria-hidden="true"><span>湘村小灶</span></div><div class="app">
+<header class="head">
+  <div class="store"><span class="seal" style="width:32px;height:32px;font-size:18px">灶</span><span class="nm">湘村小灶</span><span class="meta">桌 8 · 等待约 <b>16</b> 分钟<br>前面 1 单</span></div>
+  <div class="cats"><span class="on">全部</span><span>招牌菜</span><span>精品肉菜</span><span>家常小炒</span><span>下饭小炒</span><span>开胃凉拌</span><span>小甜水</span><span>手打柠檬茶</span><span>轻乳茶</span><span>镇店硬菜</span><span>一升霸王杯</span><span>罐装饮品</span><span>主食</span><span class="more">▼</span></div>
+  <p class="trust">明厨亮灶<i>·</i>当日现采<i>·</i>一菜一锅</p>
+</header>
+<section class="grp"><h2><b>招牌菜</b>13 道</h2><div class="box">
+  <article class="row"><span class="thumb">招</span><div class="body">
+    <p class="nm"><span class="clip1">招牌跳跳蛙</span><small>E01</small></p>
+    <p class="hook clip1">现杀牛蛙，猛火快爆，肉嫩如蒜瓣。</p>
+    <span class="price">RM&nbsp;48</span>
+  </div><span class="qty"><span class="m">−</span><b>1</b><span class="add ">+</span></span></article>
+  <article class="row"><span class="thumb">招</span><div class="body">
+    <p class="nm"><span class="clip1">招牌剁椒鱼</span><small>E02</small></p>
+    
+    <span class="price">RM&nbsp;48</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">金</span><div class="body">
+    <p class="nm"><span class="clip1">金秋土豆烧排骨</span><small>E03</small></p>
+    
+    <span class="price">RM&nbsp;38</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">糖</span><div class="body">
+    <p class="nm"><span class="clip1">糖醋排骨</span><small>E04</small></p>
+    
+    <span class="price">RM&nbsp;48</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">湘</span><div class="body">
+    <p class="nm"><span class="clip1">湘西土匪鸭</span><small>E05</small></p>
+    
+    <span class="price">RM&nbsp;48</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">湘</span><div class="body">
+    <p class="nm"><span class="clip1">湘味油泼牛肉</span><small>E06</small></p>
+    <p class="hook clip1">鲜牛肉切薄片，辣子堆上滚油一激。</p>
+    <span class="price">RM&nbsp;48</span>
+  </div><span class="qty"><span class="m">−</span><b>1</b><span class="add ">+</span></span></article>
+  <article class="row"><span class="thumb">特</span><div class="body">
+    <p class="nm"><span class="clip1">特色干煸肥肠</span><small>E07</small></p>
+    <p class="hook clip1">肥肠处理干净是底线，干锅越烧越入味。</p>
+    <span class="price">RM&nbsp;48</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">清</span><div class="body">
+    <p class="nm"><span class="clip1">清蒸罗非鱼</span><small>E08</small></p>
+    
+    <span class="price">RM&nbsp;48</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">西</span><div class="body">
+    <p class="nm"><span class="clip1">西红柿炖牛腩</span><small>E09</small></p>
+    <p class="hook clip1">带筋牛腩配沙瓤番茄，砂锅慢炖两小时。</p>
+    <span class="price">RM&nbsp;48</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">肥</span><div class="body">
+    <p class="nm"><span class="clip1">肥肠鱼</span><small>E10</small></p>
+    <p class="hook clip1">肥肠的厚、鱼肉的嫩，一锅麻辣收留。</p>
+    <span class="price">RM&nbsp;58</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">白</span><div class="body">
+    <p class="nm"><span class="clip1">白灼老虎虾</span><small>E11</small></p>
+    
+    <span class="price">RM&nbsp;58</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">椒</span><div class="body">
+    <p class="nm"><span class="clip1">椒盐排骨</span><small>E11</small></p>
+    
+    <span class="price">RM&nbsp;48</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">乡</span><div class="body">
+    <p class="nm"><span class="clip1">乡村老母鸡汤</span><small>E11</small></p>
+    
+    <span class="price">RM&nbsp;19.9</span>
+  </div><span class="add ">+</span></article></div></section><section class="grp"><h2><b>精品肉菜</b>12 道</h2><div class="box">
+  <article class="row"><span class="thumb">干</span><div class="body">
+    <p class="nm"><span class="clip1">干锅鸭头</span><small>D01</small></p>
+    
+    <span class="price">RM&nbsp;38</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">干</span><div class="body">
+    <p class="nm"><span class="clip1">干锅孜然羊肉</span><small>D02</small></p>
+    
+    <span class="price">RM&nbsp;38</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">豆</span><div class="body">
+    <p class="nm"><span class="clip1">豆笋红烧肉</span><small>D03</small></p>
+    
+    <span class="price">RM&nbsp;38</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">油</span><div class="body">
+    <p class="nm"><span class="clip1">油豆腐红烧肉</span><small>D04</small></p>
+    <p class="hook clip1">五花肉煸出油，油豆腐吸饱汁。</p>
+    <span class="price">RM&nbsp;38</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">干</span><div class="body">
+    <p class="nm"><span class="clip1">干锅手撕鸡</span><small>D05</small></p>
+    <p class="hook clip1">盐焗鸡腿手撕成条，干锅慢慢烘出香。</p>
+    <span class="price">RM&nbsp;38</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">香</span><div class="body">
+    <p class="nm"><span class="clip1">香辣虾</span><small>D06</small></p>
+    
+    <span class="price">RM&nbsp;38</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">酸</span><div class="body">
+    <p class="nm"><span class="clip1">酸菜鱼片</span><small>D08</small></p>
+    <p class="hook clip1">老坛酸菜配现杀鱼片，汤酸得干净。</p>
+    <span class="price">RM&nbsp;38</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">凯</span><div class="body">
+    <p class="nm"><span class="clip1">凯里酸汤鱼</span><small>D09</small></p>
+    <p class="hook clip1">苗家红酸汤，木姜子定调。</p>
+    <span class="price">RM&nbsp;38</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">红</span><div class="body">
+    <p class="nm"><span class="clip1">红烧猪脚</span><small>D11</small></p>
+    
+    <span class="price">RM&nbsp;38</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">干</span><div class="body">
+    <p class="nm"><span class="clip1">干锅鹿茸菌</span><small>D12</small></p>
+    
+    <span class="price">RM&nbsp;38</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">梅</span><div class="body">
+    <p class="nm"><span class="clip1">梅菜扣肉</span><small>D13</small></p>
+    
+    <span class="price">RM&nbsp;38</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">青</span><div class="body">
+    <p class="nm"><span class="clip1">青椒炒腊肉</span><small>D19</small></p>
+    
+    <span class="price">RM&nbsp;38</span>
+  </div><span class="add ">+</span></article></div></section><section class="grp"><h2><b>家常小炒</b>19 道</h2><div class="box">
+  <article class="row"><span class="thumb">日</span><div class="body">
+    <p class="nm"><span class="clip1">日本豆腐</span><small>C02</small></p>
+    
+    <span class="price">RM&nbsp;20</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">农</span><div class="body">
+    <p class="nm"><span class="clip1">农家一碗香</span><small>C03</small></p>
+    <p class="hook clip1">鸡蛋炒碎、五花煸香、青椒虎皮，一碗里的三重火候。</p>
+    <span class="price">RM&nbsp;25</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">小</span><div class="body">
+    <p class="nm"><span class="clip1">小炒牛肚</span><small>C04</small></p>
+    <p class="hook clip1">现卤牛肚配整段香菜，脆嫩裹香。</p>
+    <span class="price">RM&nbsp;25</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">小</span><div class="body">
+    <p class="nm"><span class="clip1">小炒黄牛肉</span><small>C05</small></p>
+    <p class="hook clip1">鲜牛肉逆纹切，香菜梗一起爆。</p>
+    <span class="price">RM&nbsp;25</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">辣</span><div class="body">
+    <p class="nm"><span class="clip1">辣子鸡</span><small>C06</small></p>
+    
+    <span class="price">RM&nbsp;25</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">酸</span><div class="body">
+    <p class="nm"><span class="clip1">酸辣鸡杂</span><small>C07</small></p>
+    <p class="hook clip1">鸡胗鸡心脆弹，酸菜解腻开胃。</p>
+    <span class="price">RM&nbsp;25</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">肉</span><div class="body">
+    <p class="nm"><span class="clip1">肉末茄子煲</span><small>C08</small></p>
+    <p class="hook clip1">茄子吸肉汁，砂锅收浓香。</p>
+    <span class="price">RM&nbsp;28</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">蒜</span><div class="body">
+    <p class="nm"><span class="clip1">蒜香绝味凤爪</span><small>C09</small></p>
+    <p class="hook clip1">猛火蒸透再爆蒜，爪劲十足。</p>
+    <span class="price">RM&nbsp;28</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">绝</span><div class="body">
+    <p class="nm"><span class="clip1">绝味小炒鸡</span><small>C10</small></p>
+    
+    <span class="price">RM&nbsp;28</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">姜</span><div class="body">
+    <p class="nm"><span class="clip1">姜辣口味凤爪</span><small>C11</small></p>
+    <p class="hook clip1">大量老姜配朝天椒，辣得有层次。</p>
+    <span class="price">RM&nbsp;28</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">外</span><div class="body">
+    <p class="nm"><span class="clip1">外婆菜炒肉末</span><small>C11</small></p>
+    <p class="hook clip1">坛子菜配肉末，专治没胃口。</p>
+    <span class="price">RM&nbsp;25</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">红</span><div class="body">
+    <p class="nm"><span class="clip1">红烧鱼块</span><small>C12</small></p>
+    
+    <span class="price">RM&nbsp;28</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">红</span><div class="body">
+    <p class="nm"><span class="clip1">红油猪耳尖</span><small>C13</small></p>
+    <p class="hook clip1">卤耳片红油拌，脆骨声先到。</p>
+    <span class="price">RM&nbsp;28</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">青</span><div class="body">
+    <p class="nm"><span class="clip1">青椒爆炒猪耳尖</span><small>C14</small></p>
+    <p class="hook clip1">卤耳片配螺丝椒，猛火抢出脆。</p>
+    <span class="price">RM&nbsp;28</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">卤</span><div class="body">
+    <p class="nm"><span class="clip1">卤水猪耳尖</span><small>C15</small></p>
+    <p class="hook clip1">潮式白卤，吃本味。</p>
+    <span class="price">RM&nbsp;28</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">泡</span><div class="body">
+    <p class="nm"><span class="clip1">泡椒肚丝</span><small>C16</small></p>
+    
+    <span class="price">RM&nbsp;28</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">香</span><div class="body">
+    <p class="nm"><span class="clip1">香干炒肉</span><small>C17</small></p>
+    
+    <span class="price">RM&nbsp;25</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">回</span><div class="body">
+    <p class="nm"><span class="clip1">回锅肉</span><small>C18</small></p>
+    
+    <span class="price">RM&nbsp;28</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">山</span><div class="body">
+    <p class="nm"><span class="clip1">山药烩云耳</span><small>C19</small></p>
+    
+    <span class="price">RM&nbsp;21</span>
+  </div><span class="add ">+</span></article></div></section><section class="grp"><h2><b>下饭小炒</b>14 道</h2><div class="box">
+  <article class="row"><span class="thumb">干</span><div class="body">
+    <p class="nm"><span class="clip1">干煸四季豆</span><small>B01</small></p>
+    
+    <span class="price">RM&nbsp;18</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">爆</span><div class="body">
+    <p class="nm"><span class="clip1">爆炒土豆丝</span><small>B02</small></p>
+    <p class="hook clip1">细丝泡水去淀粉，猛火脆生。</p>
+    <span class="price">RM&nbsp;13</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">肉</span><div class="body">
+    <p class="nm"><span class="clip1">肉末酸豆角</span><small>B03</small></p>
+    <p class="hook clip1">酸豆角配肉末，一勺一饭。</p>
+    <span class="price">RM&nbsp;15</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">西</span><div class="body">
+    <p class="nm"><span class="clip1">西红柿炒鸡蛋</span><small>B04</small></p>
+    <p class="hook clip1">蛋炒散、汁拌饭，家常菜的尽头。</p>
+    <span class="price">RM&nbsp;15</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">干</span><div class="body">
+    <p class="nm"><span class="clip1">干锅包菜</span><small>B05</small></p>
+    <p class="hook clip1">手撕大片配虾干，锅气脆甜。</p>
+    <span class="price">RM&nbsp;17</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">大</span><div class="body">
+    <p class="nm"><span class="clip1">大碗花菜</span><small>B06</small></p>
+    
+    <span class="price">RM&nbsp;15</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">麻</span><div class="body">
+    <p class="nm"><span class="clip1">麻婆豆腐</span><small>B07</small></p>
+    <p class="hook clip1">麻、辣、烫、嫩，八字箴言。</p>
+    <span class="price">RM&nbsp;15</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">酸</span><div class="body">
+    <p class="nm"><span class="clip1">酸菜炒小笋</span><small>B08</small></p>
+    <p class="hook clip1">嫩笋配坛酸，山里的时令。</p>
+    <span class="price">RM&nbsp;17</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">蒜</span><div class="body">
+    <p class="nm"><span class="clip1">蒜蓉空心菜</span><small>B10</small></p>
+    
+    <span class="price">RM&nbsp;17</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">清</span><div class="body">
+    <p class="nm"><span class="clip1">清炒油麦菜</span><small>B11</small></p>
+    <p class="hook clip1">当日现采，猛火三分钟。</p>
+    <span class="price">RM&nbsp;17</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">油</span><div class="body">
+    <p class="nm"><span class="clip1">油泼牛肚丝</span><small>B12</small></p>
+    <p class="hook clip1">卤肚丝配辣子，滚油一激。</p>
+    <span class="price">RM&nbsp;17</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">外</span><div class="body">
+    <p class="nm"><span class="clip1">外婆菜炒鸡蛋</span><small>B13</small></p>
+    <p class="hook clip1">坛香碎蛋，一碗乡愁。</p>
+    <span class="price">RM&nbsp;18</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">酸</span><div class="body">
+    <p class="nm"><span class="clip1">酸菜炒粉皮</span><small>B14</small></p>
+    <p class="hook clip1">粉皮吸酸香，滑糯不烂。</p>
+    <span class="price">RM&nbsp;18</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">清</span><div class="body">
+    <p class="nm"><span class="clip1">清炒翡翠西兰花</span><small>B15</small></p>
+    
+    <span class="price">RM&nbsp;17</span>
+  </div><span class="add ">+</span></article></div></section><section class="grp"><h2><b>开胃凉拌</b>8 道</h2><div class="box">
+  <article class="row"><span class="thumb">凉</span><div class="body">
+    <p class="nm"><span class="clip1">凉拌木耳</span><small>A01</small></p>
+    <p class="hook clip1">秋耳脆厚，酸辣开胃。</p>
+    <span class="price">RM&nbsp;8</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">凉</span><div class="body">
+    <p class="nm"><span class="clip1">凉拌海带丝</span><small>A02</small></p>
+    <p class="hook clip1">海带丝蒜香油激，爽脆酸辣。</p>
+    <span class="price">RM&nbsp;8</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">剁</span><div class="body">
+    <p class="nm"><span class="clip1">剁椒皮蛋</span><small>A03</small></p>
+    <p class="hook clip1">剁椒盖顶，皮蛋溏心。</p>
+    <span class="price">RM&nbsp;8</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">凉</span><div class="body">
+    <p class="nm"><span class="clip1">凉拌腐竹</span><small>A04</small></p>
+    <p class="hook clip1">腐竹筋道，花生增香。</p>
+    <span class="price">RM&nbsp;8</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">凉</span><div class="body">
+    <p class="nm"><span class="clip1">凉拌黄瓜</span><small>A05</small></p>
+    <p class="hook clip1">刀拍裂口，蒜香入缝。</p>
+    <span class="price">RM&nbsp;8</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">酒</span><div class="body">
+    <p class="nm"><span class="clip1">酒鬼花生米</span><small>A06</small></p>
+    
+    <span class="price">RM&nbsp;8</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">油</span><div class="body">
+    <p class="nm"><span class="clip1">油泼爆香黄金干</span><small>A07</small></p>
+    <p class="hook clip1">平江香干，乌黑油亮。</p>
+    <span class="price">RM&nbsp;9.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">冰</span><div class="body">
+    <p class="nm"><span class="clip1">冰糖红萝卜</span><small>A08</small></p>
+    
+    <span class="price">RM&nbsp;8</span>
+  </div><span class="add ">+</span></article></div></section><section class="grp"><h2><b>小甜水</b>12 道</h2><div class="box">
+  <article class="row"><span class="thumb">西</span><div class="body">
+    <p class="nm"><span class="clip1">西瓜椰青茶</span><small>S01</small></p>
+    
+    <span class="price">RM&nbsp;11.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">西</span><div class="body">
+    <p class="nm"><span class="clip1">西瓜海底椰</span><small>S02</small></p>
+    
+    <span class="price">RM&nbsp;11.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">奇</span><div class="body">
+    <p class="nm"><span class="clip1">奇异果冰柠茶</span><small>S03</small></p>
+    
+    <span class="price">RM&nbsp;11.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">芭</span><div class="body">
+    <p class="nm"><span class="clip1">芭乐甘露</span><small>S04</small></p>
+    
+    <span class="price">RM&nbsp;11.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">水</span><div class="body">
+    <p class="nm"><span class="clip1">水蜜桃冰柠茶</span><small>S05</small></p>
+    
+    <span class="price">RM&nbsp;11.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">杨</span><div class="body">
+    <p class="nm"><span class="clip1">杨枝甘露海底椰</span><small>S06</small></p>
+    
+    <span class="price">RM&nbsp;13.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">白</span><div class="body">
+    <p class="nm"><span class="clip1">白葡萄冰柠茶</span><small>S07</small></p>
+    
+    <span class="price">RM&nbsp;11.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">水</span><div class="body">
+    <p class="nm"><span class="clip1">水晶葡萄波波</span><small>S08</small></p>
+    <p class="hook clip1">葡萄汁透亮，波波Q弹。</p>
+    <span class="price">RM&nbsp;5.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">冰</span><div class="body">
+    <p class="nm"><span class="clip1">冰鲜薄荷柠檬水</span><small>S09</small></p>
+    <p class="hook clip1">三块九的清凉，当日鲜柠檬。</p>
+    <span class="price">RM&nbsp;3.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">茉</span><div class="body">
+    <p class="nm"><span class="clip1">茉莉金柠茶</span><small>S10</small></p>
+    
+    <span class="price">RM&nbsp;5.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">冰</span><div class="body">
+    <p class="nm"><span class="clip1">冰露酸梅汤</span><small>S11</small></p>
+    
+    <span class="price">RM&nbsp;2.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">冰</span><div class="body">
+    <p class="nm"><span class="clip1">冰鲜柠檬汁</span><small>S12</small></p>
+    
+    <span class="price">RM&nbsp;2.9</span>
+  </div><span class="add ">+</span></article></div></section><section class="grp"><h2><b>手打柠檬茶</b>8 道</h2><div class="box">
+  <article class="row"><span class="thumb">招</span><div class="body">
+    <p class="nm"><span class="clip1">招牌手打柠檬茶</span><small>L01</small></p>
+    <p class="hook clip1">香水柠檬捶出香，锡兰茶底镇场。</p>
+    <span class="price">RM&nbsp;19.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">单</span><div class="body">
+    <p class="nm"><span class="clip1">单枞鸭香手打柠檬茶</span><small>L02</small></p>
+    <p class="hook clip1">鸭屎香打底，&quot;茶中香水&quot;。</p>
+    <span class="price">RM&nbsp;9.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">山</span><div class="body">
+    <p class="nm"><span class="clip1">山茶花手打柠檬茶</span><small>L03</small></p>
+    
+    <span class="price">RM&nbsp;9.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">桃</span><div class="body">
+    <p class="nm"><span class="clip1">桃桃乌龙手打柠檬茶</span><small>L04</small></p>
+    
+    <span class="price">RM&nbsp;9.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">芽</span><div class="body">
+    <p class="nm"><span class="clip1">芽碧茉莉手打柠檬茶</span><small>L05</small></p>
+    <p class="hook clip1">横县茉莉窨香，柠檬清透。</p>
+    <span class="price">RM&nbsp;9.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">泰</span><div class="body">
+    <p class="nm"><span class="clip1">泰绿手打柠檬茶</span><small>L06</small></p>
+    <p class="hook clip1">手标绿茶，翠绿透凉。</p>
+    <span class="price">RM&nbsp;9.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">海</span><div class="body">
+    <p class="nm"><span class="clip1">海底椰冰柠茶</span><small>L07</small></p>
+    
+    <span class="price">RM&nbsp;11.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">栀</span><div class="body">
+    <p class="nm"><span class="clip1">栀子花手打柠檬茶</span><small>L08</small></p>
+    
+    <span class="price">RM&nbsp;9.9</span>
+  </div><span class="add ">+</span></article></div></section><section class="grp"><h2><b>轻乳茶</b>6 道</h2><div class="box">
+  <article class="row"><span class="thumb">单</span><div class="body">
+    <p class="nm"><span class="clip1">单枞鸭香轻乳茶</span><small>M01</small></p>
+    <p class="hook clip1">鸭屎香遇奶，香上加香。</p>
+    <span class="price">RM&nbsp;9.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">桃</span><div class="body">
+    <p class="nm"><span class="clip1">桃桃乌龙轻乳茶</span><small>M02</small></p>
+    <p class="hook clip1">蜜桃果粒沉底，乌龙茶香托底。</p>
+    <span class="price">RM&nbsp;9.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">山</span><div class="body">
+    <p class="nm"><span class="clip1">山茶花轻乳茶</span><small>M03</small></p>
+    
+    <span class="price">RM&nbsp;9.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">栀</span><div class="body">
+    <p class="nm"><span class="clip1">栀子花轻乳茶</span><small>M04</small></p>
+    
+    <span class="price">RM&nbsp;9.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">锡</span><div class="body">
+    <p class="nm"><span class="clip1">锡兰红茶轻乳茶</span><small>M05</small></p>
+    <p class="hook clip1">高地红茶，橙红透亮。</p>
+    <span class="price">RM&nbsp;11.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">芽</span><div class="body">
+    <p class="nm"><span class="clip1">芽碧茉莉轻乳茶</span><small>M06</small></p>
+    <p class="hook clip1">茉莉打底，青白可人。</p>
+    <span class="price">RM&nbsp;9.9</span>
+  </div><span class="add ">+</span></article></div></section><section class="grp"><h2><b>镇店硬菜</b>2 道</h2><div class="box">
+  <article class="row"><span class="thumb">脆</span><div class="body">
+    <p class="nm"><span class="clip1">脆皮爆汁烤鱼</span><small>V01</small></p>
+    <p class="hook clip1">整条现杀现烤，皮脆肉嫩。</p>
+    <span class="price">RM&nbsp;78</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">香</span><div class="body">
+    <p class="nm"><span class="clip1">香辣羊排</span><small>V02</small></p>
+    
+    <span class="price">RM&nbsp;78</span>
+  </div><span class="add ">+</span></article></div></section><section class="grp"><h2><b>一升霸王杯</b>3 道</h2><div class="box">
+  <article class="row"><span class="thumb">单</span><div class="body">
+    <p class="nm"><span class="clip1">单枞鸭香手打柠檬茶</span><small>XL01</small></p>
+    
+    <span class="price">RM&nbsp;10.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">招</span><div class="body">
+    <p class="nm"><span class="clip1">招牌手打柠檬茶</span><small>XL02</small></p>
+    
+    <span class="price">RM&nbsp;12.9</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">西</span><div class="body">
+    <p class="nm"><span class="clip1">西瓜海底椰</span><small>XL03</small></p>
+    <p class="hook clip1">一升的量，西瓜的鲜。</p>
+    <span class="price">RM&nbsp;12.9</span>
+  </div><span class="add ">+</span></article></div></section><section class="grp"><h2><b>罐装饮品</b>3 道</h2><div class="box">
+  <article class="row"><span class="thumb">青</span><div class="body">
+    <p class="nm"><span class="clip1">青岛啤酒（瓶装）</span><small>D01</small></p>
+    
+    <span class="price">RM&nbsp;12</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">1</span><div class="body">
+    <p class="nm"><span class="clip1">100 Plus</span><small>D02</small></p>
+    
+    <span class="price">RM&nbsp;2</span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">T</span><div class="body">
+    <p class="nm"><span class="clip1">Tiger啤酒</span><small>D03</small></p>
+    
+    <span class="price">RM&nbsp;8</span>
+  </div><span class="add ">+</span></article></div></section><section class="grp"><h2><b>主食</b>2 道</h2><div class="box">
+  <article class="row"><span class="thumb">米</span><div class="body">
+    <p class="nm"><span class="clip1">米饭</span></p>
+    
+    <span class="price">RM&nbsp;2<span class="unit"> /位</span></span>
+  </div><span class="add ">+</span></article>
+  <article class="row"><span class="thumb">下</span><div class="body">
+    <p class="nm"><span class="clip1">下饭咸鸭蛋</span></p>
+    
+    <span class="price">RM&nbsp;2<span class="unit"> /个</span></span>
+  </div><span class="add ">+</span></article></div></section>
+<div style="height:140px"></div><div class="cartbar"><div class="cart-sum"><span class="badge">2</span><span>RM&nbsp;96</span></div><button class="cart-go">去结算</button></div><nav class="tabbar"><a class="on">点单</a><a>取餐</a><a>会员</a><a>我的</a></nav></div></body></html>

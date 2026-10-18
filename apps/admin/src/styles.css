@@ -1,0 +1,277 @@
+/* 老板端暗色（21号 §5.2）：只用 tokens.json 注入的 CSS 变量 */
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+/* 底色兜底：渐变是固定在视口上的，长页面整页截图时视口以下会露白，这里先铺一层纯底色 */
+html { background: var(--color-bg-end); }
+body {
+  color: var(--color-text);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  line-height: 1.6;
+  background: linear-gradient(180deg, var(--color-bg), var(--color-bg-end)) fixed;
+  min-height: 100vh;
+}
+/* 全页暗角：边缘压暗 */
+body::after {
+  content: ''; position: fixed; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 55%, var(--color-vignette) 100%);
+}
+h1, h2, p { margin: 0; }
+.muted { color: var(--color-text-secondary); }
+.accent { color: var(--color-accent); }
+
+.shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; position: relative; z-index: 1; }
+.side { padding: 24px 16px; border-right: 1px solid var(--color-panel-border); }
+.brand { font-weight: 700; font-size: 18px; margin-bottom: 24px; display: flex; flex-direction: column; }
+.brand span { font-weight: 400; font-size: 13px; color: var(--color-text-secondary); }
+.nav {
+  display: block; padding: 10px 12px; margin-bottom: 4px; border-radius: 8px;
+  color: var(--color-text-secondary); text-decoration: none;
+}
+.nav.active { color: var(--color-text); background: var(--color-panel-from); box-shadow: inset 2px 0 0 var(--color-accent); }
+
+.main { padding: 24px 32px; min-width: 0; }
+.main h1 { font-size: 22px; margin-bottom: 16px; }
+
+.panel {
+  background: linear-gradient(180deg, var(--color-panel-from), var(--color-panel-to));
+  backdrop-filter: blur(var(--panel-blur));
+  -webkit-backdrop-filter: blur(var(--panel-blur));
+  border: 1px solid var(--color-panel-border);
+  border-radius: var(--radius-panel);
+  padding: 20px;
+}
+.panel.crash { margin: 48px auto; max-width: 480px; }
+.btn {
+  margin-top: 12px; padding: 8px 18px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--color-accent); background: transparent; color: var(--color-accent); font: inherit;
+}
+
+.table-wrap { margin-top: 12px; max-height: calc(100vh - 180px); overflow: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--color-panel-border); white-space: nowrap; }
+th { position: sticky; top: 0; background: var(--color-bg); color: var(--color-text-secondary); font-weight: 600; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ---------- P2：登录 / 接单看板 ---------- */
+.small { font-size: 13px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.btn.primary { background: var(--color-accent); color: var(--color-bg); font-weight: 700; }
+.btn.big { padding: 12px 22px; font-size: 16px; margin: 0; }
+.btn:disabled { opacity: 0.5; cursor: default; }
+.link { background: none; border: 0; color: var(--color-text-secondary); text-decoration: underline; cursor: pointer; font: inherit; padding: 8px 12px; }
+.logout { margin-top: 24px; }
+.field { display: flex; flex-direction: column; gap: 6px; margin: 16px 0; }
+input {
+  font: inherit; color: var(--color-text); background: var(--color-panel-from);
+  border: 1px solid var(--color-panel-border); border-radius: 8px; padding: 8px 10px;
+}
+.form-error { margin-top: 8px; color: var(--color-accent-2); }
+
+.login { max-width: 360px; margin: 18vh auto 0; position: relative; z-index: 1; }
+.login h1 { font-size: 22px; display: flex; flex-direction: column; }
+.login h1 span { font-size: 13px; font-weight: 400; color: var(--color-text-secondary); }
+.login .btn { width: 100%; margin-top: 8px; padding: 10px; }
+
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; }
+.pill { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--color-panel-border); color: var(--color-text-secondary); font-size: 13px; }
+.pill.on, .pill.live { color: var(--color-accent); border-color: var(--color-accent); }
+/* 断线 = 可能漏单，必须一眼看出来 */
+.pill.broken { color: var(--color-alert); border-color: var(--color-alert); box-shadow: 0 0 12px var(--color-alert); font-weight: 700; }
+
+.panel.wait { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin-bottom: 16px; padding: 14px 20px; }
+.panel.wait > div { display: flex; align-items: baseline; gap: 8px; }
+.wait-now { font-size: 22px; color: var(--color-accent); }
+.panel.wait input { width: 72px; margin: 0 4px; }
+.panel.wait .btn { margin: 0 0 0 8px; padding: 6px 12px; }
+
+.board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.column h2 { font-size: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.column .count { font-size: 13px; color: var(--color-text-secondary); }
+.ticket {
+  background: linear-gradient(180deg, var(--color-panel-from), var(--color-panel-to));
+  border: 1px solid var(--color-panel-border); border-radius: var(--radius-panel);
+  padding: 14px; margin-bottom: 12px; position: relative;
+}
+.ticket.flash { border-color: var(--color-accent); box-shadow: 0 0 0 1px var(--color-accent), 0 0 24px var(--color-accent); }
+.ticket header { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+.ticket-no { font-size: 40px; font-weight: 800; line-height: 1; color: var(--color-accent); font-variant-numeric: tabular-nums; }
+.ticket-meta { display: flex; flex-direction: column; font-size: 14px; }
+.ticket-meta strong { font-size: 18px; }
+.ticket ul { list-style: none; margin: 0; padding: 0; font-size: 15px; }
+.ticket li { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dashed var(--color-panel-border); }
+.ticket .note { margin-top: 8px; color: var(--color-accent-2); }
+.ticket footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+.ticket .actions { display: flex; gap: 8px; }
+.ticket .actions .btn { margin: 0; }
+.panel.cancelled { margin-top: 16px; }
+.panel.cancelled summary { cursor: pointer; color: var(--color-text-secondary); }
+
+@media (max-width: 1100px) { .board { grid-template-columns: 1fr; } }
+
+/* ---------- P2 第二批：会员管理 ---------- */
+.search { display: flex; gap: 8px; }
+.search input { width: 220px; }
+.search .btn, .toolbar .btn { margin: 0; }
+.recon { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; padding: 12px 20px; color: var(--color-text-secondary); }
+.recon.bad { color: var(--color-text); border-color: var(--color-accent-2); box-shadow: 0 0 0 1px var(--color-accent-2); }
+.recon .btn { margin: 0; white-space: nowrap; }
+.form-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 16px; margin-bottom: 16px; }
+.form-row label, .money-form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--color-text-secondary); }
+.form-row .btn { margin: 0; }
+.form-row .muted.small, .form-row .form-error { flex-basis: 100%; }
+.members { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 16px; align-items: start; }
+.member-list table tr.sel td { color: var(--color-accent); }
+.member-list tbody tr:hover td { background: var(--color-panel-from); }
+.member-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+.member-head h2 { font-size: 20px; }
+.member-balance { display: flex; flex-direction: column; align-items: flex-end; }
+.member-balance strong { font-size: 32px; color: var(--color-accent); font-variant-numeric: tabular-nums; }
+.member-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.money-form { display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid var(--color-panel-border); border-radius: 10px; }
+.money-form h3 { font-size: 15px; margin: 0; }
+.money-form .btn { margin: 4px 0 0; }
+.ledger-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.ledger-head h3 { font-size: 15px; margin: 0; }
+.ledger-head .btn { margin: 0; }
+.print-only { display: none; }
+@media (max-width: 1100px) {
+  .members { grid-template-columns: 1fr; }
+  .member-actions { grid-template-columns: 1fr; }
+}
+
+/* ---------- P2 第三批：对账横幅 / 营业状态 / 页内取消 / 菜品管理 ---------- */
+.global-alert {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-bottom: 16px; padding: 12px 16px;
+  border: 1px solid var(--color-alert); border-radius: var(--radius-panel); color: var(--color-text);
+  box-shadow: 0 0 18px var(--color-alert);
+}
+.global-alert strong { color: var(--color-alert); }
+.global-alert a { color: var(--color-accent); margin-left: auto; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--color-alert); margin-left: 8px; box-shadow: 0 0 8px var(--color-alert); vertical-align: middle; }
+.with-dot { display: inline-flex; align-items: center; }
+.btn.danger { border-color: var(--color-alert); color: var(--color-alert); }
+
+.panel.store { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin-bottom: 16px; padding: 12px 20px; }
+.panel.store.closed { border-color: var(--color-alert); }
+.panel.store.closed .store-state { color: var(--color-alert); }
+.store-state { color: var(--color-accent); }
+.panel.store label { display: flex; align-items: center; gap: 6px; }
+.panel.store .btn { margin: 0; padding: 6px 12px; }
+input[type='time'] { color-scheme: dark; }
+
+.cancel-box { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--color-panel-border); display: flex; flex-direction: column; gap: 8px; }
+.cancel-box .actions { justify-content: flex-end; }
+.cancel-box .btn { margin: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { padding: 5px 12px; border-radius: 999px; border: 1px solid var(--color-panel-border); background: none; color: var(--color-text-secondary); cursor: pointer; font: inherit; font-size: 13px; }
+.chip.on { border-color: var(--color-accent); color: var(--color-accent); }
+
+.dish-filters { margin-bottom: 4px; }
+select {
+  font: inherit; color: var(--color-text); background: var(--color-bg);
+  border: 1px solid var(--color-panel-border); border-radius: 8px; padding: 8px 10px;
+}
+.check { display: inline-flex; align-items: center; gap: 6px; color: var(--color-text-secondary); font-size: 14px; }
+.dish-table td { vertical-align: middle; }
+.dish-table .thumb { width: 56px; }
+.dish-table .thumb > * { width: 44px; }
+.dish-table tr.off td { color: var(--color-text-secondary); }
+.dish-table .btn { margin: 0; padding: 5px 10px; font-size: 13px; }
+.price-edit { display: inline-flex; gap: 6px; align-items: center; }
+.price-edit input { width: 72px; text-align: right; padding: 5px 8px; }
+.tag { margin-left: 6px; font-size: 12px; color: var(--color-accent-2); }
+.row-error td { color: var(--color-alert); font-size: 13px; }
+
+/* ---------- P2 第四批：三态 / 退款 / 待柜台退还 ---------- */
+.seg { display: inline-flex; border: 1px solid var(--color-panel-border); border-radius: 8px; overflow: hidden; }
+.seg-btn { background: none; border: 0; border-right: 1px solid var(--color-panel-border); color: var(--color-text-secondary); padding: 5px 10px; font: inherit; font-size: 13px; cursor: pointer; }
+.seg-btn:last-child { border-right: 0; }
+.seg-btn.on.on { background: var(--color-panel-from); color: var(--color-accent); font-weight: 700; }
+.seg-btn.on.soldout, .seg-btn.on.off { color: var(--color-alert); }
+.refund-badge { margin-left: auto; align-self: flex-start; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--color-alert); color: var(--color-alert); font-size: 12px; }
+.refunded { font-style: normal; color: var(--color-alert); font-size: 12px; }
+.refund-box { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--color-panel-border); display: flex; flex-direction: column; gap: 8px; }
+.refund-box ul li { align-items: center; }
+.refund-box .actions { justify-content: flex-end; }
+.refund-box .btn { margin: 0; }
+.mini-stepper { display: inline-flex; align-items: center; gap: 6px; }
+.mini-stepper .btn { padding: 2px 10px; }
+.mini-stepper span { min-width: 18px; text-align: center; font-weight: 700; }
+.counter-refunds { margin-bottom: 16px; border-color: var(--color-alert); }
+.counter-refunds h2 { font-size: 15px; margin-bottom: 8px; }
+.counter-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 8px 0; border-top: 1px solid var(--color-panel-border); }
+.counter-row .actions { margin-left: auto; display: flex; gap: 8px; }
+.counter-row .btn { margin: 0; padding: 5px 10px; }
+.alert-text { color: var(--color-alert); }
+
+/* 打印流水（前台打单）：只打会员详情，白底黑字 */
+@media print {
+  body { background: white; color: black; }
+  body::after { display: none; }
+  .side, .no-print { display: none !important; }
+  .shell { display: block; }
+  .main { padding: 0; }
+  .members { display: block; }
+  .panel { background: none; border: 0; backdrop-filter: none; padding: 0; }
+  .print-only { display: block; margin-bottom: 8px; }
+  .member-balance strong, .accent { color: black; }
+  th, td { border-bottom: 1px solid black; color: black; }
+  th { position: static; background: none; }
+}
+
+@media (max-width: 760px) {
+  .shell { grid-template-columns: 1fr; }
+  .side { border-right: 0; border-bottom: 1px solid var(--color-panel-border); padding: 16px; }
+  .side nav { display: flex; gap: 4px; overflow-x: auto; }
+  .nav { white-space: nowrap; margin: 0; }
+  .brand { margin-bottom: 12px; }
+  .main { padding: 16px; }
+}
+
+/* P3：系统自动取消（全部菜品已退款）的单醒目标出，和手动取消区分 */
+.cancel-row { margin: 6px 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.cancel-row.auto { color: var(--color-text); }
+.auto-badge { padding: 1px 8px; border-radius: 999px; border: 1px solid var(--color-alert); color: var(--color-alert); font-size: 12px; font-weight: 700; margin-left: 8px; }
+.cancel-row .auto-badge { margin-left: 0; }
+/* 34号：换图 / 删除图片并排 */
+.img-actions { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+
+/* P3 第③项：数据看板简版（表格 + 大数字） */
+.day-nav strong { font-size: 18px; min-width: 160px; text-align: center; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 16px; }
+.panel.stat { margin: 0; }
+.stat-label { color: var(--color-text-secondary); font-size: 14px; }
+.stat-big { font-size: 40px; font-weight: 800; line-height: 1.2; color: var(--color-accent); font-variant-numeric: tabular-nums; margin: 4px 0; }
+.stat-big span { font-size: 18px; font-weight: 600; color: var(--color-text); }
+.dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 16px; }
+.dash-grid .panel { margin: 0; }
+.dashboard h2 { font-size: 16px; margin-bottom: 8px; }
+.dashboard tfoot td { border-top: 1px solid var(--color-panel-border); font-weight: 700; }
+.dashboard .small { margin-top: 8px; }
+.week tbody tr { cursor: pointer; }
+.week tr.sel td { color: var(--color-accent); }
+.rules ul { margin: 8px 0 0 18px; color: var(--color-text-secondary); font-size: 13px; line-height: 1.8; }
+.rules summary { cursor: pointer; color: var(--color-text-secondary); }
+/* P3 第④项：上传后告诉老板图片压缩了多少 */
+.row-note td { color: var(--color-text-secondary); font-size: 13px; }
+
+/* 54号 §2.2 今日招牌（顾客端点单页顶部大画）：排顺序 */
+.panel.today-panel { margin-bottom: 16px; padding: 14px 20px; }
+.today-panel h2 { font-size: 16px; margin: 0 0 8px; }
+.today-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.today-list li { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.today-list .btn { margin: 0; padding: 4px 10px; }
+.today-no { width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--color-accent); color: var(--color-accent); font-size: 13px; }
+.today-panel .row-error { color: var(--color-alert); font-size: 13px; }
+
+/* 58号 任务4 门店信息：左边填、右边看顾客端效果 */
+.store-info { display: grid; grid-template-columns: minmax(0, 520px) minmax(0, 360px); gap: 16px; align-items: start; }
+@media (max-width: 900px) { .store-info { grid-template-columns: minmax(0, 1fr); } }
+.store-info-form .field { margin: 0 0 16px; }
+.store-info-form .btn { margin-top: 4px; }
+.form-ok { margin-top: 8px; color: var(--color-accent); }
+.store-info-preview h2 { font-size: 16px; margin: 0 0 10px; }
+.store-info-preview dl { margin: 0; display: grid; gap: 10px; }
+.store-info-preview dt { color: var(--color-text-secondary); font-size: 13px; }
+.store-info-preview dd { margin: 2px 0 0; overflow-wrap: anywhere; }

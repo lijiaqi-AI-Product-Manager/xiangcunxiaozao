@@ -1,0 +1,52 @@
+{
+  "id": "xiangcun",
+  "name": "湘村小灶",
+  "shortName": "湘村小灶",
+  "locale": "zh-CN",
+  "timezone": "Asia/Kuala_Lumpur",
+  "currency": { "code": "MYR", "symbol": "RM" },
+  "store": {
+    "address": null,
+    "hours": null,
+    "phone": null,
+    "logo": null
+  },
+  "paymentMethods": [
+    { "key": "cash", "label": "现金（到柜台）", "requiresMember": false },
+    { "key": "tng", "label": "Touch 'n Go", "requiresMember": false },
+    { "key": "duitnow", "label": "DuitNow", "requiresMember": false },
+    { "key": "stored-value", "label": "储值支付", "requiresMember": true }
+  ],
+  "spiceOptions": ["不辣", "微辣", "中辣", "特辣", "湖南辣"],
+  "categoryOrder": ["e", "d", "c", "b", "a", "s", "l", "m", "v", "xl", "can", "staple"],
+  "plainDetailCategories": ["staple"],
+  "categoryNames": {
+    "e": "招牌菜",
+    "d": "精品肉菜",
+    "c": "家常小炒",
+    "b": "下饭小炒",
+    "a": "开胃凉拌",
+    "s": "小甜水",
+    "l": "手打柠檬茶",
+    "m": "轻乳茶",
+    "v": "镇店硬菜",
+    "xl": "一升霸王杯",
+    "can": "罐装饮品",
+    "staple": "主食"
+  },
+  "wait": { "minutesPerOrder": 8 },
+  "seal": "灶",
+  "watermark": "湘村小灶",
+  "fontStylesheets": [],
+  "brushFont": { "family": "Ma Shan Zheng", "file": "fonts/brush-subset.woff2", "source": "fonts/source/MaShanZheng-Regular.ttf" },
+  "latinFont": { "family": "Cinzel", "file": "fonts/latin-subset.woff2", "source": "fonts/source/Cinzel-VariableFont.ttf", "weightRange": [400, 700] },
+  "bodyFont": { "family": "LXGW WenKai", "file": "fonts/body-subset.woff2", "source": "fonts/source/LXGWWenKai-Regular.ttf" },
+  "logoSeal": "湘",
+  "trustLine": ["明厨亮灶", "当日现采", "一菜一锅"],
+  "signatureCategories": ["e", "v"],
+  "drinkCategories": ["s", "l", "m", "xl", "can"],
+  "englishLabels": {
+    "categories": { "l": "LEMON TEA", "s": "FRUIT TEA", "m": "MILK TEA", "xl": "THE LITRE CUP", "can": "CANNED", "a": "APPETIZERS", "b": "WOK BASICS", "c": "HOMEMADE WOK", "d": "SIGNATURE BRAISES", "e": "CHEF'S PICKS", "v": "HOUSE LEGENDS", "staple": "STAPLES" },
+    "sections": { "takeApart": "SEE INSIDE", "intro": "THE DISH", "origin": "ORIGIN", "steps": "THE CRAFT", "flavorRoute": "FLAVOUR ROAD", "ingredients": "INGREDIENTS", "checkout": "CHECKOUT", "store": "OUR STORE", "faq": "GOOD TO KNOW", "signature": "SIGNATURE" }
+  }
+}
