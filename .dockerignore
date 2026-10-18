@@ -10,3 +10,8 @@ playwright-report
 .env.*
 .git
 docs/screenshots
+
+# 老系统目录（回滚锚，不进新镜像）
+server
+web
+design
