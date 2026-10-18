@@ -94,6 +94,7 @@ export function migrateLegacy(
       const chainOk = logs.length > 0 && logs.every((l) => { running += l.amount_cents; return running === l.balance_after; });
       if (chainOk) {
         for (const l of logs) {
+          if (l.amount_cents === 0) continue; // 新库 CHECK(amount<>0)：0元流水是无意义噪音，跳过（不影响余额链）
           insLedger.run(memberId, l.at, TYPE[l.action] ?? 'import', l.amount_cents, l.balance_after, 'legacy-import',
             (l.detail || l.action).slice(0, 200), l.order_no || null, `legacy-log-${l.id}`);
           report.ledgerEntries++;
