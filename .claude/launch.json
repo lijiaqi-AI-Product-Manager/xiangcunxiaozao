@@ -1,0 +1,8 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "server", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev:server"], "port": 8787 },
+    { "name": "customer", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev:customer"], "port": 5173 },
+    { "name": "admin", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev:admin"], "port": 5174 }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@pkg/ui-kit",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./vite-brand": "./src/vite-brand.ts"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  }
+}

@@ -1,72 +1,78 @@
-# 湘村小灶点单系统
+# 餐厅点单系统
 
-厦门大学校外湖南菜馆的扫码点单系统：顾客手机点餐 → 后厨实时接单 → 老板后台对账。
+一套代码，换一份「店铺配置」就能给另一家餐厅用。当前配置：`brands/` 下的第一家店（由根目录 `.env` 的 `BRAND` 指定）。
 
-## 技术栈
+顾客扫桌上二维码点单 → 老板端实时收单、出餐 → 会员储值、对账、数据看板。后端一个 Node 进程，数据库是一个 SQLite 文件。
 
-- **后端**：Node.js 24 + Express + SQLite（better-sqlite3）+ TypeScript
-- **前端**：纯静态页（顾客点单 / 后厨接单 / 老板后台），由后端直接托管
-- **部署**：Docker 单容器，数据落 `/data` 持久卷，Zeabur Compute（腾讯新加坡 2C2G）
+## 现状（2026-10-18）
 
-## 财务红线（改代码前必读）
+- 代码全部在 `main`（标签 `p5-closeout`）；**还没上生产**——服务器、域名、对象存储待定。
+- 会员体系新功能（等级 / 成长值 / 权益）挂起；前端视觉冻结，未决项见 `docs/交接/前端冻结清单.md`。
 
-1. 金额**一律整数分**（sen），任何浮点运算进 `utils/money.ts` 之外的金额代码都是 bug
-2. 订单创建在**单事务**内完成，订单+明细要么都在要么都不在
-3. 下单金额**服务端按数据库现价计算**，前端传的总价一律不信任
-4. `order_items` 冗余菜品名和单价快照——改价不影响历史账
-5. 订单号 = 吉隆坡日期 + 当日流水（`20261012-0007`），事务内原子自增
-6. `client_id` 幂等去重，断网重试不会重复下单
-7. 测试不过不准部署：`cd server && npm test`
+## 先读这几份
 
-## 目录结构
+| 文档 | 写给谁 |
+| --- | --- |
+| [`docs/交接/系统架构一页纸.md`](docs/交接/系统架构一页纸.md) | 想快速看懂系统的人：模块图、接口清单、技术栈、已知限制 |
+| [`docs/交接/部署与回滚手册.md`](docs/交接/部署与回滚手册.md) | 部署 / 运维的人：现状架构、部署步骤、验证清单、回滚、常见故障 |
+| [`docs/交接/老板使用手册.md`](docs/交接/老板使用手册.md) | 老板：今日招牌、菜品、看板、门店信息、会员怎么用 |
+| [`docs/交接/前端冻结清单.md`](docs/交接/前端冻结清单.md) | 解冻时：所有未决的前端项 |
 
-```
-├── Dockerfile            # 生产镜像（构建 TS + 托管 web/）
-├── web/                  # 前端静态页（占位页，D3 起替换为点单应用）
-├── server/
-│   ├── src/
-│   │   ├── index.ts      # 入口：启动/优雅退出/备份调度
-│   │   ├── app.ts        # Express 组装（依赖注入）
-│   │   ├── db.ts         # SQLite 连接与建表
-│   │   ├── config.ts     # 环境变量读取与启动校验
-│   │   ├── routes/       # dishes / orders / reports / health
-│   │   ├── services/     # orders.ts 订单核心逻辑（事务/幂等/状态机）
-│   │   ├── middleware/   # 鉴权 / 限流 / 日志 / 错误
-│   │   ├── utils/        # money(金额) / time(KL时区) / orderNo(流水号)
-│   │   └── scripts/      # backup(每日GitHub备份) / seed(冒烟数据)
-│   └── tests/            # 财务单测：金额精度/并发/幂等/快照/持久性
-└── docs/                 # 部署与运维手册
-```
+## 目录（每个文件夹是干什么的）
 
-## 本地开发
+| 文件夹 | 用途 |
+| --- | --- |
+| `apps/customer` | 顾客端：手机扫桌码点单 |
+| `apps/admin` | 老板端：订单、菜品、会员、看板、门店信息 |
+| `apps/server` | 后端：收订单、管账本、存数据库 |
+| `packages/contract` | 数据契约：菜品/订单/账本的格式规矩，前后端共用 |
+| `packages/ui-kit` | 公共零件：菜品图占位、请求出错提示、店铺配置注入 |
+| `brands/<店>/` | 一家店的全部信息：店名、配色、菜单、问答、字体、原始文档 |
+| `scripts/` | 导入菜单、数据校验、产品化 / 色彩检查、字体裁剪、图片压缩、备份、演示版导出 |
+| `e2e/` | 真浏览器端到端测试（独立测试数据库），同时产出验收截图 |
+| `deploy/` | 上线用的配置（Litestream 实时备份模板） |
+
+## 常用命令
 
 ```bash
-cd server
-npm install
-ADMIN_TOKEN=dev-admin-token-123456 KITCHEN_TOKEN=dev-kitchen-token-123456 npm run dev
-# → http://localhost:3000/healthz
-npm test        # 财务单测全绿才能部署
+npm ci
 ```
 
-## 环境变量
+```bash
+npm run check
+```
 
-见 `.env.example`。生产必填：`ADMIN_TOKEN`、`KITCHEN_TOKEN`（≥16位随机串）。
-可选：`BACKUP_GITHUB_TOKEN` + `BACKUP_GITHUB_REPO` 开启每日自动备份（吉隆坡 03:30）。
+```bash
+npm run dev:server
+```
 
-## API 一览（v0.1）
+```bash
+npm run dev:customer
+```
 
-| 方法 | 路径 | 权限 | 说明 |
-|---|---|---|---|
-| GET | /healthz | 公开 | 健康检查 |
-| GET | /api/dishes | 公开 | 在售菜单 |
-| GET | /api/dishes/all | admin | 全量菜品 |
-| POST | /api/dishes | admin | 新增菜品 |
-| PUT | /api/dishes/:id | admin | 改名/改价/改描述/排序 |
-| POST | /api/dishes/:id/toggle | admin | 上下架 |
-| POST | /api/orders | 公开 | 下单（幂等） |
-| GET | /api/orders/:orderNo | 公开 | 查单状态 |
-| GET | /api/orders | admin/kitchen | 订单列表（默认今天） |
-| POST | /api/orders/:orderNo/confirm | kitchen | 后厨确认接单 |
-| POST | /api/orders/:orderNo/serve | kitchen | 上桌 |
-| POST | /api/orders/:orderNo/cancel | admin | 取消（仅待接单，需原因） |
-| GET | /api/reports/daily | admin | 日报 |
+```bash
+npm run dev:admin
+```
+
+```bash
+npm run e2e
+```
+
+```bash
+npm run build:demo
+```
+
+- `npm ci`：严格按 `package-lock.json` 安装（和测试时版本完全一致）；改依赖时才用 `npm install`
+- `check`：依赖安全审计（中危及以上不过）+ 产品化检查（代码里不许有店名、不许散写色值、时间走门店时区）+ 色彩检查 + 数据校验 + 类型检查 + 单元测试
+- `e2e`：用真浏览器把点单闭环走一遍（独立测试数据库），每步截图存进 `docs/screenshots/`
+- `build:demo`：把顾客端导出成不连数据库的演示版静态网页（`apps/customer/dist-demo/`）
+- `import:menu`：把 `brands/<店>/source/` 里的原始文档转成 `menu.json` / `faq.json`，并生成校验报告 `reports/validation.md`
+- 顾客端 http://localhost:5173/?table=12（`table` 是桌号，正式环境由桌上二维码带入），老板端 http://localhost:5174
+
+## 环境说明
+
+- 第一次使用：把 `.env.example` 复制成 `.env`，填上 `ADMIN_PASSWORD`（老板端密码，至少 8 位）。`.env` 不进 git。
+- 需要 Node.js 22 以上。
+- npm 11 默认拦截安装脚本，本项目已在 `package.json` 的 `allowScripts` 里放行 esbuild 和 better-sqlite3 两个包。
+- 内部包用路径别名引用（不依赖 npm 的软链接），在虚拟化的 Windows 目录里也能运行。
+- 改动走 GitHub 私有仓库的 PR（推送后生效），`main` 只通过合并更新。

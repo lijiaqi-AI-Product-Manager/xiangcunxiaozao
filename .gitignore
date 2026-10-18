@@ -1,12 +1,14 @@
 node_modules/
 dist/
-/data/
+data/
+backups/
 *.db
 *.db-wal
 *.db-shm
+.env.local
 .env
-.env.*
-!.env.example
-
-# design小样工程的dist是交付物（可分发静态目录），需要入库
-!design/dist/
+test-results/
+playwright-report/
+dist-demo/
+*.webm
+*.mp4

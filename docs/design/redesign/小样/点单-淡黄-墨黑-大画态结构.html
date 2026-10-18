@@ -1,0 +1,470 @@
+<!doctype html><html lang="zh-CN" data-struct="ink"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>小样 · 点单页 · 淡黄 · 现状版 · 大画态</title>
+<style>@font-face{font-family:"Ma Shan Zheng";src:url("../../../../brands/xiangcun/fonts/brush-subset.woff2") format("woff2");font-display:swap}@font-face{font-family:"Cinzel";src:url("../../../../brands/xiangcun/fonts/latin-subset.woff2") format("woff2");font-weight:400 700;font-display:swap}
+/* 53号（高斯）：标题标签层的数字、英文不用书法——同一个字体名下，ASCII 和几个符号走衬线体，汉字走书法 */
+@font-face{font-family:"XC Latin";src:url("../../../../brands/xiangcun/fonts/latin-subset.woff2") format("woff2");font-weight:400 700;unicode-range:U+0020-007E,U+00B7,U+2019,U+2212;font-display:swap}
+@font-face{font-family:"LXGW WenKai";src:url("../../../../brands/xiangcun/fonts/body-subset.woff2") format("woff2");font-display:swap}</style>
+<link rel="stylesheet" href="tokens-淡黄.css"><link rel="stylesheet" href="mock.css">
+<script>(function(){var r=document.documentElement,q=new URLSearchParams(location.search).get('tier');
+function d(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return'static';var m=navigator.deviceMemory,c=navigator.hardwareConcurrency,s=navigator.connection&&navigator.connection.saveData;
+if(s||(m&&m<=2)||(c&&c<=4))return'lite';if((m&&m<=4)||(c&&c<=6))return'minimal';return'normal'}
+r.dataset.tier=q||d();r.dataset.forced=q?'1':''})()</script>
+<style>.ink .warm{background-image:url("ink-wash-warm.svg")}.ink .cool{background-image:url("ink-wash-cool.svg")}.grain{background-image:url("paper-grain.svg")}.bloom .warm{background-image:url("ink-bloom-warm.svg")}.bloom .cool{background-image:url("ink-bloom-cool.svg")}.thumb.ph::before,.hero-img.ph::before{background-image:url("brush-stroke.svg")}.lockup-stroke{background-image:url("brush-stroke-wide.svg")}.hero-paper{background-image:url("xuan-fiber.svg"),url("paper-grain.svg")}</style></head>
+<body data-seal="湘"><svg class="defs" width="0" height="0" aria-hidden="true" focusable="false"><defs>
+<linearGradient id="g-on" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--ico-on-1)"/><stop offset="1" style="stop-color:var(--ico-on-2)"/></linearGradient>
+<linearGradient id="g-ink" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--ico-ink-1)"/><stop offset="1" style="stop-color:var(--ico-ink-2)"/></linearGradient>
+<linearGradient id="g-hl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".4"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/></linearGradient>
+</defs></svg><div class="bg" aria-hidden="true"><div class="bg-alt"></div><div class="breath"><i class="warm"></i><i class="cool"></i></div><div class="light"></div><div class="light alt"></div><div class="ink"><i class="warm"></i><i class="cool"></i></div><div class="grain"></div></div><div class="bloom" aria-hidden="true"><i class="warm"></i><i class="cool"></i></div><div class="wm" aria-hidden="true"><span>湘村小灶</span></div><div class="app">
+<div class="hero-stack deck reveal"><header class="store-hero" aria-roledescription="carousel" aria-label="今日招牌">
+<div class="hero-track" tabindex="0"><article class="hero-slide" data-name="湘味油泼牛肉" data-price="RM 48" data-href="详情-淡黄-墨黑结构色.html" aria-roledescription="slide" aria-label="1 / 3：湘味油泼牛肉">
+<div class="hero-img ph" role="img" aria-label="湘味油泼牛肉"><span class="n">湘味油泼牛肉</span></div><i class="hero-spot" aria-hidden="true"></i><i class="hero-paper" aria-hidden="true"></i><span class="hero-wm" aria-hidden="true">湘村小灶</span>
+<span class="en sig-v" aria-hidden="true">SIGNATURE</span>
+<p class="price-anchor glass"><span class="pa-name">湘味油泼牛肉</span><b>RM 48</b></p></article><article class="hero-slide" data-name="招牌跳跳蛙" data-price="RM 48" data-href="#dish-e01" aria-roledescription="slide" aria-label="2 / 3：招牌跳跳蛙">
+<div class="hero-img ph" role="img" aria-label="招牌跳跳蛙"><span class="n">招牌跳跳蛙</span></div><i class="hero-spot" aria-hidden="true"></i><i class="hero-paper" aria-hidden="true"></i><span class="hero-wm" aria-hidden="true">湘村小灶</span>
+<span class="en sig-v" aria-hidden="true">SIGNATURE</span>
+<p class="price-anchor glass"><span class="pa-name">招牌跳跳蛙</span><b>RM 48</b></p></article><article class="hero-slide" data-name="脆皮爆汁烤鱼" data-price="RM 78" data-href="#dish-v01" aria-roledescription="slide" aria-label="3 / 3：脆皮爆汁烤鱼">
+<div class="hero-img ph" role="img" aria-label="脆皮爆汁烤鱼"><span class="n">脆皮爆汁烤鱼</span></div><i class="hero-spot" aria-hidden="true"></i><i class="hero-paper" aria-hidden="true"></i><span class="hero-wm" aria-hidden="true">湘村小灶</span>
+<span class="en sig-v" aria-hidden="true">SIGNATURE</span>
+<p class="price-anchor glass"><span class="pa-name">脆皮爆汁烤鱼</span><b>RM 78</b></p></article></div>
+<div class="store glass has-wm"><span class="store-wm" aria-hidden="true">湘村小灶</span><div class="store-row"><span class="seal" style="width:40px;height:40px;font-size:22px">湘</span><span class="store-name">湘村小灶</span><span class="chip-table">桌 8</span>
+<span class="wait">当前等待约<b>16 分钟</b></span></div>
+<p class="trust">明厨亮灶<i class="dot-seal"></i>当日现采<i class="dot-seal"></i>一菜一锅</p></div><div class="hero-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div></header></div>
+<i class="hero-line" style="top:240px" aria-hidden="true"></i><i class="today-scrim" aria-hidden="true"></i>
+<aside class="today glass noimg" aria-label="今日招牌" inert><i class="today-mark" aria-hidden="true"></i><span class="today-txt"><span class="today-label">今日招牌<span class="en">SIGNATURE</span></span>
+<span class="today-name">湘味油泼牛肉</span></span><span class="today-anchor"><b>RM 48</b><a class="go gilt press today-go" href="详情-淡黄-墨黑结构色.html">直达</a></span></aside>
+<div class="cats-wrap"><nav class="cats" aria-label="菜品分类"><button class="cat on" aria-current="true"><span>全部</span></button><button class="cat"><span>招牌菜</span></button><button class="cat"><span>精品肉菜</span></button><button class="cat"><span>家常小炒</span></button><button class="cat"><span>下饭小炒</span></button><button class="cat"><span>开胃凉拌</span></button><button class="cat"><span>小甜水</span></button><button class="cat"><span>手打柠檬茶</span></button><button class="cat"><span>轻乳茶</span></button><button class="cat"><span>镇店硬菜</span></button><button class="cat"><span>一升霸王杯</span></button><button class="cat"><span>罐装饮品</span></button><button class="cat"><span>主食</span></button></nav>
+<button class="cats-more" aria-label="全部分类"><span class="ring-arrow"><svg viewBox="0 0 12 12" class="ico ico-ink" aria-hidden="true"><path class="f" d="M6 9 1.5 4.5l1-1L6 7l3.5-3.5 1 1Z"/><path class="hl" d="M6 9 1.5 4.5l1-1L6 7l3.5-3.5 1 1Z"/></svg></span></button></div>
+<section class="grp reveal" aria-label="招牌菜">
+<div class="grp-head"><h2>招牌菜</h2><span class="sq-seal" style="width:16px;height:16px;font-size:10px" aria-hidden="true">灶</span><span class="en">CHEF'S PICKS</span><i class="rule" aria-hidden="true"></i><span class="count">13 道</span></div>
+<div class="card glass"><article class="row sig" id="dish-e01" data-uid="e01" data-price="4800">
+<div class="thumb ph" aria-hidden="true"><span>跳</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">招牌跳跳蛙</span></p>
+<p class="row-hook">现杀牛蛙，猛火快爆，肉嫩如蒜瓣。</p><p class="price">RM 48</p></div>
+<div class="qty on" data-qty="1"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 招牌跳跳蛙"><span class="g" aria-hidden="true">−</span></button><b>1</b><button class="btn-round add press" aria-label="加购 招牌跳跳蛙"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row sig" id="dish-e02" data-uid="e02" data-price="4800">
+<div class="thumb ph" aria-hidden="true"><span>剁</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">招牌剁椒鱼</span></p>
+<p class="price">RM 48</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 招牌剁椒鱼" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 招牌剁椒鱼"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row sig" id="dish-e03" data-uid="e03" data-price="3800">
+<div class="thumb ph" aria-hidden="true"><span>土</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">金秋土豆烧排骨</span></p>
+<p class="price">RM 38</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 金秋土豆烧排骨" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 金秋土豆烧排骨"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row sig" id="dish-e04" data-uid="e04" data-price="4800">
+<div class="thumb ph" aria-hidden="true"><span>排</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">糖醋排骨</span></p>
+<p class="price">RM 48</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 糖醋排骨" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 糖醋排骨"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row sig" id="dish-e05" data-uid="e05" data-price="4800">
+<div class="thumb ph" aria-hidden="true"><span>鸭</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">湘西土匪鸭</span></p>
+<p class="price">RM 48</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 湘西土匪鸭" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 湘西土匪鸭"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row sig" id="dish-e06" data-uid="e06" data-price="4800">
+<div class="thumb ph" aria-hidden="true"><span>油</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t"><a class="row-link" href="详情-淡黄-墨黑结构色.html">湘味油泼牛肉</a></span></p>
+<p class="row-hook">鲜牛肉切薄片，辣子堆上滚油一激。</p><p class="price">RM 48</p></div>
+<div class="qty on" data-qty="1"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 湘味油泼牛肉"><span class="g" aria-hidden="true">−</span></button><b>1</b><button class="btn-round add press" aria-label="加购 湘味油泼牛肉"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row sig" id="dish-e07" data-uid="e07" data-price="4800">
+<div class="thumb ph" aria-hidden="true"><span>干</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">特色干煸肥肠</span></p>
+<p class="row-hook">肥肠处理干净是底线，干锅越烧越入味。</p><p class="price">RM 48</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 特色干煸肥肠" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 特色干煸肥肠"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row sig" id="dish-e08" data-uid="e08" data-price="4800">
+<div class="thumb ph" aria-hidden="true"><span>清</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">清蒸罗非鱼</span></p>
+<p class="price">RM 48</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 清蒸罗非鱼" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 清蒸罗非鱼"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row sig" id="dish-e09" data-uid="e09" data-price="4800">
+<div class="thumb ph" aria-hidden="true"><span>西</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">西红柿炖牛腩</span></p>
+<p class="row-hook">带筋牛腩配沙瓤番茄，砂锅慢炖两小时。</p><p class="price">RM 48</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 西红柿炖牛腩" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 西红柿炖牛腩"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row sig" id="dish-e10" data-uid="e10" data-price="5800">
+<div class="thumb ph" aria-hidden="true"><span>肥</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">肥肠鱼</span></p>
+<p class="row-hook">肥肠的厚、鱼肉的嫩，一锅麻辣收留。</p><p class="price">RM 58</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 肥肠鱼" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 肥肠鱼"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row sig" id="dish-e11a" data-uid="e11a" data-price="5800">
+<div class="thumb ph" aria-hidden="true"><span>白</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">白灼老虎虾</span></p>
+<p class="price">RM 58</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 白灼老虎虾" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 白灼老虎虾"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row sig" id="dish-e11b" data-uid="e11b" data-price="4800">
+<div class="thumb ph" aria-hidden="true"><span>椒</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">椒盐排骨</span></p>
+<p class="price">RM 48</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 椒盐排骨" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 椒盐排骨"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row sig" id="dish-e11c" data-uid="e11c" data-price="1990">
+<div class="thumb ph" aria-hidden="true"><span>乡</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">乡村老母鸡汤</span></p>
+<p class="price">RM 19.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 乡村老母鸡汤" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 乡村老母鸡汤"><span class="g" aria-hidden="true">+</span></button></div></article></div></section><section class="grp reveal" aria-label="精品肉菜">
+<div class="grp-head"><h2>精品肉菜</h2><span class="sq-seal" style="width:16px;height:16px;font-size:10px" aria-hidden="true">灶</span><span class="en">SIGNATURE BRAISES</span><i class="rule" aria-hidden="true"></i><span class="count">12 道</span></div>
+<div class="card glass"><article class="row" id="dish-d01-hot" data-uid="d01-hot" data-price="3800">
+<div class="thumb ph" aria-hidden="true"><span>干</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">干锅鸭头</span></p>
+<p class="price">RM 38</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 干锅鸭头" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 干锅鸭头"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-d02-hot" data-uid="d02-hot" data-price="3800">
+<div class="thumb ph" aria-hidden="true"><span>孜</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">干锅孜然羊肉</span></p>
+<p class="price">RM 38</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 干锅孜然羊肉" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 干锅孜然羊肉"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-d03-hot" data-uid="d03-hot" data-price="3800">
+<div class="thumb ph" aria-hidden="true"><span>豆</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">豆笋红烧肉</span></p>
+<p class="price">RM 38</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 豆笋红烧肉" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 豆笋红烧肉"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-d04" data-uid="d04" data-price="3800">
+<div class="thumb ph" aria-hidden="true"><span>油</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">油豆腐红烧肉</span></p>
+<p class="row-hook">五花肉煸出油，油豆腐吸饱汁。</p><p class="price">RM 38</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 油豆腐红烧肉" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 油豆腐红烧肉"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-d05" data-uid="d05" data-price="3800">
+<div class="thumb ph" aria-hidden="true"><span>手</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">干锅手撕鸡</span></p>
+<p class="row-hook">盐焗鸡腿手撕成条，干锅慢慢烘出香。</p><p class="price">RM 38</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 干锅手撕鸡" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 干锅手撕鸡"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-d06" data-uid="d06" data-price="3800">
+<div class="thumb ph" aria-hidden="true"><span>香</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">香辣虾</span></p>
+<p class="price">RM 38</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 香辣虾" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 香辣虾"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-d08" data-uid="d08" data-price="3800">
+<div class="thumb ph" aria-hidden="true"><span>酸</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">酸菜鱼片</span></p>
+<p class="row-hook">老坛酸菜配现杀鱼片，汤酸得干净。</p><p class="price">RM 38</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 酸菜鱼片" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 酸菜鱼片"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-d09" data-uid="d09" data-price="3800">
+<div class="thumb ph" aria-hidden="true"><span>凯</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">凯里酸汤鱼</span></p>
+<p class="row-hook">苗家红酸汤，木姜子定调。</p><p class="price">RM 38</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 凯里酸汤鱼" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 凯里酸汤鱼"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-d11" data-uid="d11" data-price="3800">
+<div class="thumb ph" aria-hidden="true"><span>红</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">红烧猪脚</span></p>
+<p class="price">RM 38</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 红烧猪脚" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 红烧猪脚"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-d12" data-uid="d12" data-price="3800">
+<div class="thumb ph" aria-hidden="true"><span>鹿</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">干锅鹿茸菌</span></p>
+<p class="price">RM 38</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 干锅鹿茸菌" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 干锅鹿茸菌"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-d13" data-uid="d13" data-price="3800">
+<div class="thumb ph" aria-hidden="true"><span>梅</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">梅菜扣肉</span></p>
+<p class="price">RM 38</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 梅菜扣肉" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 梅菜扣肉"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-d19" data-uid="d19" data-price="3800">
+<div class="thumb ph" aria-hidden="true"><span>青</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">青椒炒腊肉</span></p>
+<p class="price">RM 38</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 青椒炒腊肉" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 青椒炒腊肉"><span class="g" aria-hidden="true">+</span></button></div></article></div></section><section class="grp reveal" aria-label="家常小炒">
+<div class="grp-head"><h2>家常小炒</h2><span class="sq-seal" style="width:16px;height:16px;font-size:10px" aria-hidden="true">灶</span><span class="en">HOMEMADE WOK</span><i class="rule" aria-hidden="true"></i><span class="count">19 道</span></div>
+<div class="card glass"><article class="row" id="dish-c02" data-uid="c02" data-price="2000">
+<div class="thumb ph" aria-hidden="true"><span>日</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">日本豆腐</span></p>
+<p class="price">RM 20</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 日本豆腐" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 日本豆腐"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c03" data-uid="c03" data-price="2500">
+<div class="thumb ph" aria-hidden="true"><span>农</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">农家一碗香</span></p>
+<p class="row-hook">鸡蛋炒碎、五花煸香、青椒虎皮，一碗里的三重火候。</p><p class="price">RM 25</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 农家一碗香" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 农家一碗香"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c04" data-uid="c04" data-price="2500">
+<div class="thumb ph" aria-hidden="true"><span>小</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">小炒牛肚</span></p>
+<p class="row-hook">现卤牛肚配整段香菜，脆嫩裹香。</p><p class="price">RM 25</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 小炒牛肚" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 小炒牛肚"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c05" data-uid="c05" data-price="2500">
+<div class="thumb ph" aria-hidden="true"><span>黄</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">小炒黄牛肉</span></p>
+<p class="row-hook">鲜牛肉逆纹切，香菜梗一起爆。</p><p class="price">RM 25</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 小炒黄牛肉" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 小炒黄牛肉"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c06" data-uid="c06" data-price="2500">
+<div class="thumb ph" aria-hidden="true"><span>辣</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">辣子鸡</span></p>
+<p class="price">RM 25</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 辣子鸡" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 辣子鸡"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c07" data-uid="c07" data-price="2500">
+<div class="thumb ph" aria-hidden="true"><span>酸</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">酸辣鸡杂</span></p>
+<p class="row-hook">鸡胗鸡心脆弹，酸菜解腻开胃。</p><p class="price">RM 25</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 酸辣鸡杂" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 酸辣鸡杂"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c08" data-uid="c08" data-price="2800">
+<div class="thumb ph" aria-hidden="true"><span>肉</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">肉末茄子煲</span></p>
+<p class="row-hook">茄子吸肉汁，砂锅收浓香。</p><p class="price">RM 28</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 肉末茄子煲" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 肉末茄子煲"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c09" data-uid="c09" data-price="2800">
+<div class="thumb ph" aria-hidden="true"><span>蒜</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">蒜香绝味凤爪</span></p>
+<p class="row-hook">猛火蒸透再爆蒜，爪劲十足。</p><p class="price">RM 28</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 蒜香绝味凤爪" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 蒜香绝味凤爪"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c10" data-uid="c10" data-price="2800">
+<div class="thumb ph" aria-hidden="true"><span>绝</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">绝味小炒鸡</span></p>
+<p class="price">RM 28</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 绝味小炒鸡" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 绝味小炒鸡"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c11a" data-uid="c11a" data-price="2800">
+<div class="thumb ph" aria-hidden="true"><span>姜</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">姜辣口味凤爪</span></p>
+<p class="row-hook">大量老姜配朝天椒，辣得有层次。</p><p class="price">RM 28</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 姜辣口味凤爪" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 姜辣口味凤爪"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c11b" data-uid="c11b" data-price="2500">
+<div class="thumb ph" aria-hidden="true"><span>外</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">外婆菜炒肉末</span></p>
+<p class="row-hook">坛子菜配肉末，专治没胃口。</p><p class="price">RM 25</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 外婆菜炒肉末" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 外婆菜炒肉末"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c12" data-uid="c12" data-price="2800">
+<div class="thumb ph" aria-hidden="true"><span>红</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">红烧鱼块</span></p>
+<p class="price">RM 28</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 红烧鱼块" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 红烧鱼块"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c13" data-uid="c13" data-price="2800">
+<div class="thumb ph" aria-hidden="true"><span>猪</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">红油猪耳尖</span></p>
+<p class="row-hook">卤耳片红油拌，脆骨声先到。</p><p class="price">RM 28</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 红油猪耳尖" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 红油猪耳尖"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c14" data-uid="c14" data-price="2800">
+<div class="thumb ph" aria-hidden="true"><span>青</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">青椒爆炒猪耳尖</span></p>
+<p class="row-hook">卤耳片配螺丝椒，猛火抢出脆。</p><p class="price">RM 28</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 青椒爆炒猪耳尖" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 青椒爆炒猪耳尖"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c15" data-uid="c15" data-price="2800">
+<div class="thumb ph" aria-hidden="true"><span>卤</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">卤水猪耳尖</span></p>
+<p class="row-hook">潮式白卤，吃本味。</p><p class="price">RM 28</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 卤水猪耳尖" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 卤水猪耳尖"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c16" data-uid="c16" data-price="2800">
+<div class="thumb ph" aria-hidden="true"><span>泡</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">泡椒肚丝</span></p>
+<p class="price">RM 28</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 泡椒肚丝" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 泡椒肚丝"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c17" data-uid="c17" data-price="2500">
+<div class="thumb ph" aria-hidden="true"><span>香</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">香干炒肉</span></p>
+<p class="price">RM 25</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 香干炒肉" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 香干炒肉"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c18" data-uid="c18" data-price="2800">
+<div class="thumb ph" aria-hidden="true"><span>回</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">回锅肉</span></p>
+<p class="price">RM 28</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 回锅肉" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 回锅肉"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-c19" data-uid="c19" data-price="2100">
+<div class="thumb ph" aria-hidden="true"><span>山</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">山药烩云耳</span></p>
+<p class="price">RM 21</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 山药烩云耳" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 山药烩云耳"><span class="g" aria-hidden="true">+</span></button></div></article></div></section><section class="grp reveal" aria-label="下饭小炒">
+<div class="grp-head"><h2>下饭小炒</h2><span class="sq-seal" style="width:16px;height:16px;font-size:10px" aria-hidden="true">灶</span><span class="en">WOK BASICS</span><i class="rule" aria-hidden="true"></i><span class="count">14 道</span></div>
+<div class="card glass"><article class="row" id="dish-b01" data-uid="b01" data-price="1800">
+<div class="thumb ph" aria-hidden="true"><span>干</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">干煸四季豆</span></p>
+<p class="price">RM 18</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 干煸四季豆" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 干煸四季豆"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-b02" data-uid="b02" data-price="1300">
+<div class="thumb ph" aria-hidden="true"><span>爆</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">爆炒土豆丝</span></p>
+<p class="row-hook">细丝泡水去淀粉，猛火脆生。</p><p class="price">RM 13</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 爆炒土豆丝" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 爆炒土豆丝"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-b03" data-uid="b03" data-price="1500">
+<div class="thumb ph" aria-hidden="true"><span>肉</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">肉末酸豆角</span></p>
+<p class="row-hook">酸豆角配肉末，一勺一饭。</p><p class="price">RM 15</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 肉末酸豆角" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 肉末酸豆角"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-b04" data-uid="b04" data-price="1500">
+<div class="thumb ph" aria-hidden="true"><span>西</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">西红柿炒鸡蛋</span></p>
+<p class="row-hook">蛋炒散、汁拌饭，家常菜的尽头。</p><p class="price">RM 15</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 西红柿炒鸡蛋" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 西红柿炒鸡蛋"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-b05" data-uid="b05" data-price="1700">
+<div class="thumb ph" aria-hidden="true"><span>包</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">干锅包菜</span></p>
+<p class="row-hook">手撕大片配虾干，锅气脆甜。</p><p class="price">RM 17</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 干锅包菜" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 干锅包菜"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-b06" data-uid="b06" data-price="1500">
+<div class="thumb ph" aria-hidden="true"><span>大</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">大碗花菜</span></p>
+<p class="price">RM 15</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 大碗花菜" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 大碗花菜"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-b07" data-uid="b07" data-price="1500">
+<div class="thumb ph" aria-hidden="true"><span>麻</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">麻婆豆腐</span></p>
+<p class="row-hook">麻、辣、烫、嫩，八字箴言。</p><p class="price">RM 15</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 麻婆豆腐" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 麻婆豆腐"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-b08" data-uid="b08" data-price="1700">
+<div class="thumb ph" aria-hidden="true"><span>酸</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">酸菜炒小笋</span></p>
+<p class="row-hook">嫩笋配坛酸，山里的时令。</p><p class="price">RM 17</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 酸菜炒小笋" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 酸菜炒小笋"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-b10" data-uid="b10" data-price="1700">
+<div class="thumb ph" aria-hidden="true"><span>蒜</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">蒜蓉空心菜</span></p>
+<p class="price">RM 17</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 蒜蓉空心菜" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 蒜蓉空心菜"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-b11" data-uid="b11" data-price="1700">
+<div class="thumb ph" aria-hidden="true"><span>清</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">清炒油麦菜</span></p>
+<p class="row-hook">当日现采，猛火三分钟。</p><p class="price">RM 17</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 清炒油麦菜" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 清炒油麦菜"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-b12" data-uid="b12" data-price="1700">
+<div class="thumb ph" aria-hidden="true"><span>油</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">油泼牛肚丝</span></p>
+<p class="row-hook">卤肚丝配辣子，滚油一激。</p><p class="price">RM 17</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 油泼牛肚丝" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 油泼牛肚丝"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-b13" data-uid="b13" data-price="1800">
+<div class="thumb ph" aria-hidden="true"><span>外</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">外婆菜炒鸡蛋</span></p>
+<p class="row-hook">坛香碎蛋，一碗乡愁。</p><p class="price">RM 18</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 外婆菜炒鸡蛋" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 外婆菜炒鸡蛋"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-b14" data-uid="b14" data-price="1800">
+<div class="thumb ph" aria-hidden="true"><span>炒</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">酸菜炒粉皮</span></p>
+<p class="row-hook">粉皮吸酸香，滑糯不烂。</p><p class="price">RM 18</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 酸菜炒粉皮" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 酸菜炒粉皮"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-b15" data-uid="b15" data-price="1700">
+<div class="thumb ph" aria-hidden="true"><span>翡</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">清炒翡翠西兰花</span></p>
+<p class="price">RM 17</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 清炒翡翠西兰花" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 清炒翡翠西兰花"><span class="g" aria-hidden="true">+</span></button></div></article></div></section><section class="grp reveal" aria-label="开胃凉拌">
+<div class="grp-head"><h2>开胃凉拌</h2><span class="sq-seal" style="width:16px;height:16px;font-size:10px" aria-hidden="true">灶</span><span class="en">APPETIZERS</span><i class="rule" aria-hidden="true"></i><span class="count">8 道</span></div>
+<div class="card glass"><article class="row" id="dish-a01" data-uid="a01" data-price="800">
+<div class="thumb ph" aria-hidden="true"><span>凉</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">凉拌木耳</span></p>
+<p class="row-hook">秋耳脆厚，酸辣开胃。</p><p class="price">RM 8</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 凉拌木耳" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 凉拌木耳"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-a02" data-uid="a02" data-price="800">
+<div class="thumb ph" aria-hidden="true"><span>海</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">凉拌海带丝</span></p>
+<p class="row-hook">海带丝蒜香油激，爽脆酸辣。</p><p class="price">RM 8</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 凉拌海带丝" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 凉拌海带丝"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-a03" data-uid="a03" data-price="800">
+<div class="thumb ph" aria-hidden="true"><span>剁</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">剁椒皮蛋</span></p>
+<p class="row-hook">剁椒盖顶，皮蛋溏心。</p><p class="price">RM 8</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 剁椒皮蛋" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 剁椒皮蛋"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-a04" data-uid="a04" data-price="800">
+<div class="thumb ph" aria-hidden="true"><span>腐</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">凉拌腐竹</span></p>
+<p class="row-hook">腐竹筋道，花生增香。</p><p class="price">RM 8</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 凉拌腐竹" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 凉拌腐竹"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-a05" data-uid="a05" data-price="800">
+<div class="thumb ph" aria-hidden="true"><span>黄</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">凉拌黄瓜</span></p>
+<p class="row-hook">刀拍裂口，蒜香入缝。</p><p class="price">RM 8</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 凉拌黄瓜" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 凉拌黄瓜"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-a06" data-uid="a06" data-price="800">
+<div class="thumb ph" aria-hidden="true"><span>酒</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">酒鬼花生米</span></p>
+<p class="price">RM 8</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 酒鬼花生米" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 酒鬼花生米"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-a07" data-uid="a07" data-price="990">
+<div class="thumb ph" aria-hidden="true"><span>油</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">油泼爆香黄金干</span></p>
+<p class="row-hook">平江香干，乌黑油亮。</p><p class="price">RM 9.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 油泼爆香黄金干" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 油泼爆香黄金干"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-a08" data-uid="a08" data-price="800">
+<div class="thumb ph" aria-hidden="true"><span>冰</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">冰糖红萝卜</span></p>
+<p class="price">RM 8</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 冰糖红萝卜" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 冰糖红萝卜"><span class="g" aria-hidden="true">+</span></button></div></article></div></section><section class="grp reveal" data-drink="1" aria-label="小甜水">
+<div class="grp-head"><h2>小甜水</h2><span class="sq-seal" style="width:16px;height:16px;font-size:10px" aria-hidden="true">灶</span><span class="en">FRUIT TEA</span><i class="rule" aria-hidden="true"></i><span class="count">12 道</span></div>
+<div class="card glass"><article class="row" id="dish-s01" data-uid="s01" data-price="1190">
+<div class="thumb ph" aria-hidden="true"><span>西</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">西瓜椰青茶</span></p>
+<p class="price">RM 11.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 西瓜椰青茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 西瓜椰青茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-s02" data-uid="s02" data-price="1190">
+<div class="thumb ph" aria-hidden="true"><span>海</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">西瓜海底椰</span></p>
+<p class="price">RM 11.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 西瓜海底椰" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 西瓜海底椰"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-s03" data-uid="s03" data-price="1190">
+<div class="thumb ph" aria-hidden="true"><span>奇</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">奇异果冰柠茶</span></p>
+<p class="price">RM 11.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 奇异果冰柠茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 奇异果冰柠茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-s04" data-uid="s04" data-price="1190">
+<div class="thumb ph" aria-hidden="true"><span>芭</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">芭乐甘露</span></p>
+<p class="price">RM 11.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 芭乐甘露" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 芭乐甘露"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-s05" data-uid="s05" data-price="1190">
+<div class="thumb ph" aria-hidden="true"><span>水</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">水蜜桃冰柠茶</span></p>
+<p class="price">RM 11.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 水蜜桃冰柠茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 水蜜桃冰柠茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-s06" data-uid="s06" data-price="1390">
+<div class="thumb ph" aria-hidden="true"><span>杨</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">杨枝甘露海底椰</span></p>
+<p class="price">RM 13.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 杨枝甘露海底椰" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 杨枝甘露海底椰"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-s07" data-uid="s07" data-price="1190">
+<div class="thumb ph" aria-hidden="true"><span>白</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">白葡萄冰柠茶</span></p>
+<p class="price">RM 11.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 白葡萄冰柠茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 白葡萄冰柠茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-s08" data-uid="s08" data-price="590">
+<div class="thumb ph" aria-hidden="true"><span>葡</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">水晶葡萄波波</span></p>
+<p class="row-hook">葡萄汁透亮，波波Q弹。</p><p class="price">RM 5.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 水晶葡萄波波" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 水晶葡萄波波"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-s09" data-uid="s09" data-price="390">
+<div class="thumb ph" aria-hidden="true"><span>冰</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">冰鲜薄荷柠檬水</span></p>
+<p class="row-hook">三块九的清凉，当日鲜柠檬。</p><p class="price">RM 3.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 冰鲜薄荷柠檬水" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 冰鲜薄荷柠檬水"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-s10" data-uid="s10" data-price="590">
+<div class="thumb ph" aria-hidden="true"><span>茉</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">茉莉金柠茶</span></p>
+<p class="price">RM 5.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 茉莉金柠茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 茉莉金柠茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-s11" data-uid="s11" data-price="290">
+<div class="thumb ph" aria-hidden="true"><span>酸</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">冰露酸梅汤</span></p>
+<p class="price">RM 2.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 冰露酸梅汤" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 冰露酸梅汤"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-s12" data-uid="s12" data-price="290">
+<div class="thumb ph" aria-hidden="true"><span>柠</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">冰鲜柠檬汁</span></p>
+<p class="price">RM 2.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 冰鲜柠檬汁" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 冰鲜柠檬汁"><span class="g" aria-hidden="true">+</span></button></div></article></div></section><section class="grp reveal" data-drink="1" aria-label="手打柠檬茶">
+<div class="grp-head"><h2>手打柠檬茶</h2><span class="sq-seal" style="width:16px;height:16px;font-size:10px" aria-hidden="true">灶</span><span class="en">LEMON TEA</span><i class="rule" aria-hidden="true"></i><span class="count">8 道</span></div>
+<div class="card glass"><article class="row" id="dish-l01" data-uid="l01" data-price="1990">
+<div class="thumb ph" aria-hidden="true"><span>手</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">招牌手打柠檬茶</span></p>
+<p class="row-hook">香水柠檬捶出香，锡兰茶底镇场。</p><p class="price">RM 19.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 招牌手打柠檬茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 招牌手打柠檬茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-l02" data-uid="l02" data-price="990">
+<div class="thumb ph" aria-hidden="true"><span>单</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">单枞鸭香手打柠檬茶</span></p>
+<p class="row-hook">鸭屎香打底，&quot;茶中香水&quot;。</p><p class="price">RM 9.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 单枞鸭香手打柠檬茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 单枞鸭香手打柠檬茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-l03" data-uid="l03" data-price="990">
+<div class="thumb ph" aria-hidden="true"><span>山</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">山茶花手打柠檬茶</span></p>
+<p class="price">RM 9.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 山茶花手打柠檬茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 山茶花手打柠檬茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-l04" data-uid="l04" data-price="990">
+<div class="thumb ph" aria-hidden="true"><span>桃</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">桃桃乌龙手打柠檬茶</span></p>
+<p class="price">RM 9.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 桃桃乌龙手打柠檬茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 桃桃乌龙手打柠檬茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-l05" data-uid="l05" data-price="990">
+<div class="thumb ph" aria-hidden="true"><span>芽</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">芽碧茉莉手打柠檬茶</span></p>
+<p class="row-hook">横县茉莉窨香，柠檬清透。</p><p class="price">RM 9.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 芽碧茉莉手打柠檬茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 芽碧茉莉手打柠檬茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-l06" data-uid="l06" data-price="990">
+<div class="thumb ph" aria-hidden="true"><span>泰</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">泰绿手打柠檬茶</span></p>
+<p class="row-hook">手标绿茶，翠绿透凉。</p><p class="price">RM 9.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 泰绿手打柠檬茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 泰绿手打柠檬茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-l07" data-uid="l07" data-price="1190">
+<div class="thumb ph" aria-hidden="true"><span>海</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">海底椰冰柠茶</span></p>
+<p class="price">RM 11.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 海底椰冰柠茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 海底椰冰柠茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-l08" data-uid="l08" data-price="990">
+<div class="thumb ph" aria-hidden="true"><span>栀</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">栀子花手打柠檬茶</span></p>
+<p class="price">RM 9.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 栀子花手打柠檬茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 栀子花手打柠檬茶"><span class="g" aria-hidden="true">+</span></button></div></article></div></section><section class="grp reveal" data-drink="1" aria-label="轻乳茶">
+<div class="grp-head"><h2>轻乳茶</h2><span class="sq-seal" style="width:16px;height:16px;font-size:10px" aria-hidden="true">灶</span><span class="en">MILK TEA</span><i class="rule" aria-hidden="true"></i><span class="count">6 道</span></div>
+<div class="card glass"><article class="row" id="dish-m01" data-uid="m01" data-price="990">
+<div class="thumb ph" aria-hidden="true"><span>单</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">单枞鸭香轻乳茶</span></p>
+<p class="row-hook">鸭屎香遇奶，香上加香。</p><p class="price">RM 9.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 单枞鸭香轻乳茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 单枞鸭香轻乳茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-m02" data-uid="m02" data-price="990">
+<div class="thumb ph" aria-hidden="true"><span>桃</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">桃桃乌龙轻乳茶</span></p>
+<p class="row-hook">蜜桃果粒沉底，乌龙茶香托底。</p><p class="price">RM 9.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 桃桃乌龙轻乳茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 桃桃乌龙轻乳茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-m03" data-uid="m03" data-price="990">
+<div class="thumb ph" aria-hidden="true"><span>山</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">山茶花轻乳茶</span></p>
+<p class="price">RM 9.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 山茶花轻乳茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 山茶花轻乳茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-m04" data-uid="m04" data-price="990">
+<div class="thumb ph" aria-hidden="true"><span>栀</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">栀子花轻乳茶</span></p>
+<p class="price">RM 9.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 栀子花轻乳茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 栀子花轻乳茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-m05" data-uid="m05" data-price="1190">
+<div class="thumb ph" aria-hidden="true"><span>锡</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">锡兰红茶轻乳茶</span></p>
+<p class="row-hook">高地红茶，橙红透亮。</p><p class="price">RM 11.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 锡兰红茶轻乳茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 锡兰红茶轻乳茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-m06" data-uid="m06" data-price="990">
+<div class="thumb ph" aria-hidden="true"><span>芽</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">芽碧茉莉轻乳茶</span></p>
+<p class="row-hook">茉莉打底，青白可人。</p><p class="price">RM 9.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 芽碧茉莉轻乳茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 芽碧茉莉轻乳茶"><span class="g" aria-hidden="true">+</span></button></div></article></div></section><section class="grp reveal" aria-label="镇店硬菜">
+<div class="grp-head"><h2>镇店硬菜</h2><span class="sq-seal" style="width:16px;height:16px;font-size:10px" aria-hidden="true">灶</span><span class="en">HOUSE LEGENDS</span><i class="rule" aria-hidden="true"></i><span class="count">2 道</span></div>
+<div class="card glass"><article class="row sig" id="dish-v01" data-uid="v01" data-price="7800">
+<div class="thumb ph" aria-hidden="true"><span>爆</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">脆皮爆汁烤鱼</span></p>
+<p class="row-hook">整条现杀现烤，皮脆肉嫩。</p><p class="price">RM 78</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 脆皮爆汁烤鱼" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 脆皮爆汁烤鱼"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row sig" id="dish-v02" data-uid="v02" data-price="7800">
+<div class="thumb ph" aria-hidden="true"><span>香</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">香辣羊排</span></p>
+<p class="price">RM 78</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 香辣羊排" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 香辣羊排"><span class="g" aria-hidden="true">+</span></button></div></article></div></section><section class="grp reveal" data-drink="1" aria-label="一升霸王杯">
+<div class="grp-head"><h2>一升霸王杯</h2><span class="sq-seal" style="width:16px;height:16px;font-size:10px" aria-hidden="true">灶</span><span class="en">THE LITRE CUP</span><i class="rule" aria-hidden="true"></i><span class="count">3 道</span></div>
+<div class="card glass"><article class="row" id="dish-xl01" data-uid="xl01" data-price="1090">
+<div class="thumb ph" aria-hidden="true"><span>单</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">单枞鸭香手打柠檬茶</span></p>
+<p class="price">RM 10.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 单枞鸭香手打柠檬茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 单枞鸭香手打柠檬茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-xl02" data-uid="xl02" data-price="1290">
+<div class="thumb ph" aria-hidden="true"><span>手</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">招牌手打柠檬茶</span></p>
+<p class="price">RM 12.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 招牌手打柠檬茶" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 招牌手打柠檬茶"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-xl03" data-uid="xl03" data-price="1290">
+<div class="thumb ph" aria-hidden="true"><span>西</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">西瓜海底椰</span></p>
+<p class="row-hook">一升的量，西瓜的鲜。</p><p class="price">RM 12.9</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 西瓜海底椰" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 西瓜海底椰"><span class="g" aria-hidden="true">+</span></button></div></article></div></section><section class="grp reveal" data-drink="1" aria-label="罐装饮品">
+<div class="grp-head"><h2>罐装饮品</h2><span class="sq-seal" style="width:16px;height:16px;font-size:10px" aria-hidden="true">灶</span><span class="en">CANNED</span><i class="rule" aria-hidden="true"></i><span class="count">3 道</span></div>
+<div class="card glass"><article class="row" id="dish-d01-can" data-uid="d01-can" data-price="1200">
+<div class="thumb ph" aria-hidden="true"><span>青</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">青岛啤酒（瓶装）</span></p>
+<p class="price">RM 12</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 青岛啤酒（瓶装）" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 青岛啤酒（瓶装）"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-d02-can" data-uid="d02-can" data-price="200">
+<div class="thumb ph" aria-hidden="true"><span>1</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">100 Plus</span></p>
+<p class="price">RM 2</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 100 Plus" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 100 Plus"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-d03-can" data-uid="d03-can" data-price="800">
+<div class="thumb ph" aria-hidden="true"><span>T</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">Tiger啤酒</span></p>
+<p class="price">RM 8</p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 Tiger啤酒" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 Tiger啤酒"><span class="g" aria-hidden="true">+</span></button></div></article></div></section><section class="grp reveal" aria-label="主食">
+<div class="grp-head"><h2>主食</h2><span class="sq-seal" style="width:16px;height:16px;font-size:10px" aria-hidden="true">灶</span><span class="en">STAPLES</span><i class="rule" aria-hidden="true"></i><span class="count">2 道</span></div>
+<div class="card glass"><article class="row" id="dish-staple-rice" data-uid="staple-rice" data-price="200">
+<div class="thumb ph" aria-hidden="true"><span>米</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">米饭</span></p>
+<p class="price">RM 2<small> /位</small></p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 米饭" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 米饭"><span class="g" aria-hidden="true">+</span></button></div></article><article class="row" id="dish-staple-salted-egg" data-uid="staple-salted-egg" data-price="200">
+<div class="thumb ph" aria-hidden="true"><span>下</span><i class="mini-seal"></i></div>
+<div class="row-body"><p class="row-name"><span class="t">下饭咸鸭蛋</span></p>
+<p class="price">RM 2<small> /个</small></p></div>
+<div class="qty" data-qty="0"><span class="abacus" aria-hidden="true"></span><button class="btn-round minus press" aria-label="减少 下饭咸鸭蛋" hidden><span class="g" aria-hidden="true">−</span></button><b hidden>0</b><button class="btn-round add press" aria-label="加购 下饭咸鸭蛋"><span class="g" aria-hidden="true">+</span></button></div></article></div></section>
+</div><div class="cartbar tray"><span class="badge" data-count>2</span><span class="sum" data-total>RM 96</span><button class="go gilt press">去结算</button></div><nav class="dock tray" aria-label="主导航"><span class="dock-pill" aria-hidden="true"></span><button class="tab press on" aria-label="点单" aria-current="page"><svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path class="f" d="M3 11h18a9 9 0 0 1-18 0Z"/><path class="s" d="M8 4c1 1 1 2 0 3m4-3c1 1 1 2 0 3m4-3c1 1 1 2 0 3"/><path class="hl" d="M3 11h18a9 9 0 0 1-18 0Z"/></svg><span>点单</span></button><button class="tab press" aria-label="取餐"><svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path class="f" d="M12 3a6 6 0 0 0-6 6v3.5L4.2 16h15.6L18 12.5V9a6 6 0 0 0-6-6Zm-2.2 15a2.2 2.2 0 0 0 4.4 0Z"/><path class="hl" d="M12 3a6 6 0 0 0-6 6v3.5L4.2 16h15.6L18 12.5V9a6 6 0 0 0-6-6Zm-2.2 15a2.2 2.2 0 0 0 4.4 0Z"/></svg><span>取餐</span></button><button class="tab press" aria-label="会员"><svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path class="f" d="M3 7a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v1H3Zm0 4h18v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3Zm3 4v2h5v-2Z"/><path class="hl" d="M3 7a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v1H3Zm0 4h18v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3Zm3 4v2h5v-2Z"/></svg><span>会员</span></button><button class="tab press" aria-label="我的"><svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path class="f" d="M12 3.8a4.2 4.2 0 1 1 0 8.4 4.2 4.2 0 0 1 0-8.4ZM3.8 20.5c.8-4 4.2-6.5 8.2-6.5s7.4 2.5 8.2 6.5Z"/><path class="hl" d="M12 3.8a4.2 4.2 0 1 1 0 8.4 4.2 4.2 0 0 1 0-8.4ZM3.8 20.5c.8-4 4.2-6.5 8.2-6.5s7.4 2.5 8.2 6.5Z"/></svg><span>我的</span></button></nav><script src="mock.js"></script></body></html>

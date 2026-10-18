@@ -1,32 +1,28 @@
-# 湘村小灶点单系统 —— 生产镜像
-# 构建：docker build -t xcz .（在仓库根目录执行）
+# 正式部署（Zeabur / 任意能跑 Docker 的服务器）：一个容器 = 后端接口 + 顾客端（/）+ 老板端（/admin/）
+# 数据库、上传图、备份都在 /data（Zeabur 上要挂一个持久化硬盘到 /data，否则重新部署会丢数据）
+# 必须在平台上设置的环境变量：ADMIN_PASSWORD（老板端密码，至少 8 位，只在平台后台填，不进代码）
+FROM node:22-bookworm-slim
+WORKDIR /srv/app
 
-# ---------- 构建阶段：编译 TypeScript ----------
-FROM node:24-slim AS build
-WORKDIR /app/server
-COPY server/package.json server/package-lock.json ./
-RUN npm ci
-COPY server/tsconfig.json ./
-COPY server/src ./src
-COPY server/tests ./tests
-RUN npm run build && npm prune --omit=dev
+COPY package.json package-lock.json ./
+COPY apps/customer/package.json apps/customer/
+COPY apps/admin/package.json apps/admin/
+COPY apps/server/package.json apps/server/
+COPY packages/contract/package.json packages/contract/
+COPY packages/ui-kit/package.json packages/ui-kit/
+RUN npm ci --no-audit --no-fund
 
-# ---------- 运行阶段：最小化生产镜像 ----------
-FROM node:24-slim
-WORKDIR /app
-ENV NODE_ENV=production
-COPY --from=build /app/server/node_modules ./server/node_modules
-COPY --from=build /app/server/dist/src ./server/dist/src
-COPY server/package.json ./server/
-COPY web ./web
+COPY . .
+ENV BRAND=xiangcun
+RUN npm run build -w @app/customer && ADMIN_BASE=/admin/ npm run build -w @app/admin
 
-# SQLite 数据库与上传图片都落在 /data，Zeabur 上把持久卷挂到这个路径
-ENV DATA_DIR=/data
-# Zeabur 网络端口配置为 8080，容器监听对齐（本地开发不受影响：无env时默认3000）
-ENV PORT=8080
+ENV NODE_ENV=production \
+    SERVE_STATIC=1 \
+    API_PORT=8080 \
+    DB_PATH=/data/app.db \
+    UPLOAD_DIR=/data/uploads \
+    BACKUP_DIR=/data/backups \
+    BACKUP_EVERY_MINUTES=10 \
+    LEGACY_DB_PATH=/data/xcz.db
 EXPOSE 8080
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/healthz').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
-
-CMD ["node", "server/dist/src/index.js"]
+CMD ["npx", "tsx", "apps/server/src/main-zeabur.ts"]

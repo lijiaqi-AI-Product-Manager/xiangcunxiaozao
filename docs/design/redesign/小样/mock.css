@@ -1,0 +1,489 @@
+/* 41号两页小样共用样式（设计资产，不进生产）。颜色全部来自 tokens-淡黄.css / tokens-淡绿.css，这里不写色值。
+   动效只动 transform / opacity；html[data-tier] 控制三档，static = 系统「减弱动态效果」 */
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg-3);-webkit-text-size-adjust:100%}
+body{position:relative;background:var(--bg-3);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.app{position:relative;z-index:1;max-width:430px;margin:0 auto;padding-bottom:180px}
+.en{font-family:var(--font-latin);font-weight:600;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--struct);line-height:1.3}
+.brush{font-family:var(--font-brush);font-weight:400}
+
+/* ---------- 背景：渐变 + 光源 + 墨晕（不是纯色，铁律 2） ---------- */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,var(--bg-1),var(--bg-2) 45%,var(--bg-3))}
+.bg-alt{position:absolute;inset:0;background:linear-gradient(180deg,var(--alt-1),var(--alt-2) 45%,var(--bg-3));opacity:0;transition:opacity 2.4s ease}
+body.drinks .bg-alt{opacity:1}
+.light{position:absolute;width:640px;height:640px;right:-220px;top:-240px;border-radius:50%;background:radial-gradient(circle,var(--light),transparent 66%)}
+.light.alt{background:radial-gradient(circle,var(--light-alt),transparent 68%);opacity:0;transition:opacity 2.4s ease}
+body.drinks .light.alt{opacity:1}
+/* 47号 G 附加：第一轮的光源漂移正式退役（46号已裁）——点单页常驻动效只剩纸的呼吸，详情页 = 呼吸 + 云斑 */
+.ink{position:absolute;left:0;right:0;top:0;height:460px;opacity:var(--ink-opacity);will-change:transform}
+.ink i{position:absolute;inset:0;background-size:cover;background-position:center top}
+/* 纸纹：全页叠一层噪点（42号②） */
+.grain{position:absolute;inset:0;background-size:240px 240px;opacity:var(--grain-opacity);mix-blend-mode:multiply}
+/* 页面中下部的墨晕团：跟着页面滚动，不只顶部一条山 */
+.bloom{position:absolute;z-index:0;left:0;right:0;top:380px;height:calc(100% - 380px);opacity:var(--bloom-opacity);pointer-events:none}
+.bloom i{position:absolute;inset:0;background-size:100% 900px;background-repeat:repeat-y}
+
+/* 43号 A1 纸的呼吸：一层极淡的米橙，透明度 0 ↔ 1 往返，一轮 20 秒（只动透明度，合成层跑，不碰主线程）
+   lite 档、减弱动态 = 停在暖黄基准色（透明度 0） */
+.breath{position:absolute;inset:0;opacity:0;will-change:opacity}
+.breath i{position:absolute;inset:0}
+.breath .warm{background:var(--breath-warm)}
+.breath .cool{background:var(--breath-cool)}
+html:not([data-tier=lite]):not([data-tier=static]) .breath{animation:breath 10s ease-in-out infinite alternate}
+@keyframes breath{to{opacity:1}}
+/* 43号 A2 分区色温：和饮品区氛围色同一个开关（body.drinks），墨晕、墨团、呼吸层一起 2.4 秒交叉淡化 */
+.ink .cool,.bloom .cool,.breath .cool{opacity:0}
+.ink i,.bloom i,.breath i{transition:opacity 2.4s ease}
+body.drinks .ink .warm,body.drinks .bloom .warm,body.drinks .breath .warm{opacity:0}
+body.drinks .ink .cool,body.drinks .bloom .cool,body.drinks .breath .cool{opacity:1}
+.wm{position:fixed;inset:0;z-index:0;pointer-events:none;display:flex;align-items:center;justify-content:flex-end;overflow:hidden}
+.wm span{writing-mode:vertical-rl;font-family:var(--font-brush);font-size:calc(88svh / 4);line-height:1;color:var(--ink);opacity:.05}
+
+/* ---------- 53号（高斯）纸白毛玻璃家族：「稍微透一点点，体现出毛玻璃、有透感就够」 ----------
+   和 51号墨玻璃并行：深玻璃管钱（托盘、Dock），浅玻璃管信息（店名框、分类条、列表、算盘珠、横幅卡）
+   配方：纸白 rgba(255,253,246,--pg-a) + 顶边 1px 亮光（左边一丝）+ 噪点（墨玻璃的一半）+ 左上极淡柔光
+   性能：真背景模糊只给「背后有滚动内容」的层（分类条、托盘、Dock、详情底栏），其余是假玻璃——同样的透和光、零 GPU 成本
+   每块透多少：店名框 .78、列表 .78、横幅卡 .80、分类条 .74（真模糊）、算盘珠 .84 */
+.glass{--pg-a:.78;background:radial-gradient(120% 160% at 0% 0%,rgba(255,246,230,.06) 0%,rgba(255,246,230,0) 60%),
+  url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E"),
+  rgba(255,253,246,var(--pg-a));background-blend-mode:normal,overlay,normal;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 1px 0 0 rgba(255,255,255,.2),var(--shadow)}
+.dbar.glass,.stage.glass{-webkit-backdrop-filter:blur(12px) saturate(140%);backdrop-filter:blur(12px) saturate(140%)} /* 背后有滚动内容 → 真模糊 */
+html[data-tier=lite] .glass,html[data-tier=lite] .glass-dark{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html[data-tier=lite] .glass{background:#FBF8F0}
+html[data-tier=lite] .glass-dark{background:var(--dark-solid)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.glass{background:var(--glass-solid)}.glass-dark{background:var(--dark-solid)}}
+.glass-dark{background:var(--dark);-webkit-backdrop-filter:blur(24px) saturate(1.3);backdrop-filter:blur(24px) saturate(1.3);box-shadow:var(--dark-glow);color:var(--on-dark)}
+
+/* ---------- 印章 ---------- */
+.seal{display:inline-flex;align-items:center;justify-content:center;flex:none;border-radius:50%;color:var(--red);font-family:var(--font-brush);line-height:1;transform:rotate(-8deg);border:2px solid var(--red);box-shadow:inset 0 0 0 1.5px var(--seal-gap),inset 0 0 0 3px var(--red)}
+.dot-seal{display:inline-block;width:6px;height:6px;border-radius:2px;background:var(--red);transform:rotate(45deg);margin:0 8px;vertical-align:middle;opacity:.85}
+
+/* ---------- 47号 E1 大画态（images.json 写了 heroDish 才出现）：全幅大图 + 径向聚光 + 左下竖排 SIGNATURE + 价格锚，门店信息浮在图上 ---------- */
+.store-hero{position:relative;height:var(--hero-h,240px);margin:0 0 4px;overflow:hidden}
+.store-hero .hero-img{border-radius:0 0 28px 28px}
+.store-hero .hero-img .n{display:none} /* 菜名已经在价格锚上，占位图里不再重复写一遍 */
+.store-hero .hero-spot{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 60% at 50% 62%,transparent 45%,rgba(43,38,34,.28) 100%);border-radius:0 0 28px 28px}
+/* 49号①：进店屏铺极浅宣纸肌理 + 纸纹噪点（列表区的纸纹在背景层，大图把它盖住了，这里补上）；有真图时也盖一层，像印在宣纸上 */
+.store-hero .hero-paper{position:absolute;inset:0;pointer-events:none;border-radius:0 0 28px 28px;background-size:320px 320px,240px 240px;mix-blend-mode:multiply;opacity:.28}
+.store-hero .store{position:absolute;left:0;right:0;top:0}
+.store-hero .sig-v{position:absolute;left:18px;bottom:18px;writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;letter-spacing:.2em;color:var(--struct)}
+.price-anchor{position:absolute;right:16px;bottom:14px;display:flex;align-items:baseline;gap:8px;padding:6px 14px;border-radius:999px}
+.price-anchor .pa-name{font-family:var(--font-brush);font-size:18px;line-height:1.2}
+.price-anchor b{color:var(--red);font-size:18px;font-weight:800}
+/* 48号 C 方案：滑过 240px 触发线 → 顶部换成「今日招牌」横幅卡（卡高 96 + 上边距 = 约 110px），分类条往下让 106px；只动 transform / opacity */
+.hero-line{position:absolute;left:0;width:1px;height:1px;pointer-events:none}
+.app{position:relative}
+.today{position:fixed;z-index:7;left:50%;top:calc(8px + env(safe-area-inset-top,0px));width:calc(100% - 32px);max-width:398px;height:96px;border-radius:22px;display:flex;align-items:center;gap:12px;padding:8px 10px 8px 8px;
+  transform:translate(-50%,calc(-100% - 16px));opacity:0;pointer-events:none;will-change:transform} /* 收起前用 inert 挡住点按和键盘，不用 visibility（visibility 过渡只能在主线程跑） */
+.today-img{position:relative;flex:none;width:80px;height:80px;border-radius:16px;overflow:hidden}
+.today-img img{width:100%;height:100%;object-fit:cover;display:block}
+.today-img.thumb{font-size:38px}
+.today-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.today-label{display:flex;align-items:baseline;gap:6px;font-size:14px;color:var(--ink-2)}
+.today-label .en{font-size:10px;letter-spacing:.2em}
+.today-name{font-family:var(--font-brush);font-size:21px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.today .price{font-size:17px}
+.today-go{flex:none;height:44px;padding:0 20px;display:flex;align-items:center;font-weight:800;text-decoration:none}
+/* 49号④ 没图时的菜单头版式：金棕书签条 + 大号书法菜名 + 右侧价格锚（价格在上、直达在下） */
+.today.noimg{padding:10px 10px 10px 22px;gap:10px}
+.today-mark{position:absolute;left:10px;top:16px;bottom:16px;width:4px;border-radius:2px;background:linear-gradient(180deg,var(--gold),color-mix(in srgb,var(--gold) 20%,transparent))}
+.today.noimg .today-name{font-size:28px;line-height:1.15}
+.today-anchor{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.today-anchor b{color:var(--red);font-size:18px;font-weight:800;line-height:1.2;padding-right:6px}
+.today-anchor .today-go{height:44px;padding:0 18px}
+body.collapsed .today{transform:translate(-50%,0);opacity:1;pointer-events:auto}
+body.collapsed .cats-wrap{transform:translateY(102px)}
+/* 横幅卡 + 分类条后面垫一层纸色（底边渐隐），菜行从下面滑过时不会从两条之间的缝里露出来；只淡入淡出 */
+.today-scrim{position:fixed;z-index:4;left:0;right:0;top:0;height:calc(172px + env(safe-area-inset-top,0px));pointer-events:none;
+  background:linear-gradient(180deg,var(--bg-1) 0%,var(--bg-2) 78%,color-mix(in srgb,var(--bg-2) 0%,transparent) 100%);opacity:0}
+body.collapsed .today-scrim{opacity:1}
+html:not([data-tier=static]) .today-scrim{transition:opacity .32s}
+/* 49号③：收起（横幅卡落下）用 ease-out-back，落到位时轻轻过冲一下再回；展开（收回去）干脆利落 */
+html:not([data-tier=static]) .today,html:not([data-tier=static]) .cats-wrap{transition:transform .26s cubic-bezier(.4,0,1,1),opacity .2s}
+html:not([data-tier=static]) body.collapsed .today,html:not([data-tier=static]) body.collapsed .cats-wrap{transition:transform .42s cubic-bezier(.34,1.56,.64,1),opacity .2s}
+
+/* ---------- 点单页：门店区 ---------- */
+.store{margin:12px 16px 0;padding:10px 14px;border-radius:24px}
+.store-row{display:flex;align-items:center;gap:10px}
+.store-name{font-size:20px;font-weight:800;letter-spacing:.02em}
+.chip-table{margin-left:6px;padding:1px 10px;border-radius:999px;box-shadow:inset 0 0 0 1.5px var(--red);color:var(--red);font-size:14px;font-weight:700}
+.wait{margin-left:auto;text-align:right;font-size:14px;color:var(--ink-2);line-height:1.25}
+.wait b{display:block;font-size:20px;color:var(--ink);font-weight:800}
+.trust{margin-top:6px;font-size:14px;color:var(--ink-2);display:flex;align-items:center;flex-wrap:wrap}
+
+/* 47号组件 4「谷雨式」分类条（吸顶）：不要白药丸——字 + 字下金棕细线 + 选中项朱红圆点；条本体半透明纸色，融进墨背景 */
+.cats{position:sticky;top:0;z-index:5;margin:10px 16px 0;padding:0 50px 0 4px;display:flex;align-items:center;gap:2px;border-radius:14px 14px 0 0;overflow:hidden;
+  background:var(--cats-bg);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--gold-line) 45%,transparent);
+  -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 72px),transparent calc(100% - 40px));mask-image:linear-gradient(90deg,#000 calc(100% - 72px),transparent calc(100% - 40px))}
+html[data-tier=lite] .cats{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--bg-2)}
+.cat{position:relative;flex:none;height:44px;padding:0 12px;font-size:15px;color:var(--ink-2);white-space:nowrap}
+.cat span{position:relative}
+.cat.on{color:var(--struct);font-weight:800}
+.cat.on::after{content:'';position:absolute;left:50%;bottom:5px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--red)}
+.cats-wrap{position:sticky;top:6px;z-index:5}
+.cats-more{position:absolute;right:20px;top:10px;height:44px;width:44px;display:flex;align-items:center;justify-content:center;z-index:6}
+.ring-arrow{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--ink-2);display:inline-flex;align-items:center;justify-content:center}
+.ring-arrow svg{width:12px;height:12px;fill:var(--ink-2)}
+
+/* 分组 + 菜卡 */
+.grp{margin:12px 16px 0}
+/* 47号 B：分组标题英文从贴字升为结构元素——全大写宽距衬线 + 细金线横贯做分割行（同一行，不加高度，保一屏 6 道） */
+.grp-head{display:flex;align-items:center;gap:8px;margin:0 4px 8px}
+.grp-head h2{font-size:18px;font-weight:900;line-height:1.4} /* 49号②：分组（招牌）标题字重 +1 档 */
+.grp-head .en{font-weight:700;font-size:11px;letter-spacing:.15em;margin-left:2px}
+.grp-head .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--gold-line),color-mix(in srgb,var(--gold-line) 15%,transparent))}
+.grp-head .count{font-size:14px;color:var(--ink-2)}
+.card{position:relative;isolation:isolate;border-radius:24px;overflow:hidden} /* 53号 S1：列表外容器 24px */
+/* 51号：列表卡片禁用背景模糊（低端机滑动时会掉到 30 帧以下）——原来带着 16px 模糊，改成不模糊的半透白 */
+.card.glass{-webkit-backdrop-filter:none;backdrop-filter:none} /* 53号：列表容器走纸白假玻璃（.78），不再是白板 */
+
+/* 47号 G1 菜卡环境光：湘菜区顶部 + 左侧一抹暖橙侧逆光，饮品区换青绿冷光；和分区色温同一个开关，2.4 秒交叉淡化 */
+.card::before,.card::after{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;transition:opacity 2.4s ease}
+.card::before{background:linear-gradient(180deg,var(--card-light-warm),transparent 72px),linear-gradient(90deg,var(--card-light-warm),transparent 56px)}
+.card::after{background:linear-gradient(180deg,var(--card-light-cool),transparent 72px),linear-gradient(90deg,var(--card-light-cool),transparent 56px);opacity:0}
+body.drinks .card::before{opacity:0}
+body.drinks .card::after{opacity:1}
+.card.still::before,.card.still::after{transition:none} /* 屏幕外的卡片直接换光，不跑过渡（看不见的动画浏览器会放主线程） */
+.row{position:relative;display:flex;align-items:center;gap:12px;padding:6px 8px 6px 12px}
+.row+.row{box-shadow:inset 0 1px 0 var(--line)}
+.row.sig::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:linear-gradient(180deg,var(--gold),transparent)}
+/* 缩略图：有图用真图；没图 = 水墨意境占位（42号③） */
+.thumb{position:relative;flex:none;width:64px;height:64px;border-radius:16px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:var(--font-brush);font-size:32px;color:var(--ink);line-height:1;
+  background:radial-gradient(circle at 34% 30%,rgba(43,38,34,.16),transparent 62%),radial-gradient(circle at 80% 85%,rgba(43,38,34,.10),transparent 55%),var(--paper)}
+.thumb.ph::before{content:'';position:absolute;left:-8px;right:-14px;top:22px;height:40px;background-size:100% 100%;opacity:.26} /* 43号 C2：缩略图墨痕减淡一档（.42 → .26） */
+/* 47号 C-B 马卡龙：首字容器给「有色的白」（四色按菜品固定一色）+ 微立体（顶部 1px 内高光 + 底部微阴影），不要墨痕 */
+.thumb.mac{background:var(--mac);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 1px 2px rgba(43,38,34,.08),0 0 0 1px rgba(43,38,34,.04)}
+.thumb span{position:relative}
+.thumb .mini-seal{position:absolute;right:6px;bottom:6px;width:11px;height:11px;border-radius:2px;background:var(--red);transform:rotate(-6deg);box-shadow:inset 0 0 0 1.5px var(--paper)}
+.thumb.img{background:var(--paper)}
+.thumb.img img{width:100%;height:100%;object-fit:cover;display:block}
+/* 方形印章：区块结束符、招牌标记（圆形印章只做店标） */
+.sq-seal{display:inline-flex;align-items:center;justify-content:center;flex:none;border-radius:3px;background:var(--red);color:var(--on-red);font-family:var(--font-brush);line-height:1;transform:rotate(-5deg);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.55)}
+.row-body{flex:1;min-width:0}
+.row-name{display:flex;align-items:center;gap:6px;font-size:16px;font-weight:700;line-height:23px} /* 49号②：菜名、描述行距各 +1.4px */
+.row-name .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sig-chip{flex:none;font-size:12px;line-height:1;padding:3px 5px;border-radius:5px;color:var(--red);border:1px solid var(--red);font-family:var(--font-brush)}
+.row-hook{font-size:14px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:21px}
+.price{color:var(--red);font-weight:800;font-size:18px;line-height:1.3;white-space:nowrap}
+.price small{font-size:14px;font-weight:500;color:var(--ink-2)}
+
+/* 加减：按钮本身 44×44（触控底线），图形画在里面 */
+.qty{position:relative;display:flex;align-items:center;flex:none}
+.qty b{position:relative;min-width:18px;text-align:center;font-family:var(--font-latin);font-weight:700;font-size:16px;color:var(--abacus-minus)}
+.btn-round{position:relative;isolation:isolate;width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center}
+.btn-round .g{position:relative;font-family:var(--font-latin);font-weight:600;font-size:24px;line-height:1;margin-top:-2px}
+/* 47号组件 1「朱砂印」：正圆改圆角方（支持的浏览器用真超椭圆），朱砂 135° 渐变 + 顶部内高光 + 1px 白描边；投影单独一层，按下时收紧 */
+.add::before,.add::after{content:'';position:absolute;inset:6px;border-radius:50%} /* 53号 S1：加号改正圆，视觉直径 32px，触控热区仍 44px */
+.add::before{background:var(--zhu-solid);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 0 0 1px rgba(255,255,255,.2)}
+.add::after{z-index:-1;box-shadow:var(--zhu-shadow)}
+.add .g{color:var(--on-red)}
+/* 按下像印章按进纸里：整颗缩到 .92，投影层变近变淡；松开带一点回弹。只动 transform / opacity */
+html:not([data-tier=static]) .add{transition:transform .32s cubic-bezier(.34,1.56,.64,1)}
+html:not([data-tier=static]) .add::after{transition:transform .32s cubic-bezier(.34,1.56,.64,1),opacity .2s}
+html:not([data-tier=static]) .add:active{transform:scale(.92);transition-duration:.1s}
+html:not([data-tier=static]) .add:active::after{transform:translateY(-2px) scale(.9);opacity:.55;transition-duration:.1s}
+/* 47号组件 2「算盘珠」：减号 / 数字 / 加号装进一个浅色一体化容器；减号深灰、加号朱砂——一明一暗 */
+/* 49号⑤：容器一开始就在（透明），加购时只淡入；去掉了背景模糊（白 90% 底上模糊几乎看不出，却要单独一个图层） */
+.qty .abacus{position:absolute;inset:4px 0;border-radius:14px;background:var(--abacus-sheen),var(--abacus);box-shadow:inset 0 0 0 1px var(--line-strong),0 2px 6px rgba(43,38,34,.06);opacity:0;pointer-events:none}
+.qty.on .abacus{opacity:1}
+html:not([data-tier=static]) .qty .abacus{transition:opacity .16s}
+.qty [hidden]{display:none}
+.minus .g{color:var(--abacus-minus)}
+html:not([data-tier=static]) .press:active{transform:scale(.96);transition:transform .12s}
+html:not([data-tier=static]) .add.press:active{transform:scale(.92)}
+
+/* 加购落印（签名动效）+ 购物车角标衰减 */
+.stamp{position:fixed;z-index:50;pointer-events:none;width:40px;height:40px;font-size:22px;opacity:0}
+/* 盖下去 0.26 秒 → 停住 → 0.4 秒淡出。47号：原来是两个动画叠在同一个元素上，浏览器只能放主线程跑；合成一条关键帧，观感和时长不变 */
+html:not([data-tier=static]) .stamp.go{animation:stamp .9s linear forwards}
+html[data-tier=static] .stamp.go{opacity:1}
+@keyframes stamp{
+  0%{opacity:0;transform:scale(1.25) rotate(-20deg);animation-timing-function:cubic-bezier(.2,.9,.3,1.2)}
+  28.9%{opacity:1;transform:scale(1) rotate(-8deg);animation-timing-function:linear}
+  55.6%{opacity:1;transform:scale(1) rotate(-8deg);animation-timing-function:ease}
+  100%{opacity:0;transform:scale(1) rotate(-8deg)}}
+html:not([data-tier=static]) .badge.pop{animation:pop .45s cubic-bezier(.34,1.8,.5,1)}
+@keyframes pop{40%{transform:scale(1.45)}}
+/* 47号附加：水滴 blob「+1」——落印之后从加号挤出来、沿弧线飞向购物车角标、落下压扁再消失（路径和形变都由 mock.js 用 transform 驱动） */
+.blob{position:fixed;z-index:51;left:0;top:0;pointer-events:none;will-change:transform}
+.blob i{display:block;will-change:transform}
+.blob b{display:flex;align-items:center;justify-content:center;width:30px;height:28px;margin:-14px 0 0 -15px;font-size:13px;font-weight:800;color:var(--on-red);background:var(--zhu-solid);
+  border-radius:52% 48% 46% 54% / 58% 56% 44% 42%;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),var(--zhu-shadow);will-change:transform}
+
+
+/* 首次进入：分组依次淡入（只播一次） */
+html:not([data-tier=static]) .reveal{opacity:0;transform:translateY(8px)}
+html:not([data-tier=static]) .reveal.in{opacity:1;transform:none;transition:opacity .2s ease,transform .2s ease}
+
+/* ---------- 图标微立体（47号任务 D / 38号 6.5）：同色系渐变 + 顶部 40% 白高光弧 + 底部同色投影；未选中页签 = 灰阶平铺 ---------- */
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+.ico .f{fill:currentColor}
+.ico .s{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.ico .hl{fill:url(#g-hl);opacity:0}
+.ico.ico-ink .f{fill:url(#g-ink)}
+.ico.ico-ink .hl{opacity:1}
+.ico.ico-ink{filter:drop-shadow(0 1px .8px var(--ico-ink-drop))}
+
+/* ---------- 51号墨玻璃（磨砂材质，不是遮罩）：托盘和 Dock 同一个配方 ----------
+   ① 底：135° 渐变，左上薄亮、右下厚暗；Dock 只有图标，墨色再透一档
+   ② 滤镜：模糊 18px + 饱和度 160% + 亮度 1.06（毛玻璃的灵魂是饱和度，下面的颜色要透上来）
+   ③ 边缘折射光不均匀：顶亮、左弱、底极弱、右无
+   ④ 左上角一块静态环境光斑（漫反射，永不动）
+   ⑤ 表面一层极细噪点（「毛」的来源），叠加模式 overlay
+   lite 档：模糊、饱和度、噪点全关，实色墨底 */
+.tray{position:fixed;isolation:isolate;overflow:hidden;color:var(--on-dark);background:var(--tray-spot),var(--tray);
+  -webkit-backdrop-filter:var(--tray-filter);backdrop-filter:var(--tray-filter);box-shadow:var(--tray-edges)}
+.dock.tray:not(.v1){background:var(--tray-spot),var(--tray-dock);-webkit-backdrop-filter:var(--tray-filter-dock);backdrop-filter:var(--tray-filter-dock)}
+.tray::before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background-repeat:repeat;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E")}
+html[data-tier=lite] .tray,html[data-tier=lite] .dock.tray:not(.v1){-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:var(--tray-solid)}
+html[data-tier=lite] .tray::before{display:none}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.tray,.dock.tray:not(.v1){background:var(--tray-solid)}}
+/* 白字、淡金字加双层投影（底透下去、字立得住）；选中页签在浅色药丸上、角标有自己的底色，不加 */
+.tray .sum,.tray .tab:not(.on),.tray .gilt{text-shadow:var(--glass-text-shadow)}
+.tray .badge{text-shadow:none}
+.dock.tray:not(.v1) .tab:not(.on){color:var(--on-dark);text-shadow:var(--glass-text-shadow-dock)}
+/* 水滴落进购物车：落点一团柔光扩散（scale 0 → 1.4、opacity .35 → 0，0.5 秒）——漫反射的光晕，不是镜面光带 */
+.land-glow{position:fixed;z-index:52;left:0;top:0;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;pointer-events:none;background:var(--land-glow);opacity:0;will-change:transform,opacity}
+/* 烫金去结算：深红 → 暗红底 + 淡金字，两端微尖（印章 / 标签感） */
+.gilt{background:var(--gilt-btn);color:var(--gilt-text);letter-spacing:.06em;border-radius:20px} /* 53号 S1：六边形切角废止，和托盘同一家族的圆角长方形（托盘 22px 的九成） */
+
+/* ---------- 浮动 Dock（47号组件 5/6）：离底 10px 悬浮的墨玻璃胶囊；选中 = 浅色药丸滑过去 + 品牌色微立体图标 ---------- */
+.dock{position:fixed;z-index:20;left:50%;transform:translateX(-50%);bottom:10px;width:calc(100% - 32px);max-width:398px;height:64px;border-radius:22px;display:flex;align-items:center;padding:0 8px}
+.dock-pill{position:absolute;left:0;top:6px;bottom:6px;width:0;border-radius:17px;background:var(--dock-pill-on);box-shadow:inset 0 1px 0 #fff,0 2px 6px rgba(0,0,0,.18);will-change:transform}
+html:not([data-tier=static]) .dock-pill{transition:transform .18s cubic-bezier(.3,.7,.4,1)}
+.tab{position:relative;flex:1;height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--on-dark-2);font-size:12px}
+.tab .ico{width:22px;height:22px}
+.tab.on{color:var(--struct);font-weight:700}
+.tab.on .ico .f{fill:url(#g-on)}
+.tab.on .ico .s{stroke:url(#g-on)}
+.tab.on .ico .hl{opacity:1}
+.tab.on .ico{filter:drop-shadow(0 1px .8px var(--ico-on-drop))}
+.tab>*{position:relative}
+.dock.v1 .tab{flex:none;width:46px}
+.dock.v1 .dock-pill{top:10px;bottom:10px;border-radius:14px} /* 只有图标的页签：药丸收成近方形，不要细长条 */
+.dock.v1 .tab span{display:none}
+.dock-go{margin-left:auto;height:52px;padding:0 20px 0 14px;display:flex;align-items:center;gap:8px;white-space:nowrap;border-radius:22px} /* 52px 高按 S0 要 ≥ 高度 40%，取 22px */
+.dock-go .stack{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15}
+.dock-go .stack b{font-size:16px;font-weight:800}
+.dock-go .stack span{font-size:14px;font-weight:600}
+.gilt .badge{background:var(--gilt-text);color:var(--gilt-badge-text)}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:var(--red);color:var(--on-red);font-size:12px;font-weight:800}
+.cartbar{position:fixed;z-index:19;left:50%;transform:translateX(-50%);bottom:84px;width:calc(100% - 32px);max-width:398px;height:56px;border-radius:20px;display:flex;align-items:center;gap:12px;padding:0 6px 0 16px}
+.cartbar .sum{font-weight:800;font-size:17px}
+.cartbar .go{margin-left:auto;height:44px;padding:0 24px;font-weight:800}
+
+/* ---------- 详情页 ---------- */
+.hero{position:relative;height:440px;overflow:hidden}
+/* 详情大图：没图 = 水墨意境占位（浅墨晕 + 大号书法菜名 + 一缕墨痕 + 方印）；有图 = 真图 + 径向聚光 */
+.hero-img{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;will-change:transform;
+  background:radial-gradient(ellipse at 50% 40%,var(--spot) 0%,transparent 55%),radial-gradient(ellipse at 22% 70%,rgba(43,38,34,.20),transparent 50%),radial-gradient(ellipse at 85% 25%,rgba(43,38,34,.12),transparent 45%),var(--paper)}
+.hero-img.ph::before{content:'';position:absolute;left:10%;right:6%;top:46%;height:24%;background-size:100% 100%;opacity:.3;filter:blur(1.2px)}
+/* 47号 G2 云斑（废弃 43号的整块明暗）：一团模糊的圆形云影，叠在大图和菜名之间，一边放大缩小一边从左往右飘过、渐隐渐现，
+   一周期 11 秒——像云影扫过桌面。模糊靠径向渐变的软边，不用滤镜；lite / 减弱动态不出现 */
+.hero-img .cloud{position:absolute;left:50%;top:42%;width:300px;height:230px;margin:-115px 0 0 -150px;border-radius:50%;
+  background:radial-gradient(closest-side,var(--cloud),var(--cloud-edge) 58%,transparent);opacity:0;will-change:transform,opacity}
+html:not([data-tier=lite]):not([data-tier=static]) .hero-img .cloud{animation:cloud 11s cubic-bezier(.45,.05,.55,.95) infinite}
+@keyframes cloud{
+  0%{transform:translate(-190px,-26px) scale(.78);opacity:0}
+  22%{opacity:.9}
+  50%{transform:translate(0,12px) scale(1.12);opacity:1}
+  78%{opacity:.9}
+  100%{transform:translate(190px,-18px) scale(.84);opacity:0}}
+.hero-img .n{position:relative;font-family:var(--font-brush);font-size:42px;color:var(--ink);line-height:1.15}
+.hero-img .sq-seal{position:absolute;right:56px;top:calc(50% + 26px)}
+.hero-img.img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-img.img::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 42%,transparent 40%,rgba(43,38,34,.35) 100%)}
+.hero-en{position:absolute;left:14px;top:76px;writing-mode:vertical-rl;font-size:12px;letter-spacing:.28em}
+.top-btns{position:absolute;z-index:3;left:16px;right:16px;top:14px;display:flex;justify-content:space-between;align-items:center}
+.circle-btn{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.circle-btn svg{width:18px;height:18px;fill:var(--ink)}
+.code-chip{padding:6px 12px;border-radius:999px;font-size:14px;color:var(--ink-2)}
+.xbtn-wrap{position:absolute;left:0;right:0;bottom:22px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.xbtn{height:48px;padding:0 26px;border-radius:999px;background:var(--red-solid);color:var(--on-red);font-weight:800;font-size:16px;letter-spacing:.12em;box-shadow:var(--glow-red)}
+.xbtn small{margin-left:8px;font-weight:500;letter-spacing:0;font-size:14px}
+.sheet{position:relative;z-index:2;margin-top:-24px;border-radius:24px 24px 0 0;padding:22px 20px 8px;background:linear-gradient(180deg,var(--bg-2),var(--bg-3))}
+.d-title{position:relative;display:inline-block;font-family:var(--font-brush);font-size:32px;line-height:1.2}
+.d-title::after{content:'';position:absolute;z-index:-1;left:-4px;right:-6px;bottom:2px;height:40%;border-radius:8px;background:linear-gradient(90deg,var(--yinni-1),var(--yinni-2));filter:blur(5px);opacity:.55}
+.d-meta{margin-top:4px;font-size:14px;color:var(--ink-2)}
+.d-price{margin-top:8px;font-size:24px;font-weight:800;color:var(--red)}
+.d-hook{margin-top:6px;font-size:16px}
+.sec{margin-top:26px}
+/* 47号 B1 区块标题（绿茶画册式双层）：中文粗黑大字 26px / 英文宽体衬线全大写独立一行 / 1px 细金线横贯。
+   中文用粗黑体不用书法：书法只留给仪式位（35号 Q2），也免得为标题字再扩书法字体的字表 */
+.sec-head{display:flex;flex-direction:column;align-items:flex-start;margin-bottom:12px}
+.sec-head h2{font-size:26px;font-weight:900;line-height:1.25;letter-spacing:.04em}
+.sec-head .en{margin-top:4px;font-size:12px;font-weight:700;letter-spacing:.18em}
+.sec-head .rule{align-self:stretch;height:1px;margin-top:8px;background:linear-gradient(90deg,var(--gold-line) 0%,var(--gold-line) 60%,color-mix(in srgb,var(--gold-line) 10%,transparent))}
+.sec p{font-size:16px;line-height:1.85}
+.sec.paper{margin-left:-20px;margin-right:-20px;padding:18px 20px;background:linear-gradient(180deg,var(--paper),var(--paper-2));border-radius:20px}
+/* 工序：大号衬线数字 + 细金线（42号⑤，不要「小学课件」卡片） */
+.steps{list-style:none}
+.step{position:relative;display:grid;grid-template-columns:52px 1fr;align-items:baseline;gap:8px;padding:12px 0 12px 12px}
+.step::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:2px;background:linear-gradient(180deg,var(--gold),transparent)}
+.step::after{content:'';position:absolute;left:12px;right:0;bottom:0;height:1px;background:linear-gradient(90deg,var(--gold),transparent 85%);opacity:.7}
+.step b{font-family:var(--font-latin);font-weight:600;font-size:28px;color:var(--struct);line-height:1}
+.step span{font-size:16px}
+.route{display:flex;align-items:center;gap:16px}
+.route-v{writing-mode:vertical-rl;font-size:18px;font-weight:700;letter-spacing:.2em;padding:12px 10px;border-radius:16px;color:var(--struct)}
+.route-note{font-size:14px;color:var(--ink-2)}
+.ink-line{opacity:1}
+html:not([data-tier=static]):not([data-tier=lite]) .ink-line{opacity:.25;transition:opacity .5s ease}
+html:not([data-tier=static]):not([data-tier=lite]) .ink-line.in{opacity:1}
+.dbar{position:fixed;z-index:19;left:50%;transform:translateX(-50%);bottom:84px;width:calc(100% - 32px);max-width:398px;height:60px;border-radius:20px;display:flex;align-items:center;gap:6px;padding:0 6px 0 16px}
+.dbar .price{font-size:20px;margin-right:auto}
+.dbar .go{height:46px;padding:0 18px;border-radius:999px;background:var(--red-solid);color:var(--on-red);font-weight:800;box-shadow:var(--glow-red)}
+
+/* 拆开看看舞台：从下方升起盖住大图（只用 transform，不用布局动画） */
+/* 拆开看看舞台：和主页面同一套毛玻璃、圆角、阴影、纸纹（42号⑥，不要系统弹窗感） */
+.stage{position:fixed;z-index:30;left:50%;bottom:0;width:100%;max-width:430px;height:82vh;border-radius:24px 24px 0 0;padding:18px 20px 120px;overflow:auto;transform:translate(-50%,100%);
+  background:linear-gradient(180deg,var(--glass),var(--glass-solid)) ,url("paper-grain.svg");background-size:auto,240px 240px}
+.pill-btn{margin-left:auto;display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 16px;border-radius:999px;font-size:15px;font-weight:700;color:var(--ink)}
+.pill-btn svg{width:12px;height:12px;fill:var(--ink)}
+.layer::after{content:none}
+html:not([data-tier=static]) .stage{transition:transform .38s cubic-bezier(.32,.72,.28,1)} /* 合拢时用 inert 挡住，不用 visibility（48号：visibility 过渡在主线程） */
+.stage.open{transform:translate(-50%,0)}
+.stage-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.stage-head h3{font-size:20px;font-weight:800}
+.text-btn{margin-left:auto;display:flex;align-items:center;gap:8px;height:44px;font-size:15px;color:var(--ink);box-shadow:inset 0 -1px 0 var(--ink-2)}
+.layer{display:flex;gap:12px;align-items:flex-start;padding:12px 0;box-shadow:inset 0 -1px 0 var(--line)}
+.layer .tile{flex:none;width:56px;height:56px;border-radius:16px;background:var(--paper);display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--font-brush);font-size:15px;line-height:1.1;padding:4px;text-wrap:balance}
+.layer b{display:block;font-size:16px}
+.layer p{font-size:14px;color:var(--ink-2);line-height:1.6}
+html:not([data-tier=static]) .layer{opacity:0;transform:translateY(24px);transition:opacity .26s ease,transform .26s ease;transition-delay:calc(var(--r) * 120ms)}
+html:not([data-tier=static]) .stage.open .layer{opacity:1;transform:none;transition-delay:calc(var(--i) * 120ms + 200ms)}
+.scrim{position:fixed;inset:0;z-index:29;background:var(--scrim);opacity:0;pointer-events:none}
+html:not([data-tier=static]) .scrim{transition:opacity .3s}
+.scrim.on{opacity:1;pointer-events:auto}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+html[data-tier=static] *,html[data-tier=static] *::before,html[data-tier=static] *::after{animation:none!important;transition:none!important}
+.row-link{color:inherit;text-decoration:none}
+.circle-btn{color:inherit;text-decoration:none}
+/* 手机底部的系统横条：浮动栏都让开它 */
+.dock{bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.cartbar,.dbar{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+
+/* ---------- 53号 S0 补齐：表里没列、但按「radius ≥ 20px 且 ≥ 高度 40%」要圆的小件 ---------- */
+.thumb{border-radius:26px}                 /* 64px 缩略图：16px（25%）读作小圆角方块 → 26px（41%） */
+.today-img{border-radius:32px}             /* 80px 横幅卡图 */
+.layer .tile{border-radius:23px}           /* 56px 拆开看看食材块 */
+.cats{border-radius:22px}                  /* 分类条：原来只有上面两个角圆 → 胶囊（高 44） */
+.cartbar{border-radius:23px}               /* 56px 托盘 */
+.dock{border-radius:26px}                  /* 64px Dock */
+/* 豁免（S2，文化物件 / 印刷装饰，等高斯确认）：方印、金棕书签条、价格锚细线、招牌金棕竖条 */
+
+/* ---------- 53号 T：书法（马善政）升为标题标签层字体 ----------
+   换：菜名、价格整串、分组标题、分类条、底部导航、按钮字、桌号 + 等待时间、店名、横幅卡 / 价格锚菜名
+   不换（正文层永远易读字体）：菜品一句话、详情正文、食材说明、英文（Cinzel）、计数「13 道」、编号
+   书法只有一种粗细：不要浏览器假加粗，层级靠字号 + 墨色深浅 */
+.brush-ui,.store-name,.chip-table,.wait,.cat,.grp-head h2,.row-name .t,.price,.tab span,.gilt,.sum,.d-price,.xbtn,.pill-btn,.today-label,.today .price,.today-anchor b,.price-anchor b{
+  font-family:var(--font-brush);font-weight:400;font-synthesis:none;letter-spacing:.02em}
+.store-name{font-size:22px;line-height:1.2}
+.chip-table{font-size:16px;font-weight:400}
+.wait{font-size:14px}
+.wait b{font-size:21px;font-weight:400}
+.cat{font-size:15px}
+.cat.on{font-weight:400}
+.grp-head h2{font-size:20px;font-weight:400;color:var(--ink-deep);line-height:1.3}
+.row-name{font-weight:400}
+.row-name .t{font-size:18px;line-height:22px;color:var(--ink-deep)}
+.price{font-size:17px;font-weight:400;line-height:21px;color:var(--price)}
+.price small{font-family:var(--font-brush);font-size:14px;font-weight:400}
+.tab span{font-size:13px}
+.tab.on{color:var(--price);font-weight:400}
+.gilt{font-weight:400;font-size:17px;letter-spacing:.08em}
+.dock-go .stack b{font-size:17px;font-weight:400}
+.dock-go .stack span{font-size:15px;font-weight:400}
+.sum{font-size:19px;font-weight:400}
+.d-price{font-size:26px;font-weight:400;color:var(--price)}
+.dbar .price{font-size:21px}
+.xbtn{font-size:18px;font-weight:400}
+.xbtn small{font-family:var(--font-body)}
+.pill-btn{font-weight:400;font-size:16px}
+.today-label{font-size:15px}
+.today-label .en,.today .price,.today-anchor b{font-weight:400}
+
+/* ---------- 53号（按高斯原话修订） ---------- */
+/* 字号：店名、招牌三句再醒目一点；分类条大 2 号；底部页签大 1 号 */
+.store-name{font-size:24px}
+.trust{font-size:16px}
+.cat{font-size:17px}
+.tab span{font-size:14px}
+/* 标题标签层里的数字、英文走衬线体（XC Latin），字重拉到 600 和书法笔画分量相当；汉字仍是书法 */
+.store-name,.chip-table,.wait,.cat,.grp-head h2,.row-name .t,.price,.tab span,.gilt,.sum,.d-price,.xbtn,.pill-btn,.today-label,.today .price,.today-anchor b,.price-anchor b,.price small,.thumb span,.today-name,.badge{font-variation-settings:"wght" 600}
+.badge{font-family:var(--font-latin);font-weight:700}
+/* 详情正文（详细介绍、源流、工序、食材说明）用楷体，字号不变；区块标题保持粗黑 */
+.sec p,.step span,.layer p,.route-note{font-family:var(--font-kai)}
+
+/* 纸白毛玻璃：每块透多少 */
+.today.glass{--pg-a:.80}
+.store-hero .store.glass{--pg-a:.80}
+.cats{background:radial-gradient(120% 160% at 0% 0%,rgba(255,246,230,.06) 0%,rgba(255,246,230,0) 60%),rgba(255,253,246,.74);
+  -webkit-backdrop-filter:blur(12px) saturate(140%);backdrop-filter:blur(12px) saturate(140%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 color-mix(in srgb,var(--gold-line) 45%,transparent)}
+html[data-tier=lite] .cats{background:#FBF8F0}
+.qty .abacus{background:var(--abacus-sheen),rgba(255,253,246,.84);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 0 0 1px var(--line-strong),0 2px 6px rgba(43,38,34,.06)}
+/* 大画态小标签：高斯点名「原样保留」——仍是原来的白 72% + 柔投影（只是不再用真模糊，背后是静止的大图） */
+.price-anchor.glass{background:rgba(255,255,255,.72);background-blend-mode:normal;box-shadow:var(--shadow)}
+
+/* 大画卡：左右留 14px 屏边距（宽屏 24px），圆角 20px + 边缘光 + 轻投影，看得出是一张浮在纸上的卡 */
+.store-hero{margin:10px 14px 4px;border-radius:20px;box-shadow:0 10px 26px -10px rgba(43,38,34,.38)}
+.store-hero .hero-img,.store-hero .hero-spot,.store-hero .hero-paper{border-radius:20px}
+.store-hero::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 0 0 1px rgba(255,255,255,.28)}
+.store-hero .store{margin:10px 10px 0}
+@media (min-width:768px){.store-hero{margin-left:24px;margin-right:24px}}
+.today{width:calc(100% - 28px)} /* 横幅卡同步 14px 边距 */
+
+/* 水印 A：进大画卡内，大图下部、竖排 SIGNATURE 旁边，灰墨竖排 9%（画册落款） */
+.hero-wm{position:absolute;left:42px;bottom:16px;writing-mode:vertical-rl;font-family:var(--font-brush);font-size:26px;line-height:1;letter-spacing:.12em;color:var(--ink);opacity:.09;pointer-events:none}
+/* 水印 B：并入门店框下沿——灰墨书法店名 9%，压在框内右下、内容后面，不占高度（独立落款带会把首屏挤到 5 道） */
+.store.has-wm{position:relative;overflow:hidden}
+.store-wm{position:absolute;right:12px;bottom:12px;font-family:var(--font-brush);font-size:19px;line-height:1;letter-spacing:.04em;color:var(--ink);opacity:.1;pointer-events:none} /* 只占招牌三句右边空出来的约 90px，不压字 */
+.store.has-wm>*:not(.store-wm){position:relative}/* 水印 B 只在招牌三句右边放得下时出现（门店框内宽 ≥ 316px，约等于 375 宽以上的手机）；更窄的屏幕宁可不出，也不压字 */
+.store.has-wm{container-type:inline-size}
+@container (max-width:314px){.store-wm{display:none}}
+/* 53号修订：.78 在截图里和原来的白板几乎看不出区别——透感再往下一档，让墨晕、水印隐约透上来（仍是「一点点」） */
+.card.glass{--pg-a:.68}
+.store.glass{--pg-a:.72}
+.cats{background:radial-gradient(120% 160% at 0% 0%,rgba(255,246,230,.06) 0%,rgba(255,246,230,0) 60%),rgba(255,253,246,.70)}
+/* 53号（高斯）点按印章：全页统一的红色「湘」字小印（圆印，和店标同形，小一号）；不挡点按 */
+.tap-seal{position:fixed;z-index:60;width:30px;height:30px;font-size:17px;pointer-events:none;opacity:0;transform:translate(-50%,-50%) rotate(-8deg);background:rgba(255,253,246,.35);will-change:transform,opacity}
+/* 53号（高斯）：大水印「湘村小灶」从背景层挪到面板前面——压在店名框、分类条、列表上（托盘、Dock 之下），7% 浅墨：
+   白处看得出一层灰墨字，字处仍是原来的墨色，不挡点按。手机上不会再被面板盖死 */
+.wm{z-index:2}
+.wm span{opacity:.07} /* 先用正片叠底，6 倍降速连点加购多出一个长帧；7% 浅墨在纸白上普通叠加看起来一样，改普通 */
+
+/* ---------- 53号（高斯）大画态多张：左右滑动切换，后面露出叠着的卡（堆叠态） ---------- */
+.hero-stack{position:relative;isolation:isolate;margin:10px 14px 16px}
+.hero-stack .store-hero{margin:0;z-index:1}
+@media (min-width:768px){.hero-stack{margin-left:24px;margin-right:24px}}
+/* 一摞卡：下面露出两层边（越往下越窄越淡），告诉人「还有好几张」 */
+.hero-stack.deck::before,.hero-stack.deck::after{content:'';position:absolute;z-index:-1;height:44px;border-radius:0 0 18px 18px;background:rgba(255,253,246,.66);box-shadow:inset 0 -1px 0 rgba(255,255,255,.5),0 6px 14px -8px rgba(43,38,34,.35)}
+.hero-stack.deck::before{left:12px;right:12px;bottom:-7px}
+.hero-stack.deck::after{left:26px;right:26px;bottom:-13px;opacity:.6}
+.hero-track{position:absolute;inset:0;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;border-radius:inherit}
+.hero-track::-webkit-scrollbar{display:none}
+.hero-slide{position:relative;flex:0 0 100%;height:100%;scroll-snap-align:center;scroll-snap-stop:always;overflow:hidden;border-radius:inherit}
+.hero-stack .store-hero .store{z-index:2}
+/* 第几张：门店框下面右侧一排小点（不压价格锚、不压竖排字） */
+.hero-dots{position:absolute;z-index:2;right:20px;top:118px;display:flex;gap:6px;pointer-events:none}
+.hero-dots i{width:6px;height:6px;border-radius:50%;background:rgba(43,38,34,.28)}
+.hero-dots i.on{background:var(--red)}
+/* 支持滚动驱动动画的浏览器：滑走的那张轻轻缩小变淡，像从一摞里抽走（合成层，只动 transform / opacity）；不支持就是普通滑动 */
+@supports (animation-timeline: view()){
+  html:not([data-tier=static]):not([data-tier=lite]) .hero-slide{animation:deck linear both;animation-timeline:view(inline)}
+  @keyframes deck{entry 0%{transform:scale(.9);opacity:.55}entry 100%{transform:none;opacity:1}exit 0%{transform:none;opacity:1}exit 100%{transform:scale(.9);opacity:.55}}
+}
+
+/* ---------- 53号（高斯）详情页：大图位留给实物图 / 手绘图；英文竖排 + 书法菜名 + 一笔浓墨 + 方印 挪到价格上面当标题 ---------- */
+.hero .hero-img.ph .n,.hero .hero-img.ph::before{display:none} /* 没图时大图位只留水墨底 + 云斑，等实物图 */
+.title-lockup{display:flex;align-items:flex-start;gap:12px;margin:2px 0 4px}
+.lockup-en{writing-mode:vertical-rl;font-size:11px;letter-spacing:.28em;margin-top:6px;flex:none}
+.lockup-main{position:relative;flex:none;max-width:calc(100% - 24px);padding:2px 40px 22px 2px} /* 宽度贴着菜名，方印正好落在名字后面 */
+.title-lockup .d-title{display:block;font-size:34px;line-height:1.2}
+.title-lockup .d-title::after{display:none} /* 原来的印泥底色换成下面这一笔浓墨 */
+.lockup-stroke{position:absolute;left:-6px;right:24px;bottom:-4px;height:44px;background-size:100% 100%;opacity:.55;filter:blur(.5px);pointer-events:none}
+.lockup-main .sq-seal{position:absolute;right:0;bottom:14px}
