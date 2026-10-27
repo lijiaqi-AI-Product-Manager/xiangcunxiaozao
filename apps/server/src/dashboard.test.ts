@@ -71,17 +71,24 @@ describe('数据看板简版（31号：今日营收 / 订单数 / 储值变动�
     expect(d.byMethod.reduce((n, x) => n + x.netSen, 0)).toBe(d.netSen); // 拆分合计 = 总实收
   });
 
-  it('混合支付：储值部分记储值，其余记另一种方式；部分退款按「储值先退」分到两边', async () => {
+  it('混合支付：储值部分记储值，其余记另一种方式；部分退款按比例分摊到两边', async () => {
     const m = await member(3000); // 余额 30
     const o = await order([['e01', 1], ['c03', 1]], 'cash', { member: m.token, useStoredValue: true }); // 73 = 储值 30 + 现金 43
     expect(o).toMatchObject({ storedSen: 3000, otherSen: 4300 });
     const frogLine = o.items.find((i) => i.dishUid === 'e01')!.line;
-    await req(`/api/admin/orders/${o.id}/refund`, { body: { lines: [{ line: frogLine, qty: 1 }], reason: '上错菜', requestId: randomUUID() }, admin: true }); // 退 48：储值先退 30，柜台退 18
+    await req(`/api/admin/orders/${o.id}/refund`, { body: { lines: [{ line: frogLine, qty: 1 }], reason: '上错菜', requestId: randomUUID() }, admin: true }); // 退 48
+    // 退 48 占整单 73 的 4800/7300，按「各付了多少」等比例退回：
+    //   储值 3000 × 4800/7300 = 1972.6 → 1973
+    //   现金 4300 × 4800/7300 = 2827.4 → 2827（余数落到最后一行）
+    // 这样顾客手上两种钱的比例不变；旧规则「储值先退」会把储值掏空、现金几乎没退。
     const day = (await dash()).day;
     const by = Object.fromEntries(day.byMethod.map((x) => [x.method, x]));
-    expect(by['stored-value']).toMatchObject({ orders: 1, grossSen: 3000, refundSen: 3000, netSen: 0 });
-    expect(by.cash).toMatchObject({ orders: 1, grossSen: 4300, refundSen: 1800, netSen: 2500 });
+    expect(by['stored-value']).toMatchObject({ orders: 1, grossSen: 3000, refundSen: 1973, netSen: 1027 });
+    expect(by.cash).toMatchObject({ orders: 1, grossSen: 4300, refundSen: 2827, netSen: 1473 });
     expect(day).toMatchObject({ orders: 1, grossSen: 7300, refundSen: 4800, netSen: 2500 });
+    // 退回的储值确实回到了会员余额里（余额 30 全花掉，退了 19.73 → 19.73）
+    const detail = (await (await req(`/api/admin/members/${m.id}`, { admin: true })).json()) as { member: { balanceSen: number } };
+    expect(detail.member.balanceSen).toBe(1973);
   });
 
   it('储值变动：充值、消费、退回、调整逐项合计，净变动 = 全店余额变化', async () => {

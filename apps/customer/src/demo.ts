@@ -7,7 +7,9 @@ import { safeStorage } from '@pkg/ui-kit';
 import { brand } from './common.tsx';
 
 interface DemoData { menu: Menu; faq: Faq; today: TodaySignature; info: StoreInfo }
-interface State { carts: Record<string, { uid: string; qty: number }[]>; orders: (Omit<Order, 'status' | 'etaMinutes' | 'updatedAt'> & { device: string })[] }
+// 购物车行 = 一道菜 + 一个辣度 + 一条备注（P1-9），跟服务端一致
+interface DemoLine { id: string; uid: string; qty: number; spice: string; note: string }
+interface State { carts: Record<string, DemoLine[]>; orders: (Omit<Order, 'status' | 'etaMinutes' | 'updatedAt'> & { device: string })[] }
 
 const KEY = 'demo-state';
 // 演示用的出餐节奏：下单后 15 秒开始制作、45 秒完成（只为让取餐页的进度动起来看效果）
@@ -36,7 +38,11 @@ export async function installDemo() {
       const d = dishes.get(it.uid);
       const price = d?.priceSen ?? null;
       const reason = !d || price === null ? ('off' as const) : d.soldOut ? ('soldout' as const) : null;
-      return { dishUid: it.uid, code: d?.code ?? '', name: d?.name ?? '已下架的菜品', priceSen: price, qty: it.qty, subtotalSen: price === null ? 0 : price * it.qty, available: reason === null, unavailableReason: reason };
+      return {
+        id: it.id, dishUid: it.uid, code: d?.code ?? '', name: d?.name ?? '已下架的菜品', priceSen: price, qty: it.qty,
+        subtotalSen: price === null ? 0 : price * it.qty, spice: it.spice, note: it.note,
+        available: reason === null, unavailableReason: reason,
+      };
     });
     return { id, lines, count: lines.reduce((n, l) => n + l.qty, 0), totalSen: lines.reduce((n, l) => n + l.subtotalSen, 0), updatedAt: now() };
   };
@@ -73,17 +79,38 @@ export async function installDemo() {
     },
     'POST /api/cart/update': (b) => {
       const id = mustCart(b.cartId);
+      const items = state.carts[id]!;
+      // 按行改数量（新）或按菜改数量（老调用），两条路都留着
+      if (typeof b.lineId === 'string') {
+        const line = items.find((x) => x.id === b.lineId);
+        if (!line) throw new Fail(404, '这一行已经不在购物车里了，刷新看看');
+        const qty = Number(b.qty);
+        if (!Number.isInteger(qty) || qty < 0 || qty > 99) throw new Fail(400, '数量需在 0 到 99 之间');
+        if (qty === 0) state.carts[id] = items.filter((x) => x.id !== line.id);
+        else line.qty = qty;
+        save();
+        return cartView(id);
+      }
       const qty = Number(b.qty);
       if (!Number.isInteger(qty) || qty < 0 || qty > 99) throw new Fail(400, '数量需在 0 到 99 之间');
-      const items = state.carts[id]!;
-      const had = items.find((x) => x.uid === b.dishUid);
-      if (qty === 0) state.carts[id] = items.filter((x) => x.uid !== b.dishUid);
+      const spice = String(b.spice ?? '');
+      const note = String(b.note ?? '');
+      // 同菜同辣度同备注 = 同一行
+      const had = items.find((x) => x.uid === b.dishUid && x.spice === spice && x.note === note);
+      if (qty === 0) state.carts[id] = items.filter((x) => !(x.uid === b.dishUid && x.spice === spice && x.note === note));
       else {
         const d = dishes.get(String(b.dishUid));
         if (!d) throw new Fail(404, '这道菜暂时不能点');
         if (d.soldOut && qty > (had?.qty ?? 0)) throw new Fail(409, `「${d.name}」今日已售罄`);
-        if (had) had.qty = qty; else items.push({ uid: d.uid, qty });
+        if (had) had.qty = qty;
+        else items.push({ id: crypto.randomUUID(), uid: d.uid, qty, spice, note });
       }
+      save();
+      return cartView(id);
+    },
+    'POST /api/cart/remove': (b) => {
+      const id = mustCart(b.cartId);
+      state.carts[id] = state.carts[id]!.filter((x) => x.id !== b.lineId);
       save();
       return cartView(id);
     },
@@ -101,14 +128,19 @@ export async function installDemo() {
     },
     'POST /api/cart/buyAgain': (b) => {
       const id = mustCart(b.cartId);
-      const o = state.orders.find((x) => x.id === b.orderId && x.device === id);
+      // 同一台手机 = 同一个设备号（订单不再按购物车 id 归属，见 submit 里的说明）
+      const device = typeof b.deviceId === 'string' && b.deviceId ? b.deviceId : id;
+      const o = state.orders.find((x) => x.id === b.orderId && x.device === device);
       if (!o) throw new Fail(404, '找不到这张订单');
       const skipped: string[] = [];
       for (const it of o.items) {
         const d = dishes.get(it.dishUid);
         if (!d || d.soldOut) { skipped.push(it.name); continue; }
-        const had = state.carts[id]!.find((x) => x.uid === it.dishUid);
-        if (had) had.qty = Math.min(99, had.qty + it.qty); else state.carts[id]!.push({ uid: it.dishUid, qty: Math.min(99, it.qty) });
+        const spice = it.spice ?? '';
+        const note = it.note ?? '';
+        const had = state.carts[id]!.find((x) => x.uid === it.dishUid && x.spice === spice && x.note === note);
+        if (had) had.qty = Math.min(99, had.qty + it.qty);
+        else state.carts[id]!.push({ id: crypto.randomUUID(), uid: it.dishUid, qty: Math.min(99, it.qty), spice, note });
       }
       save();
       return { cart: cartView(id), skipped };
@@ -125,11 +157,16 @@ export async function installDemo() {
       const gone = cart.lines.filter((l) => !l.available);
       if (gone.length) throw new Fail(409, `以下菜品暂时不能点，请先从购物车移除：${gone.map((l) => l.name).join('、')}`);
       const at = now();
+      // 订单挂在「设备号」名下，不是购物车 id：下单后购物车会被清空换号，
+      // 取餐页和「我的订单」都靠设备号找自己的单（和正式服务端一致）。
+      const device = typeof b.deviceId === 'string' && b.deviceId ? b.deviceId : id;
       const o = {
-        id: crypto.randomUUID(), device: id, pickupNo: state.orders.reduce((n, x) => Math.max(n, x.pickupNo), 0) + 1, businessDate: formatDate(at, brand.timezone),
+        id: crypto.randomUUID(), device, pickupNo: state.orders.reduce((n, x) => Math.max(n, x.pickupNo), 0) + 1, businessDate: formatDate(at, brand.timezone),
         tableNo, paymentMethod: pm.key, note: String(b.note ?? '').trim() || null, totalSen: cart.totalSen, cancelReason: null, createdAt: at,
-        items: cart.lines.map((l, i) => ({ line: i + 1, dishUid: l.dishUid, code: l.code, name: l.name, priceSen: l.priceSen ?? 0, qty: l.qty, refundedQty: 0 })),
-        storedSen: 0, otherSen: cart.totalSen, refundState: 'none' as const, refundedSen: 0, refunds: [], autoCancelled: false,
+        items: cart.lines.map((l, i) => ({ line: i + 1, dishUid: l.dishUid, code: l.code, name: l.name, priceSen: l.priceSen ?? 0, qty: l.qty, refundedQty: 0, spice: l.spice ?? '', note: l.note ?? '' })),
+        storedSen: 0, otherSen: cart.totalSen, refundState: 'none' as const, refundedSen: 0, refunds: [], autoCancelled: false, version: 0,
+        // 演示版不做加菜：这三个字段留空，接口形状和正式版保持一致
+        parentOrderId: null, addSeq: null, groupTotalSen: cart.totalSen, groupRefundedSen: 0, addCount: 0,
       };
       state.orders.push(o);
       state.carts[id] = [];

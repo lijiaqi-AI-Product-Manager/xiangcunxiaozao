@@ -87,6 +87,9 @@ html:not([data-tier=static]):not([data-tier=lite]) .progress li.now i { animatio
 .order-row.status-cancelled .order-no { opacity: .55; }
 .order-body { flex: 1; min-width: 0; }
 .order-when { font-size: 15px; }
+/* 「我的订单」展开 / 收起的入口：只在超过 5 单时出现，不抢主视觉 */
+.more-orders { margin-top: 10px; font-size: 15px; }
+
 
 /* ---------- 会员：会员卡 = 大画态小标签的放大版（白底大圆角 + 朱砂红 + 柔投影，浮在水墨上） ---------- */
 .rules .rule-text { font-size: 15px; line-height: 1.75; }
@@ -193,3 +196,121 @@ html:not([data-tier=static]) .balance { animation: balance-in .5s cubic-bezier(.
 .me-tile.tone-black .ico { filter: none; }
 
 .order-when .st { white-space: nowrap; }
+
+/* 下单出错时的卡片：除了说明原因，还要给一个「去查我的订单」的出口（弱网下订单很可能已经建好了） */
+.checkout-error p { margin: 0; }
+.checkout-error .btn.link { margin-top: 8px; padding: 0; min-height: 32px; font-size: 14px; text-decoration: underline; color: inherit; }
+
+/* ---------------- 逐菜辣度与备注（P1-9） ---------------- */
+/* 结算页：辣度/备注以小标签跟在菜名后面，一眼看出「这份是谁的」 */
+.line-tags { display: inline-flex; flex-wrap: wrap; gap: 6px; margin-left: 8px; vertical-align: middle; }
+.tag-spice { padding: 1px 8px; border-radius: 999px; font-size: 12px; line-height: 1.6; color: var(--price); box-shadow: inset 0 0 0 1px var(--price); white-space: nowrap; }
+.tag-note { padding: 1px 8px; border-radius: 999px; font-size: 12px; line-height: 1.6; color: var(--ink-2); background: color-mix(in srgb, var(--paper-white) 70%, transparent); box-shadow: inset 0 0 0 1px var(--line); white-space: nowrap; }
+
+/* 购物车弹层：每行下面的辣度条 + 备注入口 */
+.line { display: flex; flex-wrap: wrap; }
+.line-opt { flex: 0 0 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px; }
+.line-opt-label { font-size: 13px; color: var(--ink-3); }
+.chips.tight { gap: 6px; }
+.chip.small { min-height: 32px; padding: 0 12px; border-radius: 16px; font-size: 14px; }
+.link.small { font-size: 13px; }
+.note-input { display: inline-flex; align-items: center; gap: 8px; }
+.note-input input {
+  width: 150px; min-height: 32px; padding: 0 10px; border-radius: 16px; font-size: 14px;
+  background: color-mix(in srgb, var(--paper-white) 85%, transparent); box-shadow: inset 0 0 0 1px var(--line-strong); color: var(--ink);
+}
+
+/* 取消/退款提示条（P2-8）：顶在号码牌前面，顾客一眼就看见 */
+.alert-bar {
+  display: flex; flex-direction: column; gap: 2px; margin-bottom: 12px; padding: 12px 14px;
+  border-radius: 14px; background: color-mix(in srgb, var(--price) 10%, transparent);
+  box-shadow: inset 0 0 0 1.5px var(--price); color: var(--ink);
+}
+.alert-bar strong { color: var(--price); font-size: 16px; }
+.alert-bar span { font-size: 14px; color: var(--ink-2); }
+.alert-bar.warn { background: color-mix(in srgb, var(--ink-3) 8%, transparent); box-shadow: inset 0 0 0 1.5px var(--line-strong); }
+.alert-bar.warn strong { color: var(--ink); }
+
+/* 扫码带入的桌号：只读胶囊 + 「改桌号」（P2-2） */
+.table-locked { display: flex; align-items: center; gap: 12px; }
+.table-pill {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border-radius: 22px;
+  font-size: 20px; color: var(--ink); background: color-mix(in srgb, var(--paper-white) 85%, transparent);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+
+/* 错误条出现时弹一下（P2-11）：静态出现的提示在手机上经常被当成「刚才就有」 */
+.pop { animation: pop-in .28s cubic-bezier(.2, .9, .3, 1.2) both; }
+@keyframes pop-in { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .pop { animation: none; } }
+
+/* ---------------- 加菜（P2-6） ----------------
+   顾客吃到一半加一瓶饮料。整套界面只在说一件事：「还是同一个号、没给你新开单」。
+   所以这里的文案全是「给 018 加菜 / 取餐号还是 018」，而不是「下单成功」。 */
+
+/* 确认条：贴着购物车托盘上方一条，说明当前在给谁加菜 */
+.addto-bar {
+  position: fixed; z-index: 20; left: 0; right: 0; margin: 0 auto;
+  bottom: calc(148px + env(safe-area-inset-bottom, 0px));
+  width: calc(100% - 32px); max-width: 398px;
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 20px;
+  background: color-mix(in srgb, var(--paper-white) 92%, transparent);
+  box-shadow: inset 0 0 0 1.5px var(--price-line), 0 8px 24px -14px var(--ink);
+  color: var(--ink);
+}
+.addto-bar > div { flex: 1; min-width: 0; }
+.addto-bar strong { font-size: 15px; color: var(--price); }
+.addto-bar p { margin: 2px 0 0; }
+.addto-bar .btn.ghost { flex: none; height: 36px; padding: 0 14px; font-size: 14px; }
+
+/* 取餐页 / 订单行上的「加菜」入口：用描边而不是实心，
+   让「加菜」永远比不上「去取餐」显眼——加菜是少数情况，大部分顾客只是来看号的 */
+.add-dishes-btn {
+  margin-top: 12px; color: var(--price);
+  background: color-mix(in srgb, var(--paper-white) 65%, transparent);
+  box-shadow: inset 0 0 0 1.5px var(--price-line);
+}
+.add-note { margin: 8px 0 0; }
+/* 我的订单里，父单那一行补一句「加过几次、一共多少」（P2-6） */
+.add-row-note { color: var(--price); }
+
+/* 结算页在加菜模式下顶部的说明：先讲「号不变」，再讲别的 */
+.addto-hint {
+  display: flex; flex-direction: column; gap: 2px; margin: 0 0 12px; padding: 12px 14px; border-radius: 18px;
+  background: color-mix(in srgb, var(--price) 8%, transparent);
+  box-shadow: inset 0 0 0 1.5px var(--price-line);
+}
+.addto-hint strong { font-size: 16px; color: var(--price); }
+
+/* 加菜成功的回执：小票式，一句话说清「号没变、加了什么、一共多少」。
+   在取餐页里它走**流内**（不是浮层）：取餐页从标题到小票是满的，
+   任何浮起来的条都会压住号码牌——而那恰恰是顾客切回这一页唯一要看的东西。
+   其它页面（比如从「我的订单」加菜）没有这个顾虑，才用浮层。 */
+.added-notice {
+  margin: 0 0 14px; padding: 16px 18px; border-radius: 22px;
+  box-shadow: inset 0 0 0 1.5px var(--price-line), 0 18px 40px -26px var(--ink);
+  animation: added-in 320ms cubic-bezier(.2,.9,.3,1.1) both;
+}
+/* 浮层版：贴顶，压住的内容最少 */
+.added-notice.floating {
+  position: fixed; z-index: 21; left: 0; right: 0; margin: 0 auto;
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  width: calc(100% - 32px); max-width: 398px;
+}
+@keyframes added-in { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
+.added-notice .added-title { margin: 0 0 4px; font-size: 16px; color: var(--ink); }
+.added-notice .added-title strong { color: var(--price); }
+.added-notice .btn { margin-top: 12px; }
+
+/* ---------- 页内确认框（ask.tsx）：代替原生 confirm，平板上不弹的问题在这里彻底绕开 ---------- */
+.ask-mask { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 24px; background: var(--scrim); }
+.ask-box {
+  width: 100%; max-width: 340px; padding: 22px 20px 16px; border-radius: 24px;
+  background: linear-gradient(180deg, var(--paper), var(--paper-2)); box-shadow: var(--glass-edges);
+}
+.ask-title { margin: 0; font-family: var(--font-family-brush); font-size: 20px; line-height: 1.4; color: var(--ink-deep); font-variation-settings: "wght" 600; }
+.ask-detail { margin: 10px 0 0; font-size: 15px; line-height: 1.6; color: var(--ink-2); white-space: pre-line; }
+.ask-actions { display: flex; gap: 10px; margin-top: 18px; }
+.ask-actions button { flex: 1; min-height: 48px; border: 0; border-radius: 20px; font-size: 16px; font-family: inherit; }
+.ask-actions .btn-ghost { background: color-mix(in srgb, var(--paper-white) 80%, transparent); color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line-strong); }
+.ask-actions .btn-solid { background: var(--price); color: var(--paper-white); font-weight: 700; box-shadow: var(--glow-red); }

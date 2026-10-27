@@ -3,7 +3,10 @@
 // 3 倍像素密度 + 整页长图：375 宽的手机页面出图 1125 像素宽，打印到 A4 上文字仍能逐字核对
 import { copyFileSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
+import Database from 'better-sqlite3';
 import { expect, test, type Browser, type BrowserContext, type Page } from '@playwright/test';
+
+import { confirmDialog } from './helpers.ts';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const SHOTS = resolve(ROOT, 'docs', 'screenshots', 'p3-batch1');
@@ -123,15 +126,47 @@ test('详情页交互：从菜单点进、加购、返回原位置；拆开看�
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(y);
   await expect(page.getByLabel('农家一碗香 已选 1 份')).toBeVisible();
 
-  // 已下架的菜（第三批测试把爆炒土豆丝下架了）：旧链接打开只说找不到，不报错
+  // 已下架的菜：旧链接打开只说找不到，不报错。
+  // 这里不用「指望第三批把爆炒土豆丝下架了」——单独跑这条时它还在售，链接就能正常打开。
+  // 自己先把它下架，验完再恢复，用例之间不留依赖。
+  {
+    const db = new Database(resolve(ROOT, 'data', 'e2e.db'));
+    try {
+      db.prepare("INSERT INTO dish_overrides (dish_uid, listed, price_sen, image_closed, sold_out_date, updated_at) VALUES ('b02', 0, NULL, NULL, NULL, ?) ON CONFLICT(dish_uid) DO UPDATE SET listed = 0, updated_at = excluded.updated_at")
+        .run(new Date().toISOString());
+    } finally {
+      db.close();
+    }
+  }
   await page.goto(`${CUSTOMER}/?table=8#dish/b02`);
   await expect(page.getByRole('heading', { name: '没有找到这道菜' })).toBeVisible();
   await page.getByRole('button', { name: '回到菜单' }).click();
+  {
+    const db = new Database(resolve(ROOT, 'data', 'e2e.db'));
+    try {
+      db.prepare("DELETE FROM dish_overrides WHERE dish_uid = 'b02'").run();
+    } finally {
+      db.close();
+    }
+  }
 
-  // 30号 §三.4：前面几批测试跑完，招牌跳跳蛙恢复原样（原价 48、没有测试图）
+  // 没传图的菜：菜名照常显示，大图位是占位（不空着、不裂图）。
+  //
+  // 以前这里写的是「招牌跳跳蛙没有测试图」——那是在断言**别的用例没给它传图**，
+  // 属于隐式依赖：单跑绿、连跑红，红在一个跟详情页毫无关系的地方。
+  // 现在先把这张图清干净（自己造前提），验完就结束，不改动别的用例的数据。
+  {
+    const db = new Database(resolve(ROOT, 'data', 'e2e.db'));
+    try {
+      db.prepare("DELETE FROM dish_overrides WHERE dish_uid = 'e01'").run();
+    } finally {
+      db.close();
+    }
+  }
   await page.goto(`${CUSTOMER}/?table=8#dish/e01`);
   await expect(page.locator('.detail-price')).toContainText('RM 48');
   await expect(page.locator('.detail-hero img')).toHaveCount(0);
+  await expect(page.locator('.detail-hero .hero-img.ph')).toBeVisible();
 
   // 30号 高斯：背景水印在手机上完整显示，不被屏幕上下左右切掉
   const wm = await page.locator('.watermark > span').boundingBox();
@@ -148,18 +183,49 @@ test('详情页交互：从菜单点进、加购、返回原位置；拆开看�
 });
 
 test('老板端：系统自动取消（全部菜品已退款）的单醒目标出，和手动取消分开', async ({ browser }) => {
-  // 第四批测试里已经产生过一张「全部菜品已退款」自动取消单，以及若干店员手动取消单
   const desk = await (await browser.newContext({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 2 })).newPage();
-  await desk.goto(ADMIN);
-  await desk.getByLabel('老板密码').fill('e2e-test-password');
-  await desk.getByRole('button', { name: '登录' }).click();
+  const phone = await (await browser.newContext({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true })).newPage();
+
+  // 以前这条靠「第四批测试已经产生过一张自动取消单」，单独跑就是红的。
+  // 自己造一张：下单 → 把唯一的菜整行退款 → 系统自动取消。
+  // 注意不能假设「整个系统里只有我这一张」：连跑时前面的用例也会造自动取消单，
+  // 所以下面一律按**单号**定位，不断言总数。
+  let myNo = '';
+  await test.step('自己造一张「全部菜品已退款」自动取消单', async () => {
+    await phone.goto(`${CUSTOMER}/?table=11`);
+    await phone.getByRole('button', { name: '加购 农家一碗香' }).click();
+    await expect(phone.locator('.cartbar-go')).toBeVisible({ timeout: 10000 });
+    await phone.locator('.cartbar-go').click();
+    await phone.getByText('现金（到柜台）').click();
+    await phone.getByRole('button', { name: /提交订单/ }).click();
+    const no = (await phone.locator('.hero-no').innerText()).trim();
+    myNo = no;
+
+    await desk.goto(ADMIN);
+    await desk.getByLabel('老板密码').fill('e2e-test-password');
+    await desk.getByRole('button', { name: '登录' }).click();
+    const ticket = desk.locator('.ticket', { has: desk.locator('.ticket-no', { hasText: no }) });
+    await expect(ticket).toBeVisible();
+    await ticket.getByRole('button', { name: '退款' }).first().click();
+    // 退款框要先选份数、写原因，「确认退款」才会亮
+    const box = ticket.getByRole('group', { name: /号单退款/ });
+    await box.getByRole('button', { name: '多退一份 农家一碗香' }).click();
+    await box.getByRole('button', { name: '客人退菜' }).click();
+    await box.getByRole('button', { name: '确认退款' }).click();
+    await confirmDialog(desk, '确认退款');
+    await expect(desk.locator('.cancelled')).toContainText(no);
+  });
+
   const panel = desk.locator('details.cancelled');
-  await expect(panel.locator('summary')).toContainText('其中 1 单系统自动取消');
+  // 折叠标题里带「其中 N 单系统自动取消」，N 至少 1（我这张），别人造的不算错
+  await expect(panel.locator('summary')).toContainText(/其中 \d+ 单系统自动取消/);
   await panel.locator('summary').click();
-  const auto = panel.locator('.cancel-row.auto');
-  await expect(auto).toHaveCount(1);
-  await expect(auto).toContainText('系统自动取消');
-  await expect(auto).toContainText('全部菜品已退款');
+  // 我这张单必须**在自动取消那一组里**，并且写明原因
+  const mine = panel.locator('.cancel-row.auto', { hasText: myNo });
+  await expect(mine).toHaveCount(1);
+  await expect(mine).toContainText('系统自动取消');
+  await expect(mine).toContainText('全部菜品已退款');
+  // 手动取消的那些行不许挂「自动」角标（两类必须分得开，这是这条用例真正要验的事）
   expect(await panel.locator('.cancel-row:not(.auto) .auto-badge').count()).toBe(0);
   await panel.scrollIntoViewIfNeeded();
   await panel.screenshot({ path: resolve(SHOTS, '老板-自动取消单标出.png') });

@@ -42,6 +42,9 @@ export const Dish = z.object({
   images: z.object({
     closed: z.string().nullable(),
     exploded: z.string().nullable(),
+    // 小格子用的小图（点单页每行左边 64×64、详情页标题上方那条）。
+    // 老板在后台传图时顺手压一张 200px 的；没有就跟 closed 用同一张——两处永远是同一道菜、同一张图。
+    thumb: z.string().nullable().default(null),
   }),
   disassembly: Disassembly,
   orderable: z.boolean(),

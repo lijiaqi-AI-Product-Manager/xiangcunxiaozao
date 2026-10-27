@@ -1,5 +1,5 @@
 import { createHash, randomBytes, randomUUID, scryptSync, timingSafeEqual } from 'node:crypto';
-import { maskPhone, type LedgerEntry, type LedgerType, type Member, type MemberDetail, type ReconcileRun } from '@pkg/contract';
+import { formatMoney, maskPhone, type LedgerEntry, type LedgerType, type Member, type MemberDetail, type ReconcileRun } from '@pkg/contract';
 import type { LockoutGuard } from './auth.ts';
 import type { DB } from './db.ts';
 import { HttpError, type Clock } from './support.ts';
@@ -42,7 +42,7 @@ export function postLedger(
   const balance = db.prepare('SELECT balance_sen FROM members WHERE id = ?').pluck().get(e.memberId) as number | undefined;
   if (balance === undefined) throw new HttpError(404, '找不到这位会员');
   const after = balance + e.amountSen;
-  if (after < 0) throw new HttpError(409, `余额不足：当前余额 RM ${(balance / 100).toFixed(2)}`);
+  if (after < 0) throw new HttpError(409, `余额不足：当前余额 RM ${formatMoney(balance)}`);
   const r = db.prepare(`INSERT INTO ledger_entries (member_id, created_at, type, amount_sen, balance_after_sen, operator, note, order_id, idempotency_key)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`)
     .run(e.memberId, e.at, e.type, e.amountSen, after, e.operator, e.note ?? null, e.orderId ?? null, e.key);
@@ -121,13 +121,23 @@ export class MemberService {
                                   FROM members m LEFT JOIN ledger_entries l ON l.member_id = m.id
                                   GROUP BY m.id`).all() as { memberNo: string; balanceSen: number; ledgerSumSen: number }[];
     const run = { at: this.now(), checked: rows.length, mismatches: rows.filter((r) => r.balanceSen !== r.ledgerSumSen) };
-    this.db.prepare('INSERT INTO reconcile_runs (at, checked, mismatches) VALUES (?, ?, ?)').run(run.at, run.checked, JSON.stringify(run.mismatches));
+    // 一位会员都没有时不落记录：全新店铺首次启动会走一遍空对账，
+    // 落一条「checked: 0」下去，老板端此后 20 小时都会显示「对账正常：0 位会员」——
+    // 其实是「什么都没核对」，办了卡、收了充值也照样这么说。空对账等于没对账。
+    if (rows.length > 0) {
+      this.db.prepare('INSERT INTO reconcile_runs (at, checked, mismatches) VALUES (?, ?, ?)').run(run.at, run.checked, JSON.stringify(run.mismatches));
+    }
     return run;
   }
 
+  /** 最近一次对账。`uncheckedCount` = 此刻的会员总数 − 上次对账核过的数量：
+   *  大于 0 说明有人从来没被核对过（新办卡、或上次对账时还没这些人），不能对外说「全部一致」。 */
   lastReconcile(): ReconcileRun | null {
     const r = this.db.prepare('SELECT at, checked, mismatches FROM reconcile_runs ORDER BY id DESC LIMIT 1').get() as { at: string; checked: number; mismatches: string } | undefined;
-    return r ? { at: r.at, checked: r.checked, mismatches: JSON.parse(r.mismatches) as ReconcileRun['mismatches'] } : null;
+    if (!r) return null;
+    const total = (this.db.prepare('SELECT COUNT(*) AS n FROM members').get() as { n: number }).n;
+    const run: ReconcileRun = { at: r.at, checked: r.checked, mismatches: JSON.parse(r.mismatches) as ReconcileRun['mismatches'] };
+    return { ...run, uncheckedCount: Math.max(0, total - run.checked) };
   }
 
   // ---------- 顾客端 ----------

@@ -42,6 +42,8 @@ export const ReconcileRun = z.object({
   at: z.string(),
   checked: z.number().int(),
   mismatches: z.array(z.object({ memberNo: z.string(), balanceSen: z.number().int(), ledgerSumSen: z.number().int() })),
+  /** 上次对账之后才出现、从没被核对过的会员数。缺省视为 0（手动对账的返回里没有这一项） */
+  uncheckedCount: z.number().int().nonnegative().optional(),
 });
 export type ReconcileRun = z.infer<typeof ReconcileRun>;
 

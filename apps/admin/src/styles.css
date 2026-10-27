@@ -96,14 +96,24 @@ input {
 .ticket.flash { border-color: var(--color-accent); box-shadow: 0 0 0 1px var(--color-accent), 0 0 24px var(--color-accent); }
 .ticket header { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
 .ticket-no { font-size: 40px; font-weight: 800; line-height: 1; color: var(--color-accent); font-variant-numeric: tabular-nums; }
-.ticket-meta { display: flex; flex-direction: column; font-size: 14px; }
+/* .ticket-meta flex:1 + min-width:0：加了「加菜」标记之后，卡头多一个元素，
+   不给它弹性的话「桌号和付款方式」会被挤成两行、等待时间也被压成两行 */
+.ticket-meta { display: flex; flex-direction: column; font-size: 14px; flex: 1 1 auto; min-width: 0; }
 .ticket-meta strong { font-size: 18px; }
 .ticket ul { list-style: none; margin: 0; padding: 0; font-size: 15px; }
 .ticket li { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dashed var(--color-panel-border); }
 .ticket .note { margin-top: 8px; color: var(--color-accent-2); }
-.ticket footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-.ticket .actions { display: flex; gap: 8px; }
-.ticket .actions .btn { margin: 0; }
+/* 加菜（P2-6）：子单单独进板子，必须一眼看出「这不是重复下单，是同一桌加的菜」 */
+.add-badge {
+  padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; white-space: nowrap;
+  background: var(--color-accent-2); color: var(--color-bg);
+}
+.add-total { margin: 8px 0 0; padding-top: 8px; border-top: 1px dashed var(--color-panel-border); }
+.ticket footer { display: flex; flex-direction: column; align-items: stretch; gap: 8px; margin-top: 10px; }
+/* 按钮一多，横排会把卡片撑爆、把金额挤成竖排。改成换行排布 + 不换行文字 + 金额独占一行 */
+.ticket .actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.ticket .actions .btn { margin: 0; white-space: nowrap; flex: 0 0 auto; }
+.ticket footer > .muted { order: -1; }
 .panel.cancelled { margin-top: 16px; }
 .panel.cancelled summary { cursor: pointer; color: var(--color-text-secondary); }
 
@@ -183,14 +193,39 @@ select {
 .tag { margin-left: 6px; font-size: 12px; color: var(--color-accent-2); }
 .row-error td { color: var(--color-alert); font-size: 13px; }
 
+/* 批量上下架（104 道菜逐道点三次太折磨人） */
+.dish-table .pick-col { width: 34px; text-align: center; }
+.dish-table .pick-col input { width: 16px; height: 16px; cursor: pointer; }
+.dish-table tr.picked td { background: var(--color-panel-from); }
+.bulk-hint { margin: 0 0 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.bulk-bar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  margin: 0 0 12px; padding: 10px 14px; border-radius: 10px;
+  background: var(--color-panel-from); border: 1px solid var(--color-accent);
+}
+.bulk-actions { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+.bulk-actions .btn { margin: 0; }
+.bulk-msg { font-size: 13px; color: var(--color-text-secondary); }
+.bulk-msg.alert { color: var(--color-alert); }
+
 /* ---------- P2 第四批：三态 / 退款 / 待柜台退还 ---------- */
 .seg { display: inline-flex; border: 1px solid var(--color-panel-border); border-radius: 8px; overflow: hidden; }
 .seg-btn { background: none; border: 0; border-right: 1px solid var(--color-panel-border); color: var(--color-text-secondary); padding: 5px 10px; font: inherit; font-size: 13px; cursor: pointer; }
 .seg-btn:last-child { border-right: 0; }
-.seg-btn.on.on { background: var(--color-panel-from); color: var(--color-accent); font-weight: 700; }
-.seg-btn.on.soldout, .seg-btn.on.off { color: var(--color-alert); }
+.seg-btn[aria-pressed='true'] { background: var(--color-panel-from); color: var(--color-accent); font-weight: 700; }
+/* 选中态的语义色跟着 data-state 走：售罄/下架用警示色，一眼看出这道菜现在不卖 */
+.seg-btn[aria-pressed='true'][data-state='soldout'], .seg-btn[aria-pressed='true'][data-state='off'] { color: var(--color-alert); }
 .refund-badge { margin-left: auto; align-self: flex-start; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--color-alert); color: var(--color-alert); font-size: 12px; }
 .refunded { font-style: normal; color: var(--color-alert); font-size: 12px; }
+/* 已等待时长（P2-10）：20 分钟以上变红，一眼看出哪单该催 */
+.waited { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--color-muted); white-space: nowrap; flex: 0 0 auto; }
+.waited i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .6; }
+.waited.late { color: var(--color-alert); font-weight: 600; }
+.waited.late i { opacity: 1; animation: waited-pulse 1.6s ease-in-out infinite; }
+@keyframes waited-pulse { 0%, 100% { transform: scale(1); opacity: .5; } 50% { transform: scale(1.6); opacity: 1; } }
+/* 逐菜辣度（P1-9）：后厨扫一眼就知道这份怎么做 */
+.item-spice { font-style: normal; margin-left: 6px; padding: 0 6px; border-radius: 999px; font-size: 11px; color: var(--color-accent); box-shadow: inset 0 0 0 1px var(--color-accent); white-space: nowrap; }
+.item-note { color: var(--color-muted); font-size: 12px; }
 .refund-box { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--color-panel-border); display: flex; flex-direction: column; gap: 8px; }
 .refund-box ul li { align-items: center; }
 .refund-box .actions { justify-content: flex-end; }
@@ -204,6 +239,11 @@ select {
 .counter-row .actions { margin-left: auto; display: flex; gap: 8px; }
 .counter-row .btn { margin: 0; padding: 5px 10px; }
 .alert-text { color: var(--color-alert); }
+/* 部分退款、还没做完的单：和「待柜台退还」分开一块，避免高峰期被当成交完钱的单 */
+.partial-refunds { margin-bottom: 16px; border-color: var(--color-alert); }
+.partial-refunds h2 { font-size: 15px; margin-bottom: 8px; }
+.partial-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; padding: 8px 0; border-top: 1px solid var(--color-panel-border); }
+.partial-row .muted { margin-left: auto; }
 
 /* 打印流水（前台打单）：只打会员详情，白底黑字 */
 @media print {
@@ -221,12 +261,16 @@ select {
 }
 
 @media (max-width: 760px) {
-  .shell { grid-template-columns: 1fr; }
-  .side { border-right: 0; border-bottom: 1px solid var(--color-panel-border); padding: 16px; }
-  .side nav { display: flex; gap: 4px; overflow-x: auto; }
+  /* 单列布局必须写 minmax(0, 1fr)。
+     原来直接写 1fr，等于 minmax(auto, 1fr)：最小宽度由内容撑，而导航条是 overflow-x: auto
+     的横向滚动条，它的 max-content 宽度（10 个页签加起来 ~860px）会把整列顶到 893px，
+     于是手机上整页横向溢出、右边内容被裁掉。这个坑在加了「历史订单」页签后才明显。 */
+  .shell { grid-template-columns: minmax(0, 1fr); }
+  .side { border-right: 0; border-bottom: 1px solid var(--color-panel-border); padding: 16px; min-width: 0; }
+  .side nav { display: flex; gap: 4px; overflow-x: auto; min-width: 0; }
   .nav { white-space: nowrap; margin: 0; }
   .brand { margin-bottom: 12px; }
-  .main { padding: 16px; }
+  .main { padding: 16px; min-width: 0; }
 }
 
 /* P3：系统自动取消（全部菜品已退款）的单醒目标出，和手动取消区分 */
@@ -275,3 +319,214 @@ select {
 .store-info-preview dl { margin: 0; display: grid; gap: 10px; }
 .store-info-preview dt { color: var(--color-text-secondary); font-size: 13px; }
 .store-info-preview dd { margin: 2px 0 0; overflow-wrap: anywhere; }
+/* ---------------- 打印设置 ---------------- */
+.printers { display: grid; gap: 16px; }
+.printer-list { list-style: none; margin: 12px 0; padding: 0; display: grid; gap: 10px; }
+.printer-list li {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; border-radius: var(--radius-card); border: 1px solid var(--color-panel-border);
+  /* 左侧色条：一眼分辨通不通，不用读字。青=通，红=不通，灰=没启用 */
+  border-left-width: 5px;
+  border-left-color: var(--color-text-secondary);
+}
+.printer-list li.on { border-left-color: var(--color-accent); border-left-width: 5px; }
+.printer-list li.bad { border-left-color: var(--color-alert); border-left-width: 5px; }
+.printer-list li.off { opacity: .7; }
+.printer-list li > div { display: grid; gap: 3px; }
+.bad-count { background: var(--color-alert); color: var(--color-bg); margin-left: 8px; }
+table.recent { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.recent th, table.recent td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--color-panel-border); }
+table.recent tr.bad td { color: var(--color-alert); }
+@media print { .printers { display: none; } }
+
+/* 新单红点：切到别的页签时也能看到「来了几单」（订阅已提到 Shell 层，切页不再断线） */
+.badge-new {
+  display: inline-block; min-width: 20px; margin-left: 8px; padding: 1px 6px;
+  border-radius: 10px; background: var(--color-alert); color: var(--color-bg);
+  font-size: 12px; font-weight: 700; text-align: center; vertical-align: middle;
+}
+
+/* 不在订单页时来的新单：从底部浮起来一条，点一下回订单台 */
+.new-order-toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+  z-index: 60; display: flex; align-items: center; gap: 8px;
+  max-width: min(92vw, 560px); padding: 12px 18px;
+  border-radius: 14px; background: var(--color-bg-end); color: var(--color-text);
+  border: 1px solid var(--color-panel-border);
+  box-shadow: 0 8px 28px var(--color-vignette);
+  font-size: 14px; text-decoration: none;
+  animation: toast-rise .22s ease-out;
+}
+.new-order-toast strong { color: var(--color-accent); }
+.new-order-toast span { color: var(--color-text-secondary); font-size: 13px; }
+@keyframes toast-rise { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@media (prefers-reduced-motion: reduce) { .new-order-toast { animation: none; } }
+
+/* ---------------- 二次确认弹窗（替代 window.confirm） ---------------- */
+/* iPad Safari / WebView 下原生 confirm 可能不弹就直接放行，退款这类操作不能赌，所以自己画 */
+.confirm-mask {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px; background: var(--color-vignette);
+  animation: confirm-fade .16s ease-out;
+}
+.confirm-box {
+  width: min(92vw, 420px); padding: 22px 22px 16px;
+  border-radius: 16px; background: var(--color-bg-end);
+  box-shadow: 0 18px 48px var(--color-vignette);
+  animation: confirm-pop .18s ease-out;
+}
+.confirm-box h2 { margin: 0 0 10px; font-size: 17px; line-height: 1.4; }
+.confirm-detail { margin: 0 0 4px; font-size: 14px; line-height: 1.6; color: var(--color-text-secondary); white-space: pre-wrap; }
+.confirm-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+.confirm-actions .btn { min-width: 88px; min-height: 44px; }
+.btn.danger.solid { background: var(--color-alert); border-color: var(--color-alert); color: var(--color-bg); font-weight: 700; }
+@keyframes confirm-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes confirm-pop { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .confirm-mask, .confirm-box { animation: none; } }
+
+/* ---------- P3-8：错误日志 ---------- */
+.grow { flex: 1 1 auto; }
+.ellipsis { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.err-toolbar select { padding: 6px 10px; border-radius: 8px; font: inherit; }
+.err-toolbar .btn { margin: 0; }
+.empty-note { max-width: 640px; line-height: 1.7; }
+.empty-note p { margin: 0 0 8px; }
+.err-card { margin-bottom: 12px; padding: 14px 18px; }
+.err-card:last-child { margin-bottom: 0; }
+.err-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+.err-msg { font-size: 15px; line-height: 1.5; word-break: break-word; }
+.err-hits { flex: 0 0 auto; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--color-alert); border: 1px solid var(--color-alert); }
+.err-meta { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 6px; }
+.tag-customer, .tag-admin { flex: 0 0 auto; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; border: 1px solid currentcolor; }
+.tag-customer { color: var(--color-accent); }
+.tag-admin { color: var(--color-text-secondary); }
+.err-stack { margin-top: 10px; }
+.err-stack summary { cursor: pointer; font-size: 13px; color: var(--color-text-secondary); }
+.err-stack pre {
+  margin: 8px 0 0; padding: 12px; max-height: 260px; overflow: auto;
+  font-size: 12px; line-height: 1.6; white-space: pre-wrap; word-break: break-all;
+  border-radius: 8px; background: var(--color-bg); border: 1px solid var(--color-panel-border);
+}
+
+/* ---------- P2-4：日结单 / 交接班报表 ---------- */
+.report .toolbar { margin-bottom: 12px; }
+.report .toolbar .btn { margin: 0; }
+.report .toolbar label { display: flex; align-items: center; gap: 8px; }
+.report .toolbar input { padding: 6px 10px; border-radius: 8px; font: inherit; border: 1px solid var(--color-panel-border); background: transparent; color: inherit; }
+.report-meta-input input { width: 200px; }
+.slip { max-width: 760px; }
+.slip-head { text-align: center; padding-bottom: 12px; border-bottom: 2px solid var(--color-panel-border); }
+.slip-head h2 { font-size: 24px; margin: 0 0 6px; letter-spacing: .04em; }
+.slip-range { font-size: 17px; font-variant-numeric: tabular-nums; margin: 0 0 6px; }
+.slip-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; font-size: 13px; color: var(--color-text-secondary); margin: 0; }
+.slip-big { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--color-panel-border); text-align: center; }
+.slip-big .stat-big { font-size: 32px; margin: 2px 0 0; }
+.slip-sec { margin-top: 20px; }
+.slip-sec h3 { font-size: 15px; margin: 0 0 8px; padding-left: 10px; box-shadow: inset 3px 0 0 var(--color-accent); }
+.slip table { font-size: 14px; }
+.slip th, .slip td { white-space: normal; padding: 6px 10px; }
+.slip th { position: static; background: none; color: var(--color-text); font-weight: 500; }
+.slip thead th { color: var(--color-text-secondary); font-weight: 600; }
+.slip tr.sub th, .slip tr.sub td { color: var(--color-text-secondary); font-size: 13px; }
+.slip tr.total th, .slip tr.total td { font-weight: 800; font-size: 16px; border-top: 2px solid var(--color-panel-border); }
+.slip-foot { margin-top: 24px; padding-top: 12px; border-top: 1px dashed var(--color-panel-border); }
+.slip-empty { margin-top: 20px; text-align: center; }
+.sign { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; margin-top: 28px; font-size: 14px; }
+.sign .line { display: inline-block; width: 160px; border-bottom: 1px solid var(--color-text); height: 20px; }
+
+/* 打印：一张 A4 正好一页到底，别把签字栏甩到第二张纸上 */
+@media print {
+  .report .toolbar { display: none; }
+  .slip { max-width: none; }
+  .slip-big .stat-big { color: black; }
+  .slip-sec h3 { box-shadow: inset 3px 0 0 black; }
+  .slip-sec { break-inside: avoid; }
+  .slip-head { border-bottom-color: black; }
+  .slip-foot { border-top-color: black; }
+  /* 这几条必须写：.slip th / .slip tr.sub 的优先级比全局打印规则里的 th, td 高，
+     不在这里重置的话，表头和次级行会保持白字，打成白纸上一片空白（实测踩过） */
+  .slip th, .slip td, .slip tr.sub th, .slip tr.sub td, .slip thead th { color: black; }
+  /* 打印是打在白纸上的，这一段的颜色必须固定成黑，不能跟屏幕主题走（check-allow-color） */
+  .slip-meta, .slip .muted, .slip-foot .muted { color: black; /* check-allow-color */ }
+  .sign .line { border-bottom-color: black; }
+  @page { margin: 14mm; }
+}
+
+/* ---------- P2-5：历史订单 ---------- */
+.history .toolbar { margin-bottom: 12px; }
+.history .toolbar .btn { margin: 0; }
+.history .toolbar label { display: flex; align-items: center; gap: 8px; }
+.history .toolbar input { padding: 6px 10px; border-radius: 8px; font: inherit; border: 1px solid var(--color-panel-border); background: transparent; color: inherit; }
+.history-search { display: flex; align-items: center; gap: 8px; flex: 1 1 260px; }
+/* 搜索框占满剩余宽度：老板在笔记本上打字，框太窄看不全自己输的内容 */
+.history-search input { flex: 1 1 auto; min-width: 140px; }
+.history-tabs { justify-content: space-between; align-items: center; }
+.history-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+.stat-mid { font-size: 24px; font-weight: 800; line-height: 1.3; margin: 4px 0 0; font-variant-numeric: tabular-nums; color: var(--color-accent); }
+.history-dishes .chips { margin-top: 8px; }
+.dish-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
+  font-size: 13px; border: 1px solid var(--color-panel-border); color: var(--color-text-secondary);
+}
+.dish-chip b { color: var(--color-accent); font-variant-numeric: tabular-nums; }
+.hist-list { list-style: none; margin: 0; padding: 0; }
+.hist-item { border: 1px solid var(--color-panel-border); border-radius: 12px; margin-bottom: 8px; background: var(--color-panel, transparent); }
+.hist-head {
+  display: grid; grid-template-columns: 96px 56px 64px 1fr auto auto auto; align-items: baseline; gap: 10px;
+  width: 100%; padding: 12px 14px; background: none; border: 0; color: inherit; font: inherit;
+  text-align: left; cursor: pointer; border-radius: 12px;
+}
+.hist-head:hover { background: color-mix(in srgb, var(--color-accent) 6%, transparent); }
+.hist-when { font-size: 13px; color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
+.hist-no { font-weight: 800; font-variant-numeric: tabular-nums; }
+.hist-table { color: var(--color-text-secondary); }
+/* 明细摘要只占一行：一屏能多看几单，具体内容点开再看 */
+.hist-items { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.hist-sum { font-weight: 700; font-variant-numeric: tabular-nums; }
+.hist-sum.void { color: var(--color-muted); text-decoration: line-through; font-weight: 400; }
+.hist-caret { font-size: 13px; color: var(--color-accent); white-space: nowrap; }
+.hist-item .refund-badge { margin: 0; }
+.hist-body { padding: 0 14px 14px; border-top: 1px dashed var(--color-panel-border); }
+.hist-body > .muted { margin: 10px 0; }
+.hist-body ul { list-style: none; margin: 8px 0; padding: 0; }
+.hist-body li { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; font-size: 14px; }
+.hist-refunds { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--color-panel-border); }
+.pager { justify-content: center; gap: 12px; }
+.empty-history h2 { font-size: 17px; margin: 0 0 8px; }
+.empty-history p { margin: 0 0 6px; }
+
+@media (max-width: 640px) {
+  /* 手机上把七列压成两行：时间/取餐号/桌号一行，摘要和金额一行 */
+  .hist-head { grid-template-columns: auto auto 1fr auto; grid-template-areas: 'when no table sum' 'items items items caret'; row-gap: 4px; }
+  .hist-when { grid-area: when; }
+  .hist-no { grid-area: no; }
+  .hist-table { grid-area: table; }
+  .hist-items { grid-area: items; }
+  .hist-sum { grid-area: sum; }
+  .hist-caret { grid-area: caret; }
+}
+
+/* 窄屏（手机 / 竖屏平板）：历史订单的筛选条必须能换行。
+   .history .toolbar 的选择器比 .toolbar 更具体，会把 flex-wrap 之外的东西一起带出来，
+   实测 390px 宽时「查」按钮被挤出屏幕，整页横向溢出——所以单独在这里兜住。 */
+@media (max-width: 760px) {
+  .history .toolbar { gap: 8px; }
+  .history .toolbar label { flex: 0 0 auto; }
+  .history .toolbar input[type="date"] { width: 100%; }
+  .history .toolbar label { flex: 1 1 140px; }
+  .history-search { flex: 1 1 100%; }
+  .history-tabs { flex-direction: column; align-items: flex-start; gap: 8px; }
+  /* 芯片组本身是 flex-wrap，别让它被拉伸成整行：视觉上「已取消」会像单独一行 */
+  .history-tabs .chips { width: 100%; }
+  .history-sum { grid-template-columns: 1fr 1fr; }
+  .stat-mid { font-size: 20px; }
+  .slip-big { grid-template-columns: 1fr; }
+  .slip .panel { padding: 14px; }
+}
+.bulk-done {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin: 0 0 12px; padding: 9px 14px; border-radius: 10px;
+  background: var(--color-panel-from); color: var(--color-text-secondary); font-size: 13px;
+}
+.bulk-done .btn { margin: 0; padding: 3px 10px; font-size: 12px; }

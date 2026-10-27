@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import {
-  formatDate, formatDateTime, formatPrice, LEDGER_TYPE_LABEL, Member, MemberDetail, parseRM, ReconcileRun,
+  formatDate, formatDateTime, formatMoney, LEDGER_TYPE_LABEL, Member, MemberDetail, parseRM, ReconcileRun,
   type Member as MemberT, type MemberDetail as MemberDetailT, type ReconcileRun as ReconcileRunT,
 } from '@pkg/contract';
 import config from 'virtual:brand';
 import { z } from 'zod';
 import { adminGet, adminPost } from './api.ts';
+import { askConfirm } from './Confirm.tsx';
 
 const { brand } = config;
-const money = (sen: number) => `${brand.currency.symbol} ${formatPrice(sen)}`;
+const money = (sen: number) => `${brand.currency.symbol} ${formatMoney(sen)}`;
 const errText = (e: unknown) => (e instanceof Error ? e.message : '操作失败');
 
 /** 防重复提交的请求编号：同一次表单提交即使点两下，服务器也只入账一次。
@@ -81,14 +82,29 @@ function ReconcileBanner() {
   };
   if (last === undefined) return null;
   const bad = last && last.mismatches.length > 0;
+  // 有会员从没被核对过，就不能说「正常」。老记录的 checked 可能比现在的会员数少
+  // （上次对账时还没办这张卡），这时「N 位一致」是对的但会让人以为全都查过了。
+  const stale = last ? (last.uncheckedCount ?? 0) : 0;
   return (
-    <div className={bad ? 'panel recon bad no-print' : 'panel recon no-print'} role={bad ? 'alert' : undefined}>
-      {!last && <span>还没有对过账。</span>}
-      {last && !bad && <span>对账正常：{last.checked} 位会员的流水合计与余额一致（{formatDateTime(last.at, brand.timezone)}）</span>}
+    <div className={bad || stale > 0 ? 'panel recon bad no-print' : 'panel recon no-print'} role={bad || stale > 0 ? 'alert' : undefined}>
+      {!last && <span>还没有对过账，建议现在对一次（会员的流水和余额是否对得上）。</span>}
       {last && bad && (
         <span>
           对账发现 {last.mismatches.length} 处不一致，请立刻核查：
           {last.mismatches.map((m) => ` 会员 ${m.memberNo} 余额 ${money(m.balanceSen)}，流水合计 ${money(m.ledgerSumSen)}；`)}
+        </span>
+      )}
+      {last && !bad && stale > 0 && (
+        <span>
+          上次对账只核了 {last.checked} 位，之后又多了 {stale} 位会员没核对过（{formatDateTime(last.at, brand.timezone)} 那次）。
+          这不代表账有问题，但也不代表已经查过——点右边「立即对账」补上。
+        </span>
+      )}
+      {last && !bad && stale === 0 && (
+        <span>
+          {last.checked === 0
+            ? `目前还没有会员，暂时不用对账（${formatDateTime(last.at, brand.timezone)}）`
+            : `对账正常：${last.checked} 位会员的流水合计与余额一致（${formatDateTime(last.at, brand.timezone)}）`}
         </span>
       )}
       <button className="btn" disabled={busy} onClick={() => void run()}>{busy ? '对账中…' : '立即对账'}</button>
@@ -158,8 +174,8 @@ function MemberPanel({ id, onChanged }: { id: string; onChanged: () => void }) {
             <tr key={l.id}>
               <td>{formatDateTime(l.at, brand.timezone)}</td>
               <td>{LEDGER_TYPE_LABEL[l.type]}</td>
-              <td className={l.amountSen > 0 ? 'num accent' : 'num'}>{l.amountSen > 0 ? '+' : ''}{formatPrice(l.amountSen)}</td>
-              <td className="num">{formatPrice(l.balanceAfterSen)}</td>
+              <td className={l.amountSen > 0 ? 'num accent' : 'num'}>{l.amountSen > 0 ? '+' : ''}{formatMoney(l.amountSen)}</td>
+              <td className="num">{formatMoney(l.balanceAfterSen)}</td>
               <td>{l.operator === 'admin' ? '老板端' : l.operator.startsWith('member:') ? '顾客储值支付' : l.operator}</td>
               <td>{l.note ?? ''}</td>
             </tr>
@@ -184,7 +200,12 @@ function MoneyForm({ title, sign, memberNo, url, onDone }: { title: string; sign
     if (sen === null || sen === 0) { setError(sign ? '请输入金额，例如 20 或 -12.5' : '请输入金额，例如 100 或 50.5'); return; }
     if (sign && !note.trim()) { setError('调整余额必须写原因'); return; }
     const verb = sign ? (sen > 0 ? '增加' : '扣减') : '充值';
-    if (!window.confirm(`确认给会员 ${memberNo} ${verb} ${money(Math.abs(sen))}？`)) return;
+    const ok = await askConfirm({
+      title: `确认${verb}？`,
+      detail: `会员 ${memberNo} ${verb} ${money(Math.abs(sen))}${note.trim() ? `\n原因：${note.trim()}` : ''}`,
+      confirmText: `确认${verb}`, danger: sign && sen < 0,
+    });
+    if (!ok) return;
     setBusy(true);
     setError(null);
     try {

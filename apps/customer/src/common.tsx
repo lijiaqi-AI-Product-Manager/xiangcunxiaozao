@@ -1,5 +1,5 @@
 // 顾客端各页面共用的小零件：品牌配置、金额格式、页面跳转
-import { formatPrice } from '@pkg/contract';
+import { formatMoney, formatPrice } from '@pkg/contract';
 import { currentSkin } from '@pkg/ui-kit';
 import config from 'virtual:brand';
 
@@ -12,6 +12,9 @@ export const SEAL = FINISHED ? brand.seal : null;
 export const LOGO_SEAL = FINISHED ? (brand.logoSeal ?? brand.seal) : null;
 // 货币符号和数字之间用不换行空格：窄屏上「RM」和「40」不会被拆到两行
 export const money = (sen: number | null | undefined) => `${brand.currency.symbol} ${formatPrice(sen)}`;
+/** 账单金额：固定两位小数。购物车合计、行小计、应付这些「要付的钱」不能用 money，
+ *  否则顾客付钱前最盯的一眼会看到 RM 87.8。菜单价继续用 money（RM 48 更清爽），别混。 */
+export const billMoney = (sen: number | null | undefined) => `${brand.currency.symbol} ${formatMoney(sen)}`;
 export const payLabel = (key: string) => brand.paymentMethods.find((m) => m.key === key)?.label ?? key;
 
 /** 跳到某个页面（#order / #checkout / #dish/e01 …），并回到页面顶部 */

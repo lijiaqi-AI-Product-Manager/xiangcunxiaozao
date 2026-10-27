@@ -14,6 +14,14 @@ const RGB_COLOR = /rgba?\(/;
 // 不许用跟着「运行这台机器的时区」走的写法，也不许截 ISO 字符串当日期
 const RAW_TIME = /toLocale(String|DateString|TimeString)\(|\.get(Hours|Minutes|Date|Month|FullYear|Day)\(|toISOString\(\)\.slice|\b\w*(at|At|date|Date|time|Time)\.slice\((0|5), ?10\)/;
 const TIME_HOME = 'packages/contract/src/display.ts';
+/**
+ * 豁免：纯粹的「日期加减」不是「显示时间」，走 UTC 反而是对的。
+ *
+ * 例：2026-10-31 往后挪一天 应该得到 2026-11-01，不涉及时刻。
+ * 用 UTC 中午做基准可以避开夏令时边界（某些时区某天只有 23 小时，按本地时间加减会漏一天）。
+ * 所以这类行只要带了 check-allow-utc-date 标记就放过——但必须写明为什么，别随手加。
+ */
+const DATE_MATH_OK = /check-allow-utc-date/;
 
 function* walk(dir: string): Generator<string> {
   for (const name of readdirSync(dir)) {
@@ -30,11 +38,14 @@ for (const dir of CODE_DIRS.filter((d) => existsSync(d))) {
     const rel = relative('.', file).replaceAll('\\', '/');
     if (rel === SELF) continue;
     readFileSync(file, 'utf8').split(/\r?\n/).forEach((line, i) => {
-      if (BRAND_PATTERN.test(line)) hits.push(`${rel}:${i + 1} 出现店名/店ID：${line.trim()}`);
+      // 测试文件允许引用 brands/<店>/ 下的真实数据当测试数据（那些文件本来就是给这家店用的）；
+      // 业务代码里出现店名/店ID 一律不许——那是换店就得改代码的意思。
+      const isTest = /\.test\.(ts|tsx)$|\/(e2e|scripts)\/[^/]*\.spec\./.test(rel);
+      if (BRAND_PATTERN.test(line) && !isTest) hits.push(`${rel}:${i + 1} 出现店名/店ID：${line.trim()}`);
       if (/\.(css|tsx|ts)$/.test(rel) && (HEX_COLOR.test(line) || RGB_COLOR.test(line)) && !/check-allow-color/.test(line)) {
         hits.push(`${rel}:${i + 1} 散写色值（应走 tokens.json）：${line.trim()}`);
       }
-      if (/\.(tsx?)$/.test(rel) && rel !== TIME_HOME && RAW_TIME.test(line)) {
+      if (/\.(tsx?)$/.test(rel) && rel !== TIME_HOME && RAW_TIME.test(line) && !DATE_MATH_OK.test(line)) {
         hits.push(`${rel}:${i + 1} 时间没走门店时区（应用 formatDate/formatDateTime/formatClock）：${line.trim()}`);
       }
     });

@@ -99,11 +99,13 @@ export function Qty({ name, qty, onChange }: { name: string; qty: number; onChan
   );
 }
 
-/* ---------------- 缩略图：有放行的成品图用真图；没有的走「水墨意境占位」（首字 + 淡墨痕 + 小方印） ---------------- */
+/* ---------------- 缩略图：老板传了菜品图就用真图（和详情页大图同一张）；没传的走「水墨意境占位」（首字 + 淡墨痕 + 小方印） ---------------- */
 export function Thumb({ dish, char }: { dish: Dish; char: string }) {
   const [failed, setFailed] = useState(false);
-  if (dish.images.closed && !failed) {
-    return <div className="thumb img"><img src={dish.images.closed} alt={dish.name} loading="lazy" onError={() => setFailed(true)} /></div>;
+  // 优先用小图（200px、十几 KB）；老数据没有小图就退回大图，内容完全一致
+  const src = dish.images.thumb ?? dish.images.closed;
+  if (src && !failed) {
+    return <div className="thumb img"><img src={src} alt={dish.name} loading="lazy" decoding="async" onError={() => setFailed(true)} /></div>;
   }
   return (
     <div className="thumb ph" role="img" aria-label={`${dish.name}，实拍图上线中`}>
@@ -112,13 +114,30 @@ export function Thumb({ dish, char }: { dish: Dish; char: string }) {
   );
 }
 
-/** 大图：有图 = 真图 + 径向聚光；没图 = 水墨意境占位（浅墨晕 + 一缕墨痕）。云斑叠在大图与内容之间 */
-export function HeroImg({ dish, cloud = false, src = dish.images.closed }: { dish: Dish; cloud?: boolean; src?: string | null }) {
+/**
+ * 大图：有图 = 真图 + 径向聚光；没图 = 水墨意境占位（浅墨晕 + 一缕墨痕）。云斑叠在大图与内容之间。
+ *
+ * `eager`：详情页标题上方那张图是首屏最显眼的元素，必须立刻加载（400ms 内要出现）。
+ * 默认 lazy 是给列表、今日招牌大画用的，避免一次请求一百多张图。
+ */
+export function HeroImg({ dish, cloud = false, src = dish.images.closed, eager = false }: { dish: Dish; cloud?: boolean; src?: string | null; eager?: boolean }) {
   const [failed, setFailed] = useState(false);
   if (src && !failed) {
     return (
       <div className="hero-img img" role="img" aria-label={dish.name}>
-        <img src={src} alt="" onError={() => setFailed(true)} />
+        {/*
+          属性名必须全小写 `fetchpriority`：React 18 不认驼峰的 fetchPriority，
+          会在控制台刷「React does not recognize the `fetchPriority` prop」并且**不写进 DOM**，
+          等于优先级根本没生效（React 19 才支持驼峰写法）。
+        */}
+        <img
+          src={src}
+          alt=""
+          loading={eager ? 'eager' : 'lazy'}
+          {...(eager ? { fetchpriority: 'high' } : {})}
+          decoding="async"
+          onError={() => setFailed(true)}
+        />
         {cloud && <i className="cloud" />}
       </div>
     );

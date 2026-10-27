@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Cart, Faq, MemberDetail, Menu, Order, StoreInfo, StoreStatus, TodaySignature, WaitInfo } from '@pkg/contract';
-import { ApiError, fetchJson, postJson, safeStorage } from '@pkg/ui-kit';
+import { ApiError, fetchJson, newRequestId, postJson, safeStorage, WRITE_TIMEOUT_MS } from '@pkg/ui-kit';
+import { planChange } from './cart-plan.ts';
 import { z } from 'zod';
 
 export type Load<T> = { state: 'loading' } | { state: 'ok'; data: T } | { state: 'error'; message: string };
@@ -39,6 +40,21 @@ export const useMyOrders =(deviceId: string | null) =>
   useResource(deviceId ? `/api/order/mine?device=${encodeURIComponent(deviceId)}` : null, (v) => z.array(Order).parse(v), 10000);
 
 const CART_KEY = 'cart-id';
+
+/**
+ * 这台手机的固定编号（存在本地，首次访问生成）。
+ *
+ * 以前取餐页和「我的订单」用的是购物车 id 当设备号——下单后购物车被清空、车号可能换掉，
+ * 一旦刷新失败就查不到自己的单。设备号必须和购物车分开，才能做到「不管网络怎么抖，我都能找回我的单」。
+ */
+const DEVICE_KEY = 'device-id';
+export function deviceId(): string {
+  const saved = safeStorage.get(DEVICE_KEY);
+  if (saved && /^[\w-]{8,64}$/.test(saved)) return saved;
+  const fresh = newRequestId();
+  safeStorage.set(DEVICE_KEY, fresh);
+  return fresh;
+}
 
 /**
  * 购物车：服务器说了算（23号定律2）。本地只记一个车号；
@@ -85,13 +101,54 @@ export function useCart() {
     };
   }, [refresh]);
 
-  /** 在最新数量上加减 delta（+1 / -1） */
+  /**
+   * 加一份菜（可带辣度和备注）。辣度相同的同一个菜会合并到一行，
+   * 辣度不同就是新的一行——一桌人辣度不同就靠这个（P1-9）。
+   */
+  const addDish = (dishUid: string, spice = '', note = '', delta = 1) =>
+    apply((cur) => {
+      if (!cur) return null;
+      // 已有「同菜 + 同辣度 + 同备注」的那一行 → 在它上面加，避免冒出两行一样的
+      const same = cur.lines.find((l) => l.dishUid === dishUid && l.spice === spice && l.note === note);
+      const qty = Math.max(0, Math.min(99, (same?.qty ?? 0) + delta));
+      return postJson('/api/cart/update', { cartId: cur.id, dishUid, qty, spice, note }, (v) => Cart.parse(v));
+    });
+
+  /** 改某一行的数量（0 = 删掉这一行）。认行 id，不认菜——同菜多行时不会改错 */
+  const setLineQty = (lineId: string, qty: number) =>
+    apply((c) => (c ? postJson('/api/cart/update', { cartId: c.id, lineId, qty: Math.max(0, Math.min(99, qty)) }, (v) => Cart.parse(v)) : null));
+
+  /** 改某一行的辣度/备注（顾客在购物车里直接改，不用删了重加） */
+  const setLine = (lineId: string, patch: { spice?: string; note?: string }) =>
+    apply((c) => (c ? postJson('/api/cart/line', { cartId: c.id, lineId, ...patch }, (v) => Cart.parse(v)) : null));
+
+  /** 删掉某一整行 */
+  const removeLine = (lineId: string) =>
+    apply((c) => (c ? postJson('/api/cart/remove', { cartId: c.id, lineId }, (v) => Cart.parse(v)) : null));
+
+  /**
+   * 在最新数量上加减 delta（+1 / -1），动的是「数量最多的那一行」。
+   * 只有一行时就是它；同菜多行（不同辣度）时，界面上每行有自己的加减按钮（走 setLineQty），
+   * 这里作为菜单页 / 详情页上那个「+」的入口。
+   *
+   * 具体发什么请求由 planChange() 决定（纯函数，有单元测试）。这里只负责发。
+   */
   const change = (dishUid: string, delta: number) =>
     apply((c) => {
       if (!c) return null;
-      const qty = Math.max(0, Math.min(99, (c.lines.find((l) => l.dishUid === dishUid)?.qty ?? 0) + delta));
-      return postJson('/api/cart/update', { cartId: c.id, dishUid, qty }, (v) => Cart.parse(v));
+      const plan = planChange(c.lines, dishUid, delta);
+      if (plan.kind === 'none') return null;
+      if (plan.kind === 'addDish') return addRow(c, plan.dishUid, plan.qty);
+      return postJson('/api/cart/update', { cartId: c.id, lineId: plan.lineId, qty: plan.qty }, (v) => Cart.parse(v));
     });
+
+  /**
+   * 往车里加一行（不带辣度 / 备注）。辣度和备注在详情页选，那是顾客有上下文的地方；
+   * 菜单列表上的「+」只管「来一份」，要讲究的顾客会点进详情。
+   */
+  function addRow(c: Cart, dishUid: string, qty: number): Promise<Cart> {
+    return postJson('/api/cart/update', { cartId: c.id, dishUid, qty: Math.max(1, qty), spice: '', note: '' }, (v) => Cart.parse(v));
+  }
   const remove = (dishUid: string) =>
     apply((c) => (c ? postJson('/api/cart/clearItem', { cartId: c.id, dishUid }, (v) => Cart.parse(v)) : null));
   const clear = () => apply((c) => (c ? postJson('/api/cart/clear', { cartId: c.id }, (v) => Cart.parse(v)) : null));
@@ -99,30 +156,68 @@ export function useCart() {
     let skipped: string[] = [];
     await apply(async (c) => {
       if (!c) throw new Error('购物车还没准备好，请稍后再试');
-      const r = await postJson('/api/cart/buyAgain', { cartId: c.id, orderId }, (v) => z.object({ cart: Cart, skipped: z.array(z.string()) }).parse(v));
+      // 必须带上 deviceId：服务端靠它认「这张单是不是这台手机的」。
+      // 只给 cartId 的话，前端一旦换了车号（或下单后车被清空重开），会一直报「找不到这张订单」。
+      const r = await postJson('/api/cart/buyAgain', { cartId: c.id, orderId, deviceId: deviceId() }, (v) => z.object({ cart: Cart, skipped: z.array(z.string()) }).parse(v));
       skipped = r.skipped;
       return r.cart;
     });
     return skipped;
   };
-  /** 下单成功后服务器已清空购物车，这里同步一下 */
+  /**
+   * 下单成功后服务器已清空购物车，这里同步一下。
+   * 返回 Promise：调用方必须 await 之后再跳取餐页，否则取餐页拿到的是旧数据，会先闪一下「还没有订单」。
+   */
   const afterSubmit = () => refresh();
 
   return {
     cart, error, refresh, change, remove, clear, buyAgain, afterSubmit,
-    qtyOf: (uid: string) => cart?.lines.find((l) => l.dishUid === uid)?.qty ?? 0,
+    addDish, setLineQty, setLine, removeLine,
+    qtyOf: (uid: string) => cart?.lines.filter((l) => l.dishUid === uid).reduce((n, l) => n + l.qty, 0) ?? 0,
   };
 }
 export type CartApi = ReturnType<typeof useCart>;
 
 const MEMBER_KEY = 'member-token';
 
-export function submitOrder(input: { cartId: string; tableNo: string; paymentMethod: string; note: string; useStoredValue: boolean }) {
+/**
+ * 下单。带幂等编号 requestId：同一个编号重复提交，服务端返回的是第一次那张单，不会建两张。
+ *
+ * 为什么必须有：顾客网络一抖，订单已经在后厨了，但响应丢了，页面显示「网络连接失败」。
+ * 顾客唯一的合理动作是再点一次——没有幂等键的话，第二次撞上「购物车是空的」，他以为没下成功。
+ * 有了幂等键，第二次拿回来的是同一张单，取餐号都一样。
+ *
+ * requestId 由调用方保管（重试时复用）；不传就当场新生成一个。
+ */
+export function submitOrder(input: {
+  cartId: string; tableNo: string; paymentMethod: string; note: string; useStoredValue: boolean;
+  requestId: string;
+}) {
   const token = safeStorage.get(MEMBER_KEY);
   return fetchJson('/api/order/submit', (v) => Order.parse(v), {
     method: 'POST',
     headers: { 'content-type': 'application/json', ...(token ? { 'x-member-token': token } : {}) },
-    body: JSON.stringify(input),
+    // deviceId 让这张单挂在「这台手机」名下，取餐页和「我的订单」才找得回来。
+    // 不带的话服务端只能退回用购物车 id，那两处就永远是空的（见 SubmitOrderInput.deviceId 的说明）
+    body: JSON.stringify({ ...input, deviceId: deviceId() }),
+    // 写操作多给 5 秒：建单要写库、要触发打印，比读接口重
+    timeoutMs: WRITE_TIMEOUT_MS,
+  });
+}
+
+/**
+ * 加菜（P2-6）：往今天这张还没做完的单后面再加两个菜。
+ *
+ * 顾客只需要填取餐号——桌号、付款方式都沿用原单，所以这里一个多余的问题都不问。
+ * 和下单一样带 requestId：手抖点两下、或者网络重试，都只会加一次菜。
+ */
+export function addDishes(input: { pickupNo: number; cartId: string; note: string; requestId: string }) {
+  const token = safeStorage.get(MEMBER_KEY);
+  return fetchJson('/api/order/add', (v) => Order.parse(v), {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', ...(token ? { 'x-member-token': token } : {}) },
+    body: JSON.stringify({ ...input, deviceId: deviceId() }),
+    timeoutMs: WRITE_TIMEOUT_MS,
   });
 }
 

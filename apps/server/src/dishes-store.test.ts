@@ -132,6 +132,79 @@ describe('图片上传：四项防崩（大小 / 格式 / 存储路径 / 异常�
   });
 });
 
+describe('菜品图：老板传一次，点单页小格子和详情页大图都有（2026-10-26）', () => {
+  const uploadBoth = (uid: string, main: Uint8Array, thumb: Uint8Array) => {
+    const form = new FormData();
+    form.append('file', new File([main], 'a.png'));
+    form.append('thumb', new File([thumb], 'a-thumb.png'));
+    return api.request(`/api/admin/dishes/${uid}/image`, { method: 'POST', headers: { authorization: `Bearer ${admin}` }, body: form });
+  };
+
+  it('一次上传，两处拿到同一道菜的图：大图 = images.closed，小格子 = images.thumb，而且小图确实是小图', async () => {
+    // 小图换个内容（末尾补一个字节），这样两个文件名不会撞在一起，能确认用的不是同一份文件
+    const small = new Uint8Array([...PNG, 0x00]);
+    const d = AdminDish.parse(await (await uploadBoth('e01', PNG, small)).json());
+    expect(d.images.closed).toMatch(/^\/media\/e01-[0-9a-f]{10}\.png$/);
+    expect(d.images.thumb).toMatch(/^\/media\/e01-[0-9a-f]{10}-thumb\.png$/);
+    expect(d.images.thumb).not.toBe(d.images.closed);
+
+    // 顾客端菜单里两处都在（顾客端拿不到「是不是上传的」这种后台字段，但图必须有）
+    const menu = await customerMenu();
+    const dish = menu.dishes.find((x) => x.uid === 'e01')!;
+    expect(dish.images.closed).toBe(d.images.closed);
+    expect(dish.images.thumb).toBe(d.images.thumb);
+
+    // 两个地址都真的能取到图，而且 Content-Type 正确（小图文件名过 /media 的白名单正则）
+    const main = await req(d.images.closed!);
+    expect(main.status).toBe(200);
+    expect(main.headers.get('content-type')).toBe('image/png');
+    const thumb = await req(d.images.thumb!);
+    expect(thumb.status).toBe(200);
+    expect(thumb.headers.get('content-type')).toBe('image/png');
+  });
+
+  it('旧客户端只传主图：小格子退回用主图，不会空着', async () => {
+    const d = AdminDish.parse(await (await upload('e02', PNG)).json());
+    expect(d.images.closed).not.toBeNull();
+    expect(d.images.thumb).toBe(d.images.closed);
+    expect((await customerMenu()).dishes.find((x) => x.uid === 'e02')?.images.thumb).toBe(d.images.closed);
+  });
+
+  it('换图时小图跟着换；换的新图没带小图，就退回用新大图（不会继续显示上一张的小图）', async () => {
+    const first = AdminDish.parse(await (await uploadBoth('e01', PNG, new Uint8Array([...PNG, 0x01]))).json());
+    expect(first.images.thumb).not.toBe(first.images.closed);
+    const second = AdminDish.parse(await (await upload('e01', new Uint8Array([...PNG, 0x02]))).json());
+    expect(second.images.closed).not.toBe(first.images.closed);
+    expect(second.images.thumb).toBe(second.images.closed); // 不是 first.images.thumb
+  });
+
+  it('小图不是图片 / 太大：小图丢掉，主图照存，老板不会因为一张小图看不到大图', async () => {
+    const form = new FormData();
+    form.append('file', new File([PNG], 'a.png'));
+    form.append('thumb', new File([new TextEncoder().encode('not an image')], 'bad.png'));
+    const r = await api.request('/api/admin/dishes/e03/image', { method: 'POST', headers: { authorization: `Bearer ${admin}` }, body: form });
+    expect(r.status).toBe(200);
+    const d = AdminDish.parse(await r.json());
+    expect(d.images.closed).not.toBeNull();
+    expect(d.images.thumb).toBe(d.images.closed);
+  });
+
+  it('删图把小图一起删掉，恢复占位时两处都没有图', async () => {
+    const d = AdminDish.parse(await (await uploadBoth('e01', PNG, new Uint8Array([...PNG, 0x03]))).json());
+    expect(d.images.thumb).not.toBeNull();
+    const cleared = AdminDish.parse(await (await req('/api/admin/dishes/e01/image/clear', { body: {}, admin: true })).json());
+    expect(cleared.images.closed).toBeNull();
+    expect(cleared.images.thumb).toBeNull();
+    expect((await customerMenu()).dishes.find((x) => x.uid === 'e01')?.images.thumb).toBeNull();
+  });
+
+  it('/media 只放行「菜品编号-指纹[-thumb].扩展名」这一种文件名，其它一律 404（防目录穿越）', async () => {
+    for (const bad of ['../package.json', 'e01-0123456789.js', 'e01-0123456789-thumb.svg', 'e01-x.svg']) {
+      expect((await req(`/media/${encodeURIComponent(bad)}`)).status).toBe(404);
+    }
+  });
+});
+
 describe('删除图片，恢复占位（34号 A）', () => {
   it('删掉上传的图：顾客端回到占位；改动日志记下删的是哪张；原图文件还在', async () => {
     const up = AdminDish.parse(await (await upload('e01', PNG)).json());
@@ -176,6 +249,32 @@ describe('营业时间与打烊停单', () => {
     now = new Date('2026-10-17T16:30:00Z'); // 吉隆坡 00:30
     expect((await status()).open).toBe(true);
   });
+  it('暂停接单时告诉顾客大概多久恢复（P2-9）', async () => {
+    // 默认 15 分钟
+    await req('/api/admin/store', { body: { paused: true }, admin: true });
+    const a = await status();
+    expect(a.pauseMinutes).toBe(15);
+    // 吉隆坡 12:00 暂停 → 12:15 恢复
+    expect(Date.parse(a.resumeAt!)).toBe(now.getTime() + 15 * 60_000);
+
+    // 老板改成 40 分钟，恢复时刻跟着变
+    await req('/api/admin/store', { body: { paused: false }, admin: true });
+    await req('/api/admin/store', { body: { paused: true, pauseMinutes: 40 }, admin: true });
+    const b = await status();
+    expect(b.pauseMinutes).toBe(40);
+    expect(Date.parse(b.resumeAt!)).toBe(now.getTime() + 40 * 60_000);
+
+    // 恢复营业后不再挂倒计时
+    await req('/api/admin/store', { body: { paused: false }, admin: true });
+    expect(await status()).toMatchObject({ open: true, pauseMinutes: null, resumeAt: null });
+  });
+
+  it('暂停时长填得离谱直接拒掉（别让顾客看到「预计 9999 分钟」）', async () => {
+    expect((await req('/api/admin/store', { body: { paused: true, pauseMinutes: 0 }, admin: true })).status).toBe(400);
+    expect((await req('/api/admin/store', { body: { paused: true, pauseMinutes: 999 }, admin: true })).status).toBe(400);
+    expect((await req('/api/admin/store', { body: { paused: true, pauseMinutes: -5 }, admin: true })).status).toBe(400);
+  });
+
   it('营业时间格式检查', async () => {
     expect((await req('/api/admin/store', { body: { openAt: '9:00', closeAt: '22:00' }, admin: true })).status).toBe(400);
     expect((await req('/api/admin/store', { body: { openAt: '11:00' }, admin: true })).status).toBe(400);

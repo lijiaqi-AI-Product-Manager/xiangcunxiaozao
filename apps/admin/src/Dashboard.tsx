@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Dashboard, formatDate, formatPrice, LEDGER_TYPE_LABEL, shiftDay, type Dashboard as DashboardT } from '@pkg/contract';
+import { Dashboard, formatDate, formatMoney, LEDGER_TYPE_LABEL, shiftDay, type Dashboard as DashboardT } from '@pkg/contract';
 import config from 'virtual:brand';
 import { adminGet } from './api.ts';
 
 const { brand } = config;
-const money = (sen: number) => `${brand.currency.symbol} ${formatPrice(sen)}`;
+const money = (sen: number) => `${brand.currency.symbol} ${formatMoney(sen)}`;
 const signed = (sen: number) => (sen > 0 ? `+${money(sen)}` : sen < 0 ? `−${money(-sen)}` : money(0));
 const payLabel = (key: string) => brand.paymentMethods.find((m) => m.key === key)?.label ?? key;
 const dayLabel = (day: string) => formatDate(`${day}T12:00:00Z`, 'UTC'); // 营业日本身就是门店日历日，按日历显示

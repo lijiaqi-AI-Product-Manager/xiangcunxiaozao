@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { CounterRefund, formatDateTime, formatPickupNo, formatPrice, formatTable, Order, type CounterRefund as CounterRefundT, type Order as OrderT } from '@pkg/contract';
+import { CounterRefund, formatDateTime, formatPickupNo, formatMoney, formatTable, Order, type CounterRefund as CounterRefundT, type Order as OrderT } from '@pkg/contract';
 import config from 'virtual:brand';
 import { z } from 'zod';
 import { adminGet, adminPost } from './api.ts';
+import { askConfirm } from './Confirm.tsx';
 
 const { brand } = config;
-const money = (sen: number) => `${brand.currency.symbol} ${formatPrice(sen)}`;
+const money = (sen: number) => `${brand.currency.symbol} ${formatMoney(sen)}`;
 const payLabel = (key: string) => brand.paymentMethods.find((m) => m.key === key)?.label ?? key;
 const REASONS = ['菜品问题', '上错菜', '客人退菜'];
 
@@ -34,7 +35,12 @@ export function RefundBox({ order, onDone, onClose }: { order: OrderT; onDone: (
     if (amount === 0) { setError('请选择要退的菜品和份数'); return; }
     if (!reason.trim()) { setError('请写退款原因'); return; }
     const parts = [toStored > 0 ? `原路退回储值 ${money(toStored)}` : '', toCounter > 0 ? `柜台退还 ${money(toCounter)}` : ''].filter(Boolean).join('，');
-    if (!window.confirm(`确认给 ${formatPickupNo(order.pickupNo)} 号单退款 ${money(amount)}？\n${parts}`)) return;
+    const ok = await askConfirm({
+      title: `确认给 ${formatPickupNo(order.pickupNo)} 号单退款 ${money(amount)}？`,
+      detail: `${parts}\n原因：${reason.trim()}`,
+      confirmText: '确认退款', danger: true,
+    });
+    if (!ok) return;
     setBusy(true);
     setError(null);
     try {

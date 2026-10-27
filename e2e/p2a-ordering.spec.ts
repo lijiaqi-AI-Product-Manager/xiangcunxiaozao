@@ -54,24 +54,30 @@ test('点单闭环', async ({ browser }) => {
     await phone.getByRole('tab', { name: '主食' }).click();
     await phone.getByRole('button', { name: '加购 米饭' }).click();
     await expect(phone.locator('.cartbar-badge')).toHaveText('3');
-    await expect(phone.locator('.cartbar-total')).toHaveText('RM 98');
+    await expect(phone.locator('.cartbar-total')).toHaveText('RM 98.00');
     await shot(phone, '02-顾客-购物车条');
     await phone.getByRole('button', { name: '查看购物车' }).click();
     await expect(phone.getByRole('dialog', { name: '购物车' })).toBeVisible();
     await shot(phone, '03-顾客-购物车');
-    await phone.getByRole('dialog', { name: '购物车' }).getByRole('button', { name: /去结算/ }).click();
+    // 辣度是「逐菜」选的（P1-9）：一桌有人要不辣、有人要特辣，各点各的。
+    // 先在购物车里给第一道菜选「微辣」，结算页只负责核对。
+    const cart = phone.getByRole('dialog', { name: '购物车' });
+    await cart.locator('.line-opt').first().getByRole('button', { name: '微辣' }).click();
+    await expect(cart.locator('.line-opt').first().getByRole('button', { name: '微辣' })).toHaveAttribute('aria-pressed', 'true');
+    await cart.getByRole('button', { name: /去结算/ }).click();
   });
 
-  await test.step('结算：只校验付款方式和桌号；辣度写进备注', async () => {
+  await test.step('结算：校验付款方式必选；辣度已经在购物车里逐菜选好', async () => {
     await expect(phone.getByRole('heading', { name: '确认订单' })).toBeVisible();
     await shot(phone, '04-顾客-结算页');
     await phone.getByRole('button', { name: /提交订单/ }).click();
-    await expect(phone.getByRole('alert')).toHaveText('请选择付款方式');
-    await phone.getByRole('button', { name: '微辣' }).click();
+    // 错误条里除了这句话，还带一行「我可能已经下过单了？」的出口，所以用 toContainText
+    await expect(phone.getByRole('alert')).toContainText('请选择付款方式');
+    // 结算页把逐菜辣度汇总显示出来，顾客能确认「我选的那个辣度确实带上了」
+    await expect(phone.getByText('微辣').first()).toBeVisible();
     await phone.getByText('现金（到柜台）').click();
-    await expect(phone.getByText('备注将写入：辣度：微辣')).toBeVisible();
     await phone.getByRole('button', { name: /提交订单/ }).scrollIntoViewIfNeeded();
-    await shot(phone, '05-顾客-已选辣度与付款');
+    await shot(phone, '05-顾客-已选付款方式');
     await phone.getByRole('button', { name: /提交订单/ }).click();
   });
 
@@ -92,7 +98,8 @@ test('点单闭环', async ({ browser }) => {
     await desk.getByRole('button', { name: '登录' }).click();
     await expect(desk.getByText('实时连接正常')).toBeVisible();
     await expect(ticket(desk, '001')).toBeVisible();
-    await expect(ticket(desk, '001')).toContainText('备注：辣度：微辣');
+    // 辣度不再写进整单备注，而是作为标签挂在对应的那道菜上（P1-9）：后厨一眼看出是哪份要微辣
+    await expect(ticket(desk, '001').locator('.item-spice')).toHaveText('微辣');
     await shot(desk, '08-老板-看板-还没点开始接单');
     await desk.getByRole('button', { name: /开始接单/ }).click();
     await expect(desk.getByText('接单中')).toBeVisible();
@@ -129,15 +136,20 @@ test('点单闭环', async ({ browser }) => {
     await expect(phone.locator('.hero-status')).toHaveText('已完成');
     await shot(phone, '11-顾客-已完成');
     await phone2.goto(`${CUSTOMER}/#pickup`);
-    await expect(phone2.getByText('原因：客人临时离开')).toBeVisible();
+    // 取餐页和订单详情里都会写一遍取消原因，只断言页面上确实出现了
+    await expect(phone2.getByText('原因：客人临时离开').first()).toBeVisible();
     await shot(phone2, '12-另一桌-已取消');
   });
 
   await test.step('再来一单：上一单整单进购物车', async () => {
+    // 「再来一单」只在单子结束（已完成/已取消）后才出现；还在做的单显示「加菜」——
+    // 菜还没到手就再来一单，多半是误触。
     await phone.goto(`${CUSTOMER}/#me`);
-    await phone.getByRole('button', { name: '再来一单' }).first().click();
-    await expect(phone.locator('.cartbar-badge')).toHaveText('3');
+    const row = phone.locator('.order-row.status-done').first();
+    await expect(row.getByRole('button', { name: '再来一单' })).toBeVisible();
+    await row.getByRole('button', { name: '再来一单' }).click();
     await expect(phone.getByRole('status')).toHaveText('已把上一单加入购物车');
+    await expect(phone.locator('.cartbar-badge')).toHaveText('3');
     await expect(phone.getByRole('button', { name: /招牌跳跳蛙/ }).first()).toBeVisible();
     await shot(phone, '13-顾客-再来一单');
   });

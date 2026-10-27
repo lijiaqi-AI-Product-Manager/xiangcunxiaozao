@@ -180,4 +180,31 @@ describe('再来一单', () => {
     const stranger = await newCart();
     expect((await post('/api/cart/buyAgain', { cartId: stranger.id, orderId: o.id })).status).toBe(404);
   });
+
+  /**
+   * 回归：顾客点了「再来一单」，弹出来「找不到这张订单」。
+   *
+   * 真机上的路径是——下单时前端带了 deviceId（手机设备号），订单挂在设备号名下；
+   * 而再来一单只传 cartId（购物车编号）。两个编号永远不相等，于是自己的单也 404。
+   *
+   * 上面那条用例为什么没抓到：它下单时没带 deviceId，服务端退回用 cartId 记 owner，
+   * 于是「拿 cartId 比」刚好成立——测试把 bug 一起绕过去了。
+   * 这条用例按真前端的传法走：下单带 deviceId，再来一单也只带 deviceId。
+   */
+  it('下单时带了设备号：同一台手机还能再来一单（不会被当成别人的单）', async () => {
+    const device = 'device-abc-12345678';
+    const cart = await newCart();
+    await addDish(cart.id, 'e01', 1);
+    const o = Order.parse(await (await submit(cart.id, { deviceId: device })).json());
+
+    // 购物车被清空后换了车号（换手机重进 / 网络抖动重建车），设备号不变
+    const cart2 = await newCart();
+    const r = await post('/api/cart/buyAgain', { cartId: cart2.id, orderId: o.id, deviceId: device });
+    expect(r.status).toBe(200);
+    expect(Cart.parse((await json(r)).cart).count).toBe(1);
+
+    // 别的手机拿同一个订单号来复制，仍然 404
+    const other = await post('/api/cart/buyAgain', { cartId: (await newCart()).id, orderId: o.id, deviceId: 'someone-else-99999' });
+    expect(other.status).toBe(404);
+  });
 });

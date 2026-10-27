@@ -51,7 +51,8 @@ async function placeOrder(page: Page, dish: string) {
   await page.getByText('现金（到柜台）').click();
   await page.getByRole('button', { name: /提交订单/ }).click();
   await expect(page.locator('.hero-no')).toBeVisible();
-  const device = await page.evaluate(() => localStorage.getItem('cart-id'));
+  // 设备号是 device-id，不是 cart-id：下单后购物车会清空换号，用 cart-id 查自己的单会查不到
+  const device = await page.evaluate(() => localStorage.getItem('device-id'));
   const mine = await (await page.request.get(`${API}/api/order/mine?device=${device}`)).json() as { id: string }[];
   return mine[0]!.id;
 }
@@ -101,8 +102,14 @@ test('五页 + 桌面 + 状态图', async ({ browser, request }) => {
   // ---------- 结算 ----------
   await page.goto(`${CUSTOMER}/?table=8&tier=normal`);
   await page.getByRole('button', { name: '加购 农家一碗香' }).click();
-  await page.locator('.cartbar-go').click();
-  await page.getByRole('button', { name: '微辣' }).click();
+  // 辣度在「购物车弹层」里逐行设置，不在结算页（一桌有人不辣有人特辣，各点各的）。
+  // 以前这里点了 .cartbar-go 直奔结算，再去找「微辣」自然找不到。
+  await page.locator('.cartbar-summary').click();
+  const cartLine = page.locator('.lines .line', { hasText: '农家一碗香' }).first();
+  await cartLine.getByRole('button', { name: '微辣', exact: true }).click();
+  await expect(cartLine.getByRole('button', { name: '微辣', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  // 弹层盖住底部的「去结算」，要走弹层里那颗（.sheet-go）
+  await page.locator('.sheet-go').click();
   await page.getByText('现金（到柜台）').click();
   await settle(page);
   await shot(page, '09-结算', true);
@@ -112,7 +119,7 @@ test('五页 + 桌面 + 状态图', async ({ browser, request }) => {
   await expect(page.locator('.hero-status')).toHaveText('待制作');
   await settle(page);
   await shot(page, '10-取餐-待制作');
-  const device = await page.evaluate(() => localStorage.getItem('cart-id'));
+  const device = await page.evaluate(() => localStorage.getItem('device-id'));
   const [latest] = await (await page.request.get(`${API}/api/order/mine?device=${device}`)).json() as { id: string }[];
   await admin(request, `/api/admin/orders/${latest!.id}/status`, { to: 'cooking' });
   await page.reload();

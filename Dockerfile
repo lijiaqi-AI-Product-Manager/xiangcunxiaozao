@@ -25,4 +25,4 @@ ENV NODE_ENV=production \
     BACKUP_EVERY_MINUTES=10 \
     LEGACY_DB_PATH=/data/xcz.db
 EXPOSE 8080
-CMD ["npx", "tsx", "apps/server/src/main-zeabur.ts"]
+CMD ["npx", "tsx", "apps/server/src/main.ts"]

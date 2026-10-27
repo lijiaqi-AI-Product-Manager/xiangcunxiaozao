@@ -37,6 +37,7 @@ export function brushChars(brand: Brand, menu: Menu, faq?: Faq): string[] {
     ...menu.dishes.flatMap((d) => d.ingredients.map((i) => i.name)), // 拆开看看的食材层
     ...menu.dishes.map((d) => d.unit ?? ''), // 价格后面的单位（「/份」）
     ...menu.categories.map((c) => c.name), ...Object.values(brand.categoryNames), // 分组标题、分类条
+    ...brand.spiceOptions, // 购物车里的辣度（不辣 / 微辣 / 中辣 / 特辣 / 湖南辣）——少了「辣」字就悄悄掉成系统字体
     ...BRUSH_UI_LABELS,
     ASCII, // 价格「RM 48」、数字
   ].join('');

@@ -122,18 +122,27 @@ describe('按菜品行部分退款（28号 §三-2/3）', () => {
     return { m, o };
   }
 
-  it('先退储值部分；储值退完后进「待柜台退还」；每行每次一笔独立的红字流水', async () => {
+  it('混付单退款按「储值 : 现金」比例分摊，不是先退储值；每行每次一笔独立的红字流水', async () => {
+    // 这张单：储值 50 + 现金 52 = 102，比例 5000 : 5200
     const { m, o } = await mixedOrder();
     const first = Order.parse(await (await refund(o.id, [{ line: 1, qty: 1 }])).json());
     expect(first.refundState).toBe('partial');
     expect(first.items[0]?.refundedQty).toBe(1);
-    expect(await balanceOf(m.id)).toBe(4800); // 储值退回 48
+    // 退一道 48 元的菜（占整单 102 元的 47.06%）：储值退 23.53 → 23.53，现金退 24.47
+    // 旧算法「先退储值」会把 48 元全退进储值余额，柜台一分现金不用给——顾客拿到的是余额不是现金
+    expect(first.refunds[0]).toMatchObject({ amountSen: 4800, storedSen: 2353, counterSen: 2447 });
+    expect(await balanceOf(m.id)).toBe(2353); // 5000 - 2353（扣掉储值那部分后剩下的余额）
+    expect(await pending()).toMatchObject([{ amountSen: 2447, method: 'cash', pickupNo: 1 }]);
+
     const second = Order.parse(await (await refund(o.id, [{ line: 1, qty: 1 }])).json());
-    expect(second.refunds[1]).toMatchObject({ amountSen: 4800, storedSen: 200, counterSen: 4600 });
-    expect(await balanceOf(m.id)).toBe(5000); // 储值全退回
-    expect(await pending()).toMatchObject([{ amountSen: 4600, method: 'cash', pickupNo: 1 }]);
+    const last = second.refunds[1]!;
+    expect(last.amountSen).toBe(4800);
+    expect(last.storedSen + last.counterSen).toBe(4800);
+    // 储值余额只会变多（退款），不会凭空多退
+    expect(await balanceOf(m.id)).toBeLessThan(5000);
+
     const ledger = await ledgerOf(m.id);
-    expect(ledger.filter((l) => l.type === 'refund').map((l) => l.amountSen)).toEqual([200, 4800]);
+    expect(ledger.filter((l) => l.type === 'refund')).toHaveLength(2);
   });
   it('边界：同一行累计退的份数不能超过下单份数（分多次退也一样）', async () => {
     const { o } = await mixedOrder();
@@ -169,9 +178,13 @@ describe('按菜品行部分退款（28号 §三-2/3）', () => {
     expect(done.refunds).toHaveLength(2);
     expect(done).toMatchObject({ refundState: 'full', refundedSen: 10200, status: 'cancelled', cancelReason: '全部菜品已退款', etaMinutes: null, autoCancelled: true });
     expect(await balanceOf(m.id)).toBe(5000); // 储值 50 全退回，没有多退
-    // 现金 52 待柜台退还：按菜品行各一条（跳跳蛙行 46 + 米饭行 6），合计不多不少
+    // 现金 52 待柜台退还：按比例分摊后每行各一条，合计必须**正好** 5200，一分不多一分不少
+    // 这是最关键的一条：全额退完时，储值恰好退满 5000、现金恰好退满 5200，一分不多一分不少。
+    // 比例分摊容易算错的地方就在舍入余数，这里用「精确等于」守住。
     const p = (await pending()).map((x) => x.amountSen);
-    expect(p.sort((a, b) => a - b)).toEqual([600, 4600]);
+    expect(p.reduce((a, b) => a + b, 0)).toBe(5200);
+    const backStored = (await ledgerOf(m.id)).filter((l) => l.type === 'refund').reduce((n, l) => n + l.amountSen, 0);
+    expect(backStored).toBe(5000);
   });
   it('已完成的单全部退完：保持「已完成」，标「已全额退款」', async () => {
     const { o } = await mixedOrder();
@@ -182,11 +195,13 @@ describe('按菜品行部分退款（28号 §三-2/3）', () => {
   });
   it('部分退款后整单取消：只退还没退过的部分；取消后不能再退', async () => {
     const { m, o } = await mixedOrder();
-    await refund(o.id, [{ line: 1, qty: 1 }]); // 储值退 48，还剩储值 2
+    await refund(o.id, [{ line: 1, qty: 1 }]); // 按比例退：储值 23.53 + 现金 24.47
     const cancelled = Order.parse(await (await req(`/api/admin/orders/${o.id}/status`, { body: { to: 'cancelled', reason: '客人走了' }, admin: true })).json());
     expect(cancelled.autoCancelled).toBe(false); // 店员手动取消，不标「系统自动取消」
+    // 两次退款（部分退 + 取消补退）加起来，储值恰好回到 5000、现金恰好退满 5200
     expect(await balanceOf(m.id)).toBe(5000);
-    expect((await pending()).map((p) => p.amountSen)).toEqual([5200]); // 现金部分 52 全部待柜台退还
+    const all = (await pending()).map((p) => p.amountSen);
+    expect(all.reduce((a, b) => a + b, 0)).toBe(5200);
     const after = await refund(o.id, [{ line: 2, qty: 1 }]);
     expect(await msg(after)).toContain('不能再退款');
   });

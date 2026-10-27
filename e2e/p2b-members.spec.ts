@@ -4,6 +4,7 @@ import { mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
 
+import { autoConfirm } from './helpers.ts';
 const SHOTS = resolve(import.meta.dirname, '..', 'docs', 'screenshots', 'p2-batch2');
 mkdirSync(SHOTS, { recursive: true });
 const CUSTOMER = 'http://localhost:5183';
@@ -14,7 +15,7 @@ const shot = (page: Page, name: string, fullPage = false) => page.screenshot({ p
 test('会员与储值', async ({ browser }) => {
   const phone = await (await browser.newContext(PHONE)).newPage();
   const desk = await (await browser.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
-  desk.on('dialog', (d) => void d.accept()); // 充值/调整的二次确认一律点「确定」
+  autoConfirm(desk); // 老板端的确认是自定义弹窗，不是原生 dialog
   const balance = desk.locator('.member-balance strong');
   const panel = desk.locator('.member-panel');
 
@@ -38,7 +39,7 @@ test('会员与储值', async ({ browser }) => {
     await f.getByLabel('金额（RM）').fill('100');
     await f.getByLabel('备注（可选）').fill('柜台现金');
     await f.getByRole('button', { name: '充值' }).dblclick();
-    await expect(balance).toHaveText('RM 100');
+    await expect(balance).toHaveText('RM 100.00');
     await expect(panel.locator('tbody tr')).toHaveCount(1);
     await shot(desk, '02-老板-充值后');
   });
@@ -50,7 +51,7 @@ test('会员与储值', async ({ browser }) => {
     await expect(f.getByRole('alert')).toHaveText('调整余额必须写原因');
     await f.getByLabel('原因（必填）').fill('多充冲回');
     await f.getByRole('button', { name: '余额调整' }).click();
-    await expect(balance).toHaveText('RM 90');
+    await expect(balance).toHaveText('RM 90.00');
     await shot(desk, '03-老板-调整后');
   });
 
@@ -64,7 +65,7 @@ test('会员与储值', async ({ browser }) => {
     await shot(phone, '04-顾客-会员密码错误');
     await f.getByLabel('4 位密码').fill('2468');
     await f.getByRole('button', { name: '登录会员' }).click();
-    await expect(phone.locator('.balance')).toHaveText('RM 90');
+    await expect(phone.locator('.balance')).toHaveText('RM 90.00');
     await expect(phone.getByText('012****789')).toBeVisible();
     await shot(phone, '05-顾客-会员余额与流水', true);
   });
@@ -73,14 +74,14 @@ test('会员与储值', async ({ browser }) => {
     await phone.goto(`${CUSTOMER}/?table=3#order`);
     await phone.getByRole('button', { name: '加购 农家一碗香' }).click();
     await phone.locator('.cartbar-go').click();
-    await expect(phone.getByText('余额 RM 90')).toBeVisible();
+    await expect(phone.getByText(/余额\s*RM\s*90\.00/)).toBeVisible();
     await phone.getByText('储值支付').click();
     await phone.getByRole('button', { name: /提交订单/ }).scrollIntoViewIfNeeded();
     await shot(phone, '06-顾客-储值支付结算');
     await phone.getByRole('button', { name: /提交订单/ }).click();
     await expect(phone.locator('.hero-status')).toHaveText('待制作');
     await phone.goto(`${CUSTOMER}/#member`);
-    await expect(phone.locator('.balance')).toHaveText('RM 65');
+    await expect(phone.locator('.balance')).toHaveText('RM 65.00');
     await shot(phone, '07-顾客-扣款后余额', true);
   });
 
@@ -89,9 +90,9 @@ test('会员与储值', async ({ browser }) => {
     await phone.getByRole('tab', { name: '镇店硬菜' }).click();
     await phone.getByRole('button', { name: '加购 脆皮爆汁烤鱼' }).click();
     await phone.locator('.cartbar-go').click();
-    await expect(phone.getByText('余额不足（RM 65）')).toBeVisible();
+    await expect(phone.getByText(/余额不足（RM\s*65\.00）/)).toBeVisible();
     await expect(phone.getByRole('radio', { name: /储值支付/ })).toBeDisabled();
-    await phone.getByText('余额不足（RM 65）').scrollIntoViewIfNeeded();
+    await phone.getByText(/余额不足（RM\s*65\.00）/).scrollIntoViewIfNeeded();
     await shot(phone, '08-顾客-余额不足');
     await phone.goto(`${CUSTOMER}/#order`);
     await phone.getByRole('button', { name: '查看购物车' }).click();
@@ -103,15 +104,15 @@ test('会员与储值', async ({ browser }) => {
     const ticket = desk.locator('.ticket', { hasText: '储值支付' });
     await expect(ticket).toBeVisible();
     await ticket.getByRole('button', { name: '取消' }).click();
-    await expect(ticket.getByText('取消后 RM 25 会自动退回会员余额')).toBeVisible();
+    await expect(ticket.getByText(/取消后 RM\s*25\.00\s*会自动退回会员余额/)).toBeVisible();
     await ticket.getByLabel('取消原因').fill('食材用完了');
     await ticket.getByRole('button', { name: '确认取消' }).click();
     await expect(desk.getByText(/已取消 \d+ 单/)).toBeVisible();
     await phone.goto(`${CUSTOMER}/#pickup`);
-    await expect(phone.getByText('储值 RM 25 已原路退回会员余额')).toBeVisible();
+    await expect(phone.getByText(/储值 RM\s*25\.00\s*已原路退回会员余额/)).toBeVisible();
     await shot(phone, '09-顾客-取消后退回');
     await phone.goto(`${CUSTOMER}/#member`);
-    await expect(phone.locator('.balance')).toHaveText('RM 90');
+    await expect(phone.locator('.balance')).toHaveText('RM 90.00');
     await shot(phone, '10-顾客-退回后余额', true);
   });
 

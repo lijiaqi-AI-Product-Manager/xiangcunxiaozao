@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import Database from 'better-sqlite3';
 import { expect, test, type Page } from '@playwright/test';
 
+import { confirmDialog, ensureMember } from './helpers.ts';
 const ROOT = resolve(import.meta.dirname, '..');
 const SHOTS = resolve(ROOT, 'docs', 'screenshots', 'p2-batch3');
 mkdirSync(SHOTS, { recursive: true });
@@ -12,6 +13,25 @@ const CUSTOMER = 'http://localhost:5183';
 const ADMIN = 'http://localhost:5184';
 const PHONE = { viewport: { width: 375, height: 812 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true };
 const shot = (page: Page, name: string, fullPage = false) => page.screenshot({ path: resolve(SHOTS, `${name}.png`), fullPage });
+
+/**
+ * 直接改测试库。要点只有一条：**不能切 journal 模式**。
+ *
+ * 后端进程一直开着这个库（WAL）。外面另开一个连接写进去，后端那条长连接**能看到**新数据
+ * ——WAL 下每次读都会看最新的提交，不需要切模式。
+ * 以前这里踩过：UPDATE 明明执行了，`/api/admin/reconcile` 还是返回「0 位会员，全部一致」。
+ * 真正的原因是账号：库里根本没有 100001 这张卡（它是另一个用例办的），UPDATE 影响了 0 行。
+ * 后来一度想用 `PRAGMA journal_mode = DELETE` 去「刷新」，结果后端还连着，切模式直接 database is locked。
+ */
+function pokeDb(sql: string) {
+  const db = new Database(resolve(ROOT, 'data', 'e2e.db'));
+  try {
+    db.pragma('busy_timeout = 5000');
+    return db.prepare(sql).run();
+  } finally {
+    db.close();
+  }
+}
 
 /** 吉隆坡现在几点之后 h 小时的 HH:MM，用来设一个「当前不在营业时间」的窗口 */
 const klPlus = (h: number) =>
@@ -33,7 +53,8 @@ test('菜品管理与营业', async ({ browser }) => {
   const phone = await (await browser.newContext(PHONE)).newPage();
   const deskCtx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const desk = await deskCtx.newPage();
-  desk.on('dialog', (d) => void d.accept()); // 改价、暂停接单的二次确认
+  // 本用例所有确认都显式点，不用 autoConfirm：那个后台循环会和频繁跳转互相干扰，
+  // 表现出来就是「.side 里的链接刚点下去就被替换掉了」
   const nav = (name: string) => desk.locator('.side').getByRole('link', { name: new RegExp(`^${name}`) });
   const row = (name: string) => desk.locator('.dish-table tbody tr', { has: desk.getByRole('cell', { name, exact: true }) });
 
@@ -46,6 +67,8 @@ test('菜品管理与营业', async ({ browser }) => {
     await shot(desk, '01-老板-菜品管理');
     await desk.getByLabel('招牌跳跳蛙 价格').fill('52');
     await row('招牌跳跳蛙').getByRole('button', { name: '保存' }).click();
+    // 改价是动钱的，会先弹二次确认；不点确认价格根本不会提交
+    await confirmDialog(desk, '确认改价');
     await expect(row('招牌跳跳蛙')).toContainText('菜单原价 48');
   });
 
@@ -81,7 +104,7 @@ test('菜品管理与营业', async ({ browser }) => {
   await test.step('顾客端立即生效：新价格、新图片；下架的菜看不到', async () => {
     await phone.goto(`${CUSTOMER}/?table=9`);
     const frog = phone.locator('.dish', { hasText: '招牌跳跳蛙' });
-    await expect(frog).toContainText('RM 52');
+    await expect(frog).toContainText('RM 52'); // 菜单价，去掉多余的 .00 更清爽（账单才用两位小数）
     await expect(frog.locator('img')).toHaveCount(0); // 招牌菜没被传测试图
     await phone.getByRole('tab', { name: '主食' }).click();
     await expect(phone.locator('.dish', { hasText: '下饭咸鸭蛋' }).locator('img')).toBeVisible();
@@ -93,7 +116,9 @@ test('菜品管理与营业', async ({ browser }) => {
 
   await test.step('老板删除图片（34号 A）：fixture 菜回到占位，顾客端立即生效；后面的截图里不再有测试图', async () => {
     await desk.getByLabel('搜索菜品').fill('咸鸭蛋');
-    await desk.getByRole('button', { name: '删除 下饭咸鸭蛋 图片' }).click(); // 二次确认由上面的 dialog 处理自动接受
+    await desk.getByRole('button', { name: '删除 下饭咸鸭蛋 图片' }).click();
+    // 删图也会先弹确认（「确认删除这张图？」→「删除图片」），不点就一直挂着
+    await confirmDialog(desk, '删除图片');
     await expect(row('下饭咸鸭蛋').getByRole('button', { name: '上传图片' })).toBeVisible();
     await expect(desk.getByRole('button', { name: '删除 下饭咸鸭蛋 图片' })).toHaveCount(0);
     await shot(desk, '04b-老板-删除图片后');
@@ -105,11 +130,16 @@ test('菜品管理与营业', async ({ browser }) => {
 
   await test.step('老板暂停接单：顾客端看到提示，结算按钮变「暂不接单」', async () => {
     await nav('实时订单').click();
+    // 暂停接单不再用浏览器原生 prompt（平板上会被拦），改成页面里填分钟数
     await desk.getByRole('button', { name: '暂停接单' }).click();
+    const pauseForm = desk.getByRole('form', { name: '暂停接单' });
+    await pauseForm.getByLabel('暂停多少分钟').fill('15');
+    await pauseForm.getByRole('button', { name: '确认暂停' }).click();
+    await confirmDialog(desk, '暂停接单');
     await expect(desk.getByRole('status').filter({ hasText: '已暂停接单' })).toBeVisible();
     await shot(desk, '05-老板-已暂停接单');
     await phone.goto(`${CUSTOMER}/?table=9`);
-    await expect(phone.getByText('本店暂停接单')).toBeVisible();
+    await expect(phone.getByText('本店暂时停止接单')).toBeVisible();
     await shot(phone, '06-顾客-暂停接单提示');
     await phone.getByRole('button', { name: '加购 农家一碗香' }).click();
     await phone.locator('.cartbar-go').click();
@@ -150,10 +180,11 @@ test('菜品管理与营业', async ({ browser }) => {
   });
 
   await test.step('对账异常：任何页面顶部都有横幅，「开始接单」旁亮红点', async () => {
+    // 先确保库里真有这张会员卡（单独跑这条用例时不会有人替我们办卡）
+    await ensureMember(desk, ADMIN, '100001', '90');
     // 模拟「有人绕过流水直接改了余额」：直接改测试数据库
-    const db = new Database(resolve(ROOT, 'data', 'e2e.db'));
-    db.prepare("UPDATE members SET balance_sen = balance_sen + 1000 WHERE member_no = '100001'").run();
-    db.close();
+    const hit = pokeDb("UPDATE members SET balance_sen = balance_sen + 1000 WHERE member_no = '100001'");
+    expect(hit.changes, '测试库上应该有会员 100001 才改得动').toBe(1);
     await nav('会员管理').click();
     await desk.getByRole('button', { name: '立即对账' }).click();
     await expect(desk.locator('.global-alert')).toContainText('对账发现 1 处不一致');
@@ -164,9 +195,7 @@ test('菜品管理与营业', async ({ browser }) => {
     await expect(desk.getByText('实时连接正常')).toBeVisible();
     await shot(desk, '10-老板-接单旁红点');
     // 测试完把数据改回来，再对一次账，横幅消失
-    const db2 = new Database(resolve(ROOT, 'data', 'e2e.db'));
-    db2.prepare("UPDATE members SET balance_sen = balance_sen - 1000 WHERE member_no = '100001'").run();
-    db2.close();
+    pokeDb("UPDATE members SET balance_sen = balance_sen - 1000 WHERE member_no = '100001'");
     await nav('会员管理').click();
     await desk.getByRole('button', { name: '立即对账' }).click();
     await expect(desk.locator('.global-alert')).toHaveCount(0);

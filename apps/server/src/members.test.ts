@@ -169,4 +169,30 @@ describe('对账', () => {
     run = ((await (await req('/api/admin/reconcile', { body: {}, admin: true })).json()) as { last: { mismatches: unknown[] } }).last;
     expect(run.mismatches).toEqual([{ memberNo: '100001', balanceSen: 99999, ledgerSumSen: 10000 }]);
   });
+
+  it('一个会员都没有时不落记录：空对账不能算「对过了」', async () => {
+    expect(((await (await req('/api/admin/reconcile', { body: {}, admin: true })).json()) as { last: { checked: number } }).last.checked).toBe(0);
+    // 空库跑了一遍，不该留下「已对账」的痕迹，否则老板端会显示「对账正常：0 位会员」
+    expect(((await (await req('/api/admin/reconcile', { admin: true })).json()) as { last: unknown }).last).toBeNull();
+    // 办了卡之后才有记录的资格
+    await newMember();
+    await req('/api/admin/reconcile', { body: {}, admin: true });
+    expect(((await (await req('/api/admin/reconcile', { admin: true })).json()) as { last: { checked: number } }).last.checked).toBe(1);
+  });
+
+  it('上次对账之后新办的卡算「没核对过」，不能说全部一致', async () => {
+    await newMember('1234', '0123456789');
+    await req('/api/admin/reconcile', { body: {}, admin: true });
+    await newMember('1234', '0199999999'); // 对账之后才办的第二张
+    const last = ((await (await req('/api/admin/reconcile', { admin: true })).json()) as { last: { checked: number; uncheckedCount: number } }).last;
+    expect(last.checked).toBe(1);
+    expect(last.uncheckedCount).toBe(1);
+  });
+
+  it('手动对账后随即返回 uncheckedCount 0，不会让老板刚点完还看到「有 N 位没核对」', async () => {
+    await newMember();
+    const last = ((await (await req('/api/admin/reconcile', { body: {}, admin: true })).json()) as { last: { checked: number; uncheckedCount: number } }).last;
+    expect(last.checked).toBe(1);
+    expect(last.uncheckedCount).toBe(0);
+  });
 });

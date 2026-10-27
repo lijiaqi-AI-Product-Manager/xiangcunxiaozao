@@ -56,10 +56,16 @@ function loadBrand(repoRoot: string) {
 const FONT_ROUTE = '/brand-font/';
 function fontFiles(repoRoot: string) {
   const { brand, dir } = loadBrand(repoRoot);
-  // 书法字体首屏就要用（占位图、水印），预加载；英文字体只在用到时才下载
-  // 53号：详情正文楷体也自托管，只在详情页用到，不预加载
-  return [{ font: brand.brushFont, preload: true }, { font: brand.latinFont, preload: false }, { font: brand.bodyFont, preload: false }]
-    .flatMap(({ font, preload }) => (font ? [{ family: font.family, path: resolve(dir, font.file), url: FONT_ROUTE + basename(font.file), preload, weight: font.weightRange?.join(' '), latin: font === brand.latinFont }] : []));
+  // 谁该预加载，只看「首屏看不看得见」：
+  //   ① 书法字体（brush）—— 菜单页的菜名、今日招牌大画上的字、水印，首屏全都是它，149 KB，必须预加载，否则菜名会先闪一下系统字体再跳回书法体；
+  //   ② 英文装饰字体（latin）—— 只用在编号、价格数字这类小块装饰上，24 KB，顺带预加载代价极低，省掉一次「数字换字形」；
+  //   ③ 正文楷体（body）—— 242 KB，只有菜品详情页的长正文用得到，首屏一个字都不显示，绝不预加载。
+  // 之前这里把 body 当成「书法字体」预加载、把真正的 brush 漏了：首屏多等 242 KB 用不上的字，最想要的 149 KB 反而没提前下。
+  return [
+    { font: brand.brushFont, preload: true },
+    { font: brand.latinFont, preload: true },
+    { font: brand.bodyFont, preload: false },
+  ].flatMap(({ font, preload }) => (font ? [{ family: font.family, path: resolve(dir, font.file), url: FONT_ROUTE + basename(font.file), preload, weight: font.weightRange?.join(' '), latin: font === brand.latinFont }] : []));
 }
 function fontHead(repoRoot: string): string {
   const files = fontFiles(repoRoot);

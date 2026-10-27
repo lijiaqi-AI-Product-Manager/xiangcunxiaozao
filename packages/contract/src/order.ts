@@ -27,12 +27,21 @@ export const NEXT_STATUS: Record<OrderStatus, OrderStatus[]> = {
 };
 
 export const CartLine = z.object({
+  /**
+   * 这一行的编号（P1-9）。同一种菜可以有多行——「剁椒鱼 微辣」和「剁椒鱼 特辣」是两行，
+   * 所以前端改数量/删行必须认 id，不能再按 dishUid。
+   */
+  id: z.string(),
   dishUid: z.string(),
   code: z.string(),
   name: z.string(),
   priceSen: z.number().int().nullable(),
   qty: z.number().int().positive(),
   subtotalSen: z.number().int(),
+  /** 这一行的辣度（brand.spiceOptions 的值）；空串 = 没选 */
+  spice: z.string().default(''),
+  /** 这一行的备注（不要香菜 / 打包）；空串 = 没有 */
+  note: z.string().default(''),
   available: z.boolean(), // 菜品已下架或今日售罄时为 false，结算前需移除
   unavailableReason: z.enum(['soldout', 'off']).nullable(),
 });
@@ -55,6 +64,10 @@ export const OrderItem = z.object({
   priceSen: z.number().int(),
   qty: z.number().int().positive(),
   refundedQty: z.number().int().nonnegative(), // 这一行已经退了几份
+  /** 下单时这一行选的辣度；空串 = 没选（P1-9） */
+  spice: z.string().default(''),
+  /** 下单时这一行的备注；空串 = 没有（P1-9） */
+  note: z.string().default(''),
 });
 
 /** 退款情况（28号 §三-2）：不改订单状态机，单独标「部分退款 / 已全额退款」 */
@@ -110,6 +123,29 @@ export const Order = z.object({
   refundedSen: z.number().int().nonnegative(),
   refunds: z.array(RefundRecord),
   autoCancelled: z.boolean(), // 系统因「全部菜品已退款」自动取消
+  // 乐观锁版本号：老板端改状态时带回来，对不上说明别的设备刚改过（防止两台设备互相覆盖）。
+  // 老数据没有这个字段，给默认值 0，避免前端解析失败。
+  version: z.number().int().nonnegative().default(0),
+  /**
+   * 这单是不是一张「加菜单」（P2-6）。
+   *
+   * 加菜另开一张子单，钱各记各的，但客人和老板看到的都是父单那个取餐号。
+   * 所以 pickupNo 一律返回**父单的号**；要区分「第几次加菜」看 addSeq。
+   */
+  parentOrderId: z.string().nullable().default(null),
+  /** 第几次加菜（1、2、3…）；主单为 null */
+  addSeq: z.number().int().positive().nullable().default(null),
+  /**
+   * 这张单自己付了多少钱、退了多少。
+   *
+   * 加菜后「这一桌一共多少」= 父单 totalSen + 各子单 totalSen。
+   * 为了不让每个调用方自己加一遍（漏掉子单是最容易犯的错），接口同时给一个 groupTotalSen。
+   */
+  groupTotalSen: z.number().int().nonnegative().default(0),
+  /** 这一桌一共退了多少（父子相加） */
+  groupRefundedSen: z.number().int().nonnegative().default(0),
+  /** 还有几次加菜单挂在它下面（只在父单上有值，方便老板端说「又加了 2 次」） */
+  addCount: z.number().int().nonnegative().default(0),
 });
 export type Order = z.infer<typeof Order>;
 
@@ -127,7 +163,40 @@ export const SubmitOrderInput = z.object({
   note: z.string().nullish(),
   // 「储值 + 其他方式」合付：余额先扣完，剩下的用 paymentMethod 付
   useStoredValue: z.boolean().nullish(),
+  // 幂等编号：顾客网络一抖就会重试，带同一个编号重试必须返回同一张单，不能变成两张
+  requestId: z.string().nullish(),
+  /**
+   * 这台手机的固定编号（存在本地，见 apps/customer/src/api.ts 的 deviceId()）。
+   *
+   * 以前订单的 device_id 存的是购物车 id，而「我的订单 / 取餐页」拿的是设备号去查，
+   * 两边永远不相等 —— 顾客下完单回头一看，永远是「还没有订单」，取餐页也找不到自己的单。
+   * 购物车每单都会换一个，设备号才跟着这台手机走，所以必须由前端明确带上来。
+   */
+  deviceId: z.string().nullish(),
 });
+
+/**
+ * 加菜（P2-6）：往**已经下过的**那张单后面再挂一张子单。
+ *
+ * 只允许点「这张单还是这一桌的菜」的时候加。规则写在这里，服务端照着执行：
+ *   • 父单已取消 / 已完成：不能再加（做完了再加，就该重新开一单）
+ *   • 父单本身是加菜单：不能再套一层，永远挂到最上面那张主单（避免出现三层、四层）
+ *   • 付款方式跟父单走，不再让顾客选一次——一桌一单的账，付款方式应该一致
+ */
+export const AddDishesInput = z.object({
+  /** 挂在哪个取餐号下面。顾客手上只有这个号，他也只可能提供这个 */
+  pickupNo: z.number().int().positive(),
+  cartId: z.string(),
+  note: z.string().nullish(),
+  requestId: z.string().nullish(),
+  deviceId: z.string().nullish(),
+});
+export type AddDishesInput = z.infer<typeof AddDishesInput>;
+
+/** 一张单现在的显示号：加菜子单显示成「018+1」 */
+export function pickupLabel(pickupNo: number, addSeq: number | null | undefined): string {
+  return `${String(pickupNo).padStart(3, '0')}${addSeq ? `+${addSeq}` : ''}`;
+}
 
 /** 付款方式的显示文字：纯储值 / 纯其他 / 「储值 RM X + 现金 RM Y」 */
 export function paymentText(o: Pick<Order, 'paymentMethod' | 'storedSen' | 'otherSen'>, labelOf: (key: string) => string, money: (sen: number) => string): string {

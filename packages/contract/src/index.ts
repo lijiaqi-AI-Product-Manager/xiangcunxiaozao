@@ -5,3 +5,5 @@ export * from './order.ts';
 export * from './member.ts';
 export * from './store.ts';
 export * from './dashboard.ts';
+export * from './report.ts';
+export * from './history.ts';

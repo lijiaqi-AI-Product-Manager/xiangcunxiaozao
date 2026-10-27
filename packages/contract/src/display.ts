@@ -14,6 +14,21 @@ export function formatPrice(sen: number | null | undefined): string {
   return cents % 10 === 0 ? `${sign}${whole}.${cents / 10}` : `${sign}${whole}.${String(cents).padStart(2, '0')}`;
 }
 
+/**
+ * 1990 → "19.90"，4800 → "48.00"。**固定两位小数，只给账单类场景用。**
+ *
+ * 为什么不能直接用 formatPrice：
+ * 菜单上「19.9」看着清爽，但日结单、看板这种一列金额叠着的地方，
+ * 「553.3 / 29.7 / 0」上下对不齐，而且老板会怀疑是不是少打了一位。
+ * 账单上两位小数是行业惯例，也是给顾客看的凭据该有的样子。
+ */
+export function formatMoney(sen: number | null | undefined): string {
+  if (typeof sen !== 'number' || !Number.isInteger(sen)) return '—';
+  const sign = sen < 0 ? '-' : '';
+  const abs = Math.abs(sen);
+  return `${sign}${Math.trunc(abs / 100)}.${String(abs % 100).padStart(2, '0')}`;
+}
+
 export function formatTable(table: string | number | null | undefined): string {
   if (table === null || table === undefined) return '桌 —';
   const s = String(table).trim();
@@ -49,6 +64,20 @@ export function formatClock(value: string | number | Date | null | undefined, ti
   const d = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(d.getTime())) return '--:--';
   return new Intl.DateTimeFormat('zh-CN', { timeZone, hour: '2-digit', minute: '2-digit', hour12: false }).format(d);
+}
+
+/**
+ * 门店时区的「时:分:秒」，用于打印记录这类要精确到秒的场景。
+ *
+ * 为什么单独开一个函数：老板端原来写的是 `at.slice(11, 19)`——at 是 ISO 的 UTC 时间，
+ * 截出来的是 UTC 的时分秒，吉隆坡要比它大 8 小时。晚上 7 点打的单显示成上午 11 点，
+ * 老板对不上「刚才那单到底打没打出来」。
+ */
+export function formatClockSec(value: string | number | Date | null | undefined, timeZone: string): string {
+  if (value === null || value === undefined || value === '') return '--:--:--';
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return '--:--:--';
+  return new Intl.DateTimeFormat('zh-CN', { timeZone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(d);
 }
 
 /**

@@ -7,6 +7,13 @@ export const StoreStatus = z.object({
   reason: z.enum(['paused', 'outside-hours']).nullable(), // 不营业的原因：老板手动暂停 / 不在营业时间
   openAt: z.string().nullable(), // 'HH:MM'，未设置为 null
   closeAt: z.string().nullable(),
+  /**
+   * 暂停接单时老板填的「预计多久恢复」（分钟）；没填就是 null（P2-9）。
+   * 以前顾客只看到「暂停接单，请稍后再来」——等 5 分钟还是干脆走人？没法判断。
+   */
+  pauseMinutes: z.number().int().positive().nullable().default(null),
+  /** 预计恢复的时刻（ISO）。由服务端按暂停时间 + 分钟数算出，顾客端直接照着倒计时 */
+  resumeAt: z.string().nullable().default(null),
 });
 export type StoreStatus = z.infer<typeof StoreStatus>;
 

@@ -9,6 +9,7 @@
     "@hono/node-server": "^1.14.4",
     "@pkg/contract": "*",
     "better-sqlite3": "^12.2.0",
-    "hono": "^4.8.4"
+    "hono": "^4.8.4",
+    "iconv-lite": "^0.7.3"
   }
 }

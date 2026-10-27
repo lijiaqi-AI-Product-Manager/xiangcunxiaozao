@@ -33,6 +33,10 @@ test.afterAll(() => new Promise<void>((ok) => server.close(() => ok())));
 
 test('演示版：不连后端，点单 → 下单 → 取餐出号；资源都用相对路径', async ({ browser }) => {
   const page = await (await browser.newContext({ viewport: { width: 375, height: 812 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true })).newPage();
+  // 演示版把购物车/订单存在浏览器的 demo-state 里。不先清掉，跑过第二次就会看到上次的单和号（取餐号不是 001）
+  await page.goto(`http://localhost:${PORT}${PREFIX}`);
+  await page.evaluate(() => { localStorage.removeItem('demo-state'); localStorage.removeItem('device-id'); localStorage.removeItem('cart-id'); });
+  await page.reload();
   const missing: string[] = [];
   page.on('response', (r) => { if (r.status() >= 400) missing.push(r.url()); });
   await page.goto(`http://localhost:${PORT}${PREFIX}`);
@@ -64,7 +68,11 @@ test('演示版：不连后端，点单 → 下单 → 取餐出号；资源都�
   await expect(page.getByRole('alert')).toContainText('演示版不连会员数据');
 
   await page.goto(`http://localhost:${PORT}${PREFIX}#me`);
-  await expect(page.getByRole('button', { name: '再来一单' }).first()).toBeVisible();
+  // 待制作的单给的是「加菜」（还能往这一单里加），送完/取消之后才轮到「再来一单」。
+  // 演示版的出餐节奏是 45 秒自动完成，所以这里等状态自己走到「已完成」。
+  await expect(page.getByText('待制作')).toBeVisible();
+  await expect(page.getByRole('button', { name: '加菜' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '再来一单' }).first()).toBeVisible({ timeout: 60_000 });
   expect(missing, `这些资源没加载到：${missing.join('\n')}`).toEqual([]);
 });
 

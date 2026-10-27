@@ -279,7 +279,7 @@ export function run(brandDir: string) {
       categoryKey: r.section,
       hook: c?.hook ?? null, intro: c?.intro ?? null, ingredients: c?.ingredients ?? [],
       origin: c?.origin ?? null, steps: c?.steps ?? [], flavorRoute: c?.flavorRoute ?? null,
-      spice: null, images: { closed: null, exploded: null },
+      spice: null, images: { closed: null, exploded: null, thumb: null },
       disassembly: sec.disassembly, orderable: true, soldOut: false, annotations: [],
       pending: PENDING[r.uid] ?? [], sourceNote: r.sourceNote,
     };
@@ -296,7 +296,7 @@ export function run(brandDir: string) {
     dishes.push({
       uid, code: '', name: s.name, priceSen: toSen(Number(m[1])), unit: m[2] ?? null,
       categoryKey: 'staple', hook: null, intro: null, ingredients: [], origin: null, steps: [],
-      flavorRoute: null, spice: null, images: { closed: null, exploded: null }, disassembly: 'none',
+      flavorRoute: null, spice: null, images: { closed: null, exploded: null, thumb: null }, disassembly: 'none',
       orderable: !isDelivery, soldOut: false, annotations: [], pending: [], sourceNote: s.desc === '—' ? null : s.desc,
     });
   }

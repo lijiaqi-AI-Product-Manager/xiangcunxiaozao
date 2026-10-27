@@ -65,7 +65,8 @@ function Detail({ dish, category, cart }: { dish: Dish; category: string | null;
   return (
     <article className="detail" aria-label={dish.name}>
       <div className={dish.soldOut ? 'detail-hero sold-out' : 'detail-hero'} ref={hero}>
-        <HeroImg dish={dish} cloud />
+        {/* 详情页大图位：和点单页小格子是同一张图（老板传一次，两处都有）。首屏元素，立刻加载 */}
+        <HeroImg dish={dish} cloud eager />
         <div className="top-btns">
           <button className="circle-btn glass press" aria-label="返回菜单" onClick={backToList}><Icon name="back" ink /></button>
           <span className="code-chip glass">{category}{dish.code && <> · <span className="detail-code">{dish.code}</span></>}</span>

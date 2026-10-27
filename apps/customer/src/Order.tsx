@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import { formatTable, type Cart, type Dish, type Menu, type StoreStatus as StoreStatusT } from '@pkg/contract';
 import { Seal } from '@pkg/ui-kit';
 import { useMenu, useStoreStatus, useToday, useWait, type CartApi } from './api.ts';
-import { brand, FINISHED, go, listMemory, LOGO_SEAL, money, openDish, SEAL } from './common.tsx';
+import { billMoney, brand, FINISHED, go, listMemory, LOGO_SEAL, money, openDish, SEAL } from './common.tsx';
 import { peekRoom, pose, rubber, settle, transformOf } from './deck.ts';
 import { landGlow, moving, tier } from './fx.ts';
 import { thumbChars } from './thumb.ts';
@@ -15,7 +15,7 @@ const COLLAPSE_SHIFT = 102; // 收起后分类条往下让出横幅卡的高度
 const JUMP_GAP = 8; // 点分类跳过去时，分组标题离分类条下沿多远
 const BACK = 'cubic-bezier(.34,1.56,.64,1)'; // ease-out-back（49号 / 54号复用）
 
-export function OrderPage({ cart, table }: { cart: CartApi; table: string }) {
+export function OrderPage({ cart, table, addingTo }: { cart: CartApi; table: string; addingTo?: number | null }) {
   const [menu, retry] = useMenu();
   const [today] = useToday();
   const [sheet, setSheet] = useState(false);
@@ -25,8 +25,8 @@ export function OrderPage({ cart, table }: { cart: CartApi; table: string }) {
         {(m) => <MenuView menu={m} todayIds={today.state === 'ok' ? today.data.dishes : []} table={table} cart={cart} />}
       </Loaded>
       <Float>
-        <CartBar cart={cart.cart} onOpen={() => setSheet(true)} />
-        {sheet && cart.cart && <CartSheet cart={cart.cart} api={cart} onClose={() => setSheet(false)} />}
+        <CartBar cart={cart.cart} addingTo={addingTo ?? null} onOpen={() => setSheet(true)} />
+        {sheet && cart.cart && <CartSheet cart={cart.cart} api={cart} addingTo={addingTo ?? null} onClose={() => setSheet(false)} />}
       </Float>
     </>
   );
@@ -55,12 +55,43 @@ function StoreCard({ table, big }: { table: string; big: boolean }) {
 }
 
 /** 不营业时的提示（23号 validStore：扫码先看营业状态；打烊显示营业时间、停止接单） */
+/**
+ * 暂停时给顾客一个准数（P2-9）。
+ *
+ * 原来只有一句「暂停接单，请稍后再来」——顾客不知道是等 5 分钟还是今天别来了，
+ * 多数人的选择是走掉。老板填了预计时长就显示「还有 12 分钟」，到点了自动变回可下单。
+ */
+function useCountdown(resumeAt: string | null): { text: string; done: boolean } {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!resumeAt) return;
+    const t = window.setInterval(() => setNow(Date.now()), 15_000);
+    return () => window.clearInterval(t);
+  }, [resumeAt]);
+  if (!resumeAt) return { text: '', done: false };
+  const ms = Date.parse(resumeAt) - now;
+  if (Number.isNaN(ms)) return { text: '', done: false };
+  if (ms <= 0) return { text: '马上就好', done: true };
+  const min = Math.ceil(ms / 60_000);
+  return { text: min <= 1 ? '不到 1 分钟' : `大约 ${min} 分钟`, done: false };
+}
+
 export function ClosedNotice({ status }: { status: StoreStatusT }) {
+  const left = useCountdown(status.reason === 'paused' ? status.resumeAt : null);
   if (status.open) return null;
   return (
     <div className="closed-notice" role="alert">
       {status.reason === 'paused'
-        ? <><strong>本店暂停接单</strong><span>请稍后再来，菜单可以先看看。</span></>
+        ? (
+          <>
+            <strong>本店暂时停止接单</strong>
+            <span>
+              {left.text
+                ? left.done ? '后厨正在恢复，刷新一下就能下单了。' : `预计 ${left.text} 后恢复，菜单可以先看看。`
+                : '请稍后再来，菜单可以先看看。'}
+            </span>
+          </>
+        )
         : <><strong>本店已打烊</strong><span>{status.openAt && status.closeAt && `营业时间 ${status.openAt}–${status.closeAt}，`}菜单可以先看看。</span></>}
     </div>
   );
@@ -492,7 +523,7 @@ function TodayBanner({ dish, collapsed }: { dish: Dish; collapsed: boolean }) {
 const ENTER: Keyframe[] = [{ transform: 'translateY(12px) scale(.92)', opacity: 0 }, { transform: 'none', opacity: 1 }];
 const EXIT: Keyframe[] = [{ transform: 'none', opacity: 1 }, { transform: 'translateY(10px) scale(.94)', opacity: 0 }];
 
-function CartBar({ cart, onOpen }: { cart: Cart | null; onOpen: () => void }) {
+function CartBar({ cart, addingTo, onOpen }: { cart: Cart | null; addingTo: number | null; onOpen: () => void }) {
   const count = cart?.count ?? 0;
   const [mounted, setMounted] = useState(count > 0);
   const el = useRef<HTMLDivElement>(null);
@@ -532,15 +563,26 @@ function CartBar({ cart, onOpen }: { cart: Cart | null; onOpen: () => void }) {
     <div className="cartbar tray" ref={el} style={count === 0 ? { pointerEvents: 'none' } : undefined}>
       <button className="cartbar-summary" onClick={onOpen} aria-label="查看购物车">
         <span className="badge cartbar-badge" data-count>{last.current.count}</span>
-        <span className="sum cartbar-total" data-total>{money(last.current.total)}</span>
+        <span className="sum cartbar-total" data-total>{billMoney(last.current.total)}</span>
       </button>
-      <button className="gilt press cartbar-go" onClick={() => go('checkout')}>去结算</button>
+      {/* 加菜时按钮文案必须变（P2-6）：顾客看到「去结算」会以为又要开一张单，
+          而他要的恰恰是「别开新单」。这一行字是整个加菜流程里最便宜的防错 */}
+      <button className="gilt press cartbar-go" onClick={() => go('checkout')}>
+        {addingTo !== null ? '去加菜' : '去结算'}
+      </button>
     </div>
   );
 }
 
-function CartSheet({ cart, api, onClose }: { cart: Cart; api: CartApi; onClose: () => void }) {
+/**
+ * 购物车弹层。辣度和备注挂在**每一行**上（P1-9）：
+ * 一桌三个人，有人不辣有人特辣，各选各的，后厨小票上也逐行打出来，
+ * 不用再靠「整单备注里写一句：其中干锅花菜不要辣」这种口头约定。
+ */
+function CartSheet({ cart, api, addingTo, onClose }: { cart: Cart; api: CartApi; addingTo: number | null; onClose: () => void }) {
   useEffect(() => { if (cart.count === 0) onClose(); }, [cart.count, onClose]);
+  // 正在编辑备注的那一行（一次只开一行，避免小屏上一堆输入框）
+  const [editing, setEditing] = useState<string | null>(null);
   return (
     <div className="sheet-backdrop" onClick={onClose}>
       <section className="sheet glass" role="dialog" aria-label="购物车" onClick={(e) => e.stopPropagation()}>
@@ -550,22 +592,69 @@ function CartSheet({ cart, api, onClose }: { cart: Cart; api: CartApi; onClose: 
         </header>
         <ul className="lines">
           {cart.lines.map((l) => (
-            <li key={l.dishUid} className={l.available ? 'line' : 'line gone'}>
+            <li key={l.id} className={l.available ? 'line' : 'line gone'}>
               <div className="line-name brush">
                 <FitText text={l.name} max={18} min={14} />
                 {!l.available && <span className="tag">{l.unavailableReason === 'soldout' ? '今日售罄' : '已下架'}</span>}
               </div>
               <div className="line-right">
-                <span className="price">{money(l.subtotalSen)}</span>
+                <span className="price">{billMoney(l.subtotalSen)}</span>
                 {l.available
-                  ? <Qty name={l.name} qty={l.qty} onChange={(d) => void api.change(l.dishUid, d)} />
-                  : <button className="link" onClick={() => void api.remove(l.dishUid)}>移除</button>}
+                  ? <Qty name={l.name} qty={l.qty} onChange={(d) => void api.setLineQty(l.id, l.qty + d)} />
+                  : <button className="link" onClick={() => void api.removeLine(l.id)}>移除</button>}
               </div>
+              {l.available && (
+                <div className="line-opt">
+                  <span className="line-opt-label">辣度</span>
+                  <div className="chips tight">
+                    {brand.spiceOptions.map((s) => (
+                      <button
+                        key={s}
+                        className={l.spice === s ? 'chip small on' : 'chip small'}
+                        aria-pressed={l.spice === s}
+                        onClick={() => void api.setLine(l.id, { spice: l.spice === s ? '' : s })}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                  {editing === l.id ? (
+                    <NoteInput
+                      initial={l.note}
+                      onDone={(v) => { setEditing(null); if (v !== l.note) void api.setLine(l.id, { note: v }); }}
+                    />
+                  ) : (
+                    <button className="link small" onClick={() => setEditing(l.id)}>
+                      {l.note ? `备注：${l.note}` : '+ 加备注'}
+                    </button>
+                  )}
+                </div>
+              )}
             </li>
           ))}
         </ul>
-        <button className="gilt press sheet-go" onClick={() => go('checkout')}>去结算 · {money(cart.totalSen)}</button>
+        <button className="gilt press sheet-go" onClick={() => go('checkout')}>
+          {addingTo !== null ? '去加菜' : '去结算'} · {billMoney(cart.totalSen)}
+        </button>
       </section>
     </div>
+  );
+}
+
+/** 逐菜备注：小输入框 + 确定。回车也确定，省一次点击 */
+function NoteInput({ initial, onDone }: { initial: string; onDone: (v: string) => void }) {
+  const [v, setV] = useState(initial);
+  return (
+    <span className="note-input">
+      <input
+        autoFocus
+        value={v}
+        maxLength={40}
+        placeholder="例如：不要香菜"
+        onChange={(e) => setV(e.target.value)}
+        onKeyDown={(e) => { if (e.key === 'Enter') onDone(v.trim()); if (e.key === 'Escape') onDone(initial); }}
+      />
+      <button className="link small" onClick={() => onDone(v.trim())}>确定</button>
+    </span>
   );
 }

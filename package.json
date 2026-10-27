@@ -12,7 +12,7 @@
     "check:data": "tsx --env-file=.env scripts/validate-data.ts",
     "check:palette": "tsx --env-file=.env scripts/check-palette.ts",
     "check:audit": "npm audit --audit-level=moderate",
-    "check": "npm run check:audit && npm run check:brand && npm run check:palette && npm run check:data && npm run typecheck && npm test",
+    "check": "npm run check:audit && npm run check:brand && npm run check:money && npm run check:palette && npm run check:data && npm run typecheck && npm test",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "e2e": "playwright test -c e2e/playwright.config.ts",
@@ -24,7 +24,8 @@
     "dev:customer": "npm run dev -w @app/customer",
     "dev:admin": "npm run dev -w @app/admin",
     "backup": "tsx --env-file=.env scripts/backup.ts",
-    "build:demo": "tsx --env-file=.env scripts/build-demo.ts"
+    "build:demo": "tsx --env-file=.env scripts/build-demo.ts",
+    "check:money": "tsx scripts/check-money-format.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",

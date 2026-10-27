@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import sharp from 'sharp';
 import { expect, test } from '@playwright/test';
 
+import { autoConfirm } from './helpers.ts';
 const ROOT = resolve(import.meta.dirname, '..');
 const SHOTS = resolve(ROOT, 'docs', 'screenshots', 'p3-batch4');
 mkdirSync(SHOTS, { recursive: true });
@@ -42,7 +43,7 @@ test('老板上传一张约 2MB 的大图：浏览器先压到 300KB 以内再�
   expect(big.length).toBeGreaterThan(1024 * 1024);
 
   const desk = await (await browser.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
-  desk.on('dialog', (d) => void d.accept());
+  autoConfirm(desk); // 老板端的确认是自定义弹窗，不是原生 dialog
   await desk.goto(ADMIN);
   await desk.getByLabel('老板密码').fill('e2e-test-password');
   await desk.getByRole('button', { name: '登录' }).click();
