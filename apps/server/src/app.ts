@@ -567,7 +567,16 @@ export function createApp(db: DB, brandDir: string, opts: AppOptions) {
   );
 
   // 打印机状态（老板端"打印设置"页用）：能不能连通，一台一句人话
-  app.get('/api/admin/printers', async (c) => c.json({ ...(await printer.healthAll()), encoding: readPrintEnv().encoding, recent: printLog.recent() }));
+  app.get('/api/admin/printers', async (c) => {
+    const env = readPrintEnv();
+    return c.json({
+      ...(await printer.healthAll()),
+      // 两台编码/纸宽各配各的，UI 分别展示，避免"一台对一台错"时看不出哪台要改
+      encodings: { receipt: env.receiptEncoding, label: env.labelEncoding },
+      papers: { receipt: env.receiptPaper, label: env.labelPaper },
+      recent: printLog.recent(),
+    });
+  });
 
   // 打测试页：不占订单，直接送一张示例小票/标签，用来确认纸宽、字号、切刀对不对
   // 装机那天老板就靠这一个按钮判断"连上了没有"

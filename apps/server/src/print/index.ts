@@ -8,7 +8,8 @@
  */
 
 import { createChannel, type TransportKind } from './transport.ts';
-import type { PrintConfig, PrintOrder, ShopInfo } from './templates.ts';
+import type { PrintOrder, ShopInfo } from './templates.ts';
+import type { Encoding } from './escpos.ts';
 import { PrintDispatcher, type PrintJobResult, type TargetName, type TargetSpec } from './dispatcher.ts';
 
 export { PrintDispatcher } from './dispatcher.ts';
@@ -34,17 +35,21 @@ export interface PrintEnv {
   receiptPaper: '80' | '58';
   receiptCutter: boolean;
   receiptDrawer: boolean;
+  receiptEncoding: Encoding;
   labelEnabled: boolean;
   labelKind: TransportKind;
   labelHost?: string;
   labelPort: number;
   labelDevice?: string;
   labelQueue?: string;
+  labelPaper: '80' | '58';
   labelCutter: boolean;
-  encoding: 'gbk' | 'utf8';
+  labelEncoding: Encoding;
+  /** 标签上「桌 12」用三倍字（占三行高）还是两倍字（省纸）；大桌号看得清，小字号贴得稳 */
+  labelBigTable: boolean;
   retries: number;
   backoffMs: number;
-  /** 两台的接法可以不同，但纸宽/切刀等分机配置各自独立 */
+  /** 两台的接法可以不同，纸宽/切刀/编码等分机配置各自独立 */
 }
 
 export function readPrintEnv(env: NodeJS.ProcessEnv = process.env): PrintEnv {
@@ -52,6 +57,10 @@ export function readPrintEnv(env: NodeJS.ProcessEnv = process.env): PrintEnv {
     const k = (v ?? 'mock').toLowerCase() as TransportKind;
     return ['net', 'usb', 'system', 'mock'].includes(k) ? k : 'mock';
   };
+  const enc = (v: string | undefined): Encoding =>
+    v === 'utf8' ? 'utf8' : v === 'gb18030' ? 'gb18030' : 'gbk';
+  const paper = (v: string | undefined, dflt: '80' | '58'): '80' | '58' =>
+    v === '80' ? '80' : v === '58' ? '58' : dflt;
   const rOn = bool(env.PRINT_RECEIPT_ON, false);
   const lOn = bool(env.PRINT_LABEL_ON, false);
   return {
@@ -61,17 +70,22 @@ export function readPrintEnv(env: NodeJS.ProcessEnv = process.env): PrintEnv {
     receiptPort: num(env.PRINT_RECEIPT_PORT, 9100),
     receiptDevice: env.PRINT_RECEIPT_DEVICE,
     receiptQueue: env.PRINT_RECEIPT_QUEUE,
-    receiptPaper: env.PRINT_RECEIPT_PAPER === '58' ? '58' : '80',
+    receiptPaper: paper(env.PRINT_RECEIPT_PAPER, '80'),
     receiptCutter: bool(env.PRINT_RECEIPT_CUTTER, true),
     receiptDrawer: bool(env.PRINT_RECEIPT_DRAWER, false),
+    receiptEncoding: enc(env.PRINT_RECEIPT_ENCODING ?? env.PRINT_ENCODING),
     labelEnabled: lOn,
     labelKind: kind(env.PRINT_LABEL_KIND),
     labelHost: env.PRINT_LABEL_HOST,
     labelPort: num(env.PRINT_LABEL_PORT, 9100),
     labelDevice: env.PRINT_LABEL_DEVICE,
     labelQueue: env.PRINT_LABEL_QUEUE,
-    labelCutter: bool(env.PRINT_LABEL_CUTTER, true),
-    encoding: env.PRINT_ENCODING === 'utf8' ? 'utf8' : 'gbk',
+    // 标签纸缺省 58：杯子上的贴纸就那么宽，宽了会截边
+    labelPaper: paper(env.PRINT_LABEL_PAPER, '58'),
+    // 缺省 off：无切刀的芯烨 XP-236B 收到 GS V 会吐一截空白，宁可让人手撕
+    labelCutter: bool(env.PRINT_LABEL_CUTTER, false),
+    labelEncoding: enc(env.PRINT_LABEL_ENCODING ?? env.PRINT_ENCODING),
+    labelBigTable: bool(env.PRINT_LABEL_BIGTABLE, true),
     retries: num(env.PRINT_RETRIES, 2),
     backoffMs: num(env.PRINT_BACKOFF_MS, 800),
   };
@@ -84,7 +98,6 @@ export function payLabelOf(methods: { key: string; label: string }[], key: strin
 }
 
 export function buildDispatcher(cfg: PrintEnv, sink?: (r: PrintJobResult) => void): PrintDispatcher {
-  const base: PrintConfig = { paper: cfg.receiptPaper, encoding: cfg.encoding, cutter: true, cashDrawer: false };
   const targets: TargetSpec[] = [];
 
   if (cfg.receiptEnabled) {
@@ -97,7 +110,12 @@ export function buildDispatcher(cfg: PrintEnv, sink?: (r: PrintJobResult) => voi
         device: cfg.receiptDevice,
         queue: cfg.receiptQueue,
       }),
-      config: { ...base, cutter: cfg.receiptCutter, cashDrawer: cfg.receiptDrawer },
+      config: {
+        paper: cfg.receiptPaper,
+        encoding: cfg.receiptEncoding,
+        cutter: cfg.receiptCutter,
+        cashDrawer: cfg.receiptDrawer,
+      },
       retries: cfg.retries,
       backoffMs: cfg.backoffMs,
     });
@@ -112,7 +130,13 @@ export function buildDispatcher(cfg: PrintEnv, sink?: (r: PrintJobResult) => voi
         device: cfg.labelDevice,
         queue: cfg.labelQueue,
       }),
-      config: { ...base, paper: '80', cutter: cfg.labelCutter },
+      config: {
+        paper: cfg.labelPaper,
+        encoding: cfg.labelEncoding,
+        cutter: cfg.labelCutter,
+        cashDrawer: false,
+      },
+      bigTable: cfg.labelBigTable,
       retries: cfg.retries,
       backoffMs: cfg.backoffMs,
     });

@@ -18,6 +18,14 @@ export type PaperSize = '80' | '58';
 
 export const PAPER_COLS: Record<PaperSize, number> = { '80': 48, '58': 32 };
 
+/**
+ * 汉字编码。国产热敏机的「中文」全是双字节老朋友：
+ *   gbk      芯烨/佳博/ZYWELL 出厂默认，一个字 2 字节（最稳）
+ *   gb18030  GBK 的超集，生僻字（𠮷、犇、麤）不会变成问号，字节长度仍是 2，列宽算法不用改
+ *   utf8     少数外贸机/安卓板子；国产机发 utf8 会打成一串乱码
+ */
+export type Encoding = 'gbk' | 'gb18030' | 'utf8';
+
 export const CMD = {
   init: Buffer.from([0x1b, 0x40]),
   align: (a: Align): Buffer => Buffer.from([0x1b, 0x61, a === 'left' ? 0 : a === 'center' ? 1 : 2]),
@@ -32,6 +40,14 @@ export const CMD = {
   feed: (n = 1): Buffer => Buffer.from([0x1b, 0x64, Math.max(0, Math.min(255, n))]),
   /** 切纸：0 全切 / 1 半切（只有带切刀的机型认这条） */
   cut: (partial = false): Buffer => Buffer.from([0x1d, 0x56, partial ? 0x42 : 0x00, 0x03]),
+  /**
+   * 进入汉字模式（FS &）。
+   * 芯烨、佳博、ZYWELL 这类机子里，双字节汉字的第一个字节（0xB0–0xF7）同时也是
+   * 单字节的扩展 ASCII 区。不先发这条，机器会把「湘」拆成两个乱字符打出来——
+   * 这也是「有的票中文正常、有的票全是怪符号」最常见的原因：前面那张票进了汉字模式，
+   * 这张没进。gbk/gb18030 一律在票头补上，utf8 机器不能发（会把后面整段吞掉）。
+   */
+  chineseMode: Buffer.from([0x1c, 0x26]),
 };
 
 /**
@@ -95,9 +111,19 @@ export function statusText(s: PrinterStatus): string | null {
 }
 
 /** 国产热敏机基本是 GBK；个别新机是 UTF-8，由配置决定 */
-export function text(s: string, encoding: 'utf8' | 'gbk' = 'gbk'): Buffer {
+export function text(s: string, encoding: Encoding = 'gbk'): Buffer {
   const norm = s.replace(/\r\n/g, '\n');
-  return encoding === 'utf8' ? Buffer.from(norm, 'utf8') : iconv.encode(norm, 'gbk');
+  if (encoding === 'utf8') return Buffer.from(norm, 'utf8');
+  // gb18030 跟 gbk 一样是双字节定宽，折行/对齐用的是 displayWidth，不受影响
+  return iconv.encode(norm, encoding);
+}
+
+/**
+ * 一张纸的开头。初始化 + 汉字模式必须成对出现：
+ * 只发 ESC @ 不发 FS &，机器回到上电默认的「单字节模式」，中文就散了。
+ */
+export function preamble(encoding: Encoding): Buffer[] {
+  return encoding === 'utf8' ? [CMD.init] : [CMD.init, CMD.chineseMode];
 }
 
 /** 显示宽度：全角计 2、半角计 1（中文小票实现左右对齐全靠它） */

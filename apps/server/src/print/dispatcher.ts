@@ -25,6 +25,8 @@ export interface TargetSpec {
   enabled: boolean;
   channel: PrinterChannel;
   config: PrintConfig;
+  /** 标签专用：桌号用三倍字还是两倍字（小票忽略） */
+  bigTable?: boolean;
   retries: number;
   backoffMs: number;
 }
@@ -82,7 +84,7 @@ export class PrintDispatcher {
       try {
         payloads = name === 'receipt'
           ? [renderReceipt(order, shop, spec.config)]
-          : renderCups(order, { bigTable: true }, spec.config);
+          : renderCups(order, { bigTable: spec.bigTable ?? true }, spec.config);
       } catch (e) {
         this.emit({ target: name, orderNo: order.order_no, ok: false, attempts: 0, pages: 0, error: `排版失败：${(e as Error).message}`, at: now() });
         continue;
@@ -101,7 +103,7 @@ export class PrintDispatcher {
     }
     const payloads = target === 'receipt'
       ? [renderReceipt(order, shop, spec.config)]
-      : renderCups(order, { bigTable: true }, spec.config);
+      : renderCups(order, { bigTable: spec.bigTable ?? true }, spec.config);
     return new Promise((resolve) => {
       this.enqueue({ target, orderNo: order.order_no, payloads, attempts: 0, resolve });
     });

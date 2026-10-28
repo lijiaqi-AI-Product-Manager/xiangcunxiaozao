@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import iconv from 'iconv-lite';
-import { CMD, PAPER_COLS, displayWidth, lr, raster, wrap } from './escpos.ts';
+import { CMD, PAPER_COLS, displayWidth, lr, raster, text, wrap } from './escpos.ts';
 import { renderCups, renderReceipt, type PrintOrder } from './templates.ts';
 import { MockChannel } from './transport.ts';
 import { PrintDispatcher } from './dispatcher.ts';
@@ -395,5 +395,102 @@ describe('逐菜辣度印在小票上（P1-9）', () => {
     expect(t).toContain('农家一碗香');
     expect(t).not.toContain('农家一碗香（');
     expect(t).not.toContain('（）');
+  });
+});
+
+/**
+ * 这一组全部对着店里那两台机器的铭牌写：
+ *   ZYWELL Zy307      80mm 纸 / 48 列 / 带切刀 / ESC/POS / USB + 网口
+ *   Xprinter XP-236B  58mm 纸（48mm 打印区）/ 32 列 / 无切刀 / USB + 蓝牙，票据标签双模
+ *
+ * 纸宽和切刀错一个，现场的表现是「出半张」「字折到纸外面」「空吐一段」，
+ * 老板看不出来是配置问题，只会觉得「这系统不爱出纸」——所以全写成测试卡住。
+ */
+describe('店里两台机器：纸宽、汉字编码、切刀', () => {
+  // 剥掉 ESC/POS 控制码，只留看得见的字，用来数列宽
+  const plain = (b: Buffer): string => {
+    let s = iconv.decode(b, 'gbk');
+    s = s.replace(/\x1dk[\s\S]*?\x00/g, '[条码]');
+    s = s.replace(/\x1b[@]/g, '');
+    s = s.replace(/\x1bp[\s\S]{3}/g, '');
+    s = s.replace(/\x1b[ad!]./g, '');
+    s = s.replace(/\x1d[!hHw]./g, '');
+    s = s.replace(/\x1dV[\s\S]{2}/g, '');
+    s = s.replace(/\x1c&/g, '');
+    return s.replace(/[\x00-\x08\x0b-\x1f]/g, '');
+  };
+  const widths = (s: string): number[] =>
+    s.split('\n').map((l) => displayWidth(l.replace(/\s+$/, '')));
+
+  // 长店名 + 长备注：最容易把版式撑出纸边的两个来源
+  const longOrder: PrintOrder = {
+    ...order,
+    note: '不要香菜不要葱，辣椒单独装一碟，米饭晚点上',
+    items: [
+      { dish_uid: 'f01', code: 'F01', name: '招牌剁椒鱼头（大份加宽的那种）', qty: 1, price_rm: '88.00', subtotal_rm: '88.00', note: '不要香菜不要葱，多放辣椒，做成微辣', is_drink: false },
+      { dish_uid: 'l01', code: 'L01', name: '柠檬茶', qty: 1, price_rm: '19.90', subtotal_rm: '19.90', is_drink: true },
+    ],
+  };
+  const longShop = { ...shop, name: '示例门店吉隆坡双子塔旗舰店' };
+
+  it('58mm 小票：折行后每行都不超过 32 列', () => {
+    const t = plain(renderReceipt(longOrder, longShop, { paper: '58', encoding: 'gbk', cutter: false, cashDrawer: false }));
+    expect(Math.max(...widths(t))).toBeLessThanOrEqual(32);
+  });
+
+  it('80mm 小票：折行后每行都不超过 48 列', () => {
+    const t = plain(renderReceipt(longOrder, longShop, { paper: '80', encoding: 'gbk', cutter: true, cashDrawer: false }));
+    expect(Math.max(...widths(t))).toBeLessThanOrEqual(48);
+  });
+
+  it('标签按配置的纸宽排，不多占一列', () => {
+    const [c58] = renderCups(longOrder, { bigTable: true }, { paper: '58', encoding: 'gbk', cutter: false, cashDrawer: false });
+    const [c80] = renderCups(longOrder, { bigTable: true }, { paper: '80', encoding: 'gbk', cutter: false, cashDrawer: false });
+    expect(Math.max(...widths(plain(c58!)))).toBeLessThanOrEqual(32);
+    expect(Math.max(...widths(plain(c80!)))).toBeLessThanOrEqual(48);
+  });
+
+  it('票头先初始化再进汉字模式（FS &），否则中文打成乱码', () => {
+    const b = renderReceipt(order, shop, { paper: '58', encoding: 'gbk', cutter: false, cashDrawer: false });
+    // ESC @ = 1b 40，FS & = 1c 26
+    expect([...b.subarray(0, 4)]).toEqual([0x1b, 0x40, 0x1c, 0x26]);
+  });
+
+  it('utf8 机型不发汉字模式（会吞掉后面整段）', () => {
+    const b = renderReceipt(order, shop, { paper: '58', encoding: 'utf8', cutter: false, cashDrawer: false });
+    expect([...b.subarray(0, 2)]).toEqual([0x1b, 0x40]);
+    expect(b.includes(Buffer.from([0x1c, 0x26]))).toBe(false);
+  });
+
+  it('gb18030 编得出 GBK 编不出的生僻字，不变成问号', () => {
+    const wide = text('𠮷', 'gb18030');
+    expect(iconv.decode(wide, 'gb18030')).toBe('𠮷');
+    expect(iconv.encode('𠮷', 'gbk').toString('hex')).toBe('3f'); // 问号：这就是 gbk 掉字的样子
+  });
+
+  it('无切刀的标签机默认不发切纸指令', () => {
+    const env = readPrintEnv({ PRINT_LABEL_ON: '1' });
+    expect(env.labelCutter).toBe(false);
+    const [c] = renderCups(order, { bigTable: true }, { paper: '58', encoding: 'gbk', cutter: false, cashDrawer: false });
+    expect(c!.includes(Buffer.from([0x1d, 0x56]))).toBe(false);
+  });
+
+  it('两台可以各配各的编码，没配就吃 PRINT_ENCODING 兜底', () => {
+    const both = readPrintEnv({ PRINT_ENCODING: 'gbk', PRINT_RECEIPT_ENCODING: 'utf8', PRINT_LABEL_ENCODING: 'gb18030' });
+    expect(both.receiptEncoding).toBe('utf8');
+    expect(both.labelEncoding).toBe('gb18030');
+    const fallback = readPrintEnv({ PRINT_ENCODING: 'utf8' });
+    expect(fallback.receiptEncoding).toBe('utf8');
+    expect(fallback.labelEncoding).toBe('utf8');
+    expect(readPrintEnv({}).labelEncoding).toBe('gbk'); // 国产机缺省，不用配
+  });
+
+  it('纸宽默认值对着机器来：小票 80、标签 58；桌号大字能关', () => {
+    const env = readPrintEnv({ PRINT_LABEL_ON: '1', PRINT_RECEIPT_ON: '1' });
+    expect(env.receiptPaper).toBe('80'); // Zy307
+    expect(env.labelPaper).toBe('58'); // XP-236B 的 48mm 打印区
+    expect(env.labelBigTable).toBe(true);
+    expect(readPrintEnv({ PRINT_LABEL_BIGTABLE: '0' }).labelBigTable).toBe(false);
+    expect(readPrintEnv({ PRINT_LABEL_PAPER: '80' }).labelPaper).toBe('80');
   });
 });

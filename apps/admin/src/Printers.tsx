@@ -22,15 +22,17 @@ const JobRow = z.object({
   error: z.string().nullable(),
   at: z.string(),
 });
-const Printers = z.object({
+const PrintersSchema = z.object({
   receipt: Health.optional(),
   label: Health.optional(),
-  encoding: z.string(),
+  /** 两台分机配置（老服务端没有这两块，做可选，避免升级顺序不一致时页面整块白屏） */
+  encodings: z.object({ receipt: z.string(), label: z.string() }).optional(),
+  papers: z.object({ receipt: z.string(), label: z.string() }).optional(),
   recent: z.array(JobRow),
 });
 const JobResult = z.object({ target: z.string(), orderNo: z.string(), ok: z.boolean(), attempts: z.number(), pages: z.number(), error: z.string().optional(), at: z.string() });
 
-type Printers = z.infer<typeof Printers>;
+type PrintersData = z.infer<typeof PrintersSchema>;
 type Target = 'receipt' | 'label';
 
 const { brand } = config;
@@ -60,13 +62,13 @@ function humanError(detail: string): string {
 }
 
 export function PrintersPage() {
-  const [data, setData] = useState<Printers | null>(null);
+  const [data, setData] = useState<PrintersData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [ok, setOk] = useState<string | null>(null);
 
   const load = () =>
-    adminGet('/api/admin/printers', (v) => Printers.parse(v))
+    adminGet('/api/admin/printers', (v) => PrintersSchema.parse(v))
       .then((v) => { setData(v); setError(null); })
       .catch((e: unknown) => setError(e instanceof Error ? e.message : '加载失败'));
 
@@ -126,6 +128,7 @@ export function PrintersPage() {
                 <div>
                   <strong>{TARGET_LABEL[t]}</strong>
                   <span className="muted small">
+                    {data.papers?.[t] ? `纸宽 ${data.papers[t]}mm · ` : ''}
                     {!h || !h.enabled ? '未启用（在服务器的 .env 里打开 PRINT_' + t.toUpperCase() + '_ON）' : humanError(h.detail)}
                   </span>
                 </div>
@@ -136,7 +139,11 @@ export function PrintersPage() {
             );
           })}
         </ul>
-        <p className="muted small">汉字编码：{data.encoding.toUpperCase()}（芯烨、佳博、中崎这些国产机型基本都是 GBK；打成乱码就改 .env 里的 PRINT_ENCODING）</p>
+        <p className="muted small">
+          汉字编码：小票 {data.encodings?.receipt.toUpperCase() ?? 'GBK'} / 标签 {data.encodings?.label.toUpperCase() ?? 'GBK'}。
+          芯烨、ZYWELL、佳博这些国产热敏机基本都是 GBK；打成乱码就改 .env 里的
+          <code>PRINT_RECEIPT_ENCODING</code> / <code>PRINT_LABEL_ENCODING</code>（可填 gbk、gb18030、utf8，两台可以不一样）。
+        </p>
         {ok && <p className="form-ok" role="status">{ok}</p>}
         {error && <p className="form-error" role="alert">{error}</p>}
         <button className="btn" onClick={() => void load()}>重新检测</button>

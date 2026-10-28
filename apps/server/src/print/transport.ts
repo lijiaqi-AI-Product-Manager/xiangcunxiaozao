@@ -132,13 +132,22 @@ export class NetChannel implements PrinterChannel {
   }
 }
 
-/** USB 直连（Linux 设备节点） */
+/**
+ * USB 直连
+ *
+ * Linux：设备节点（/dev/usb/lp0），直接 writeFile 就是裸字节，最省事。
+ * Windows：**没有**等价节点（\\.\USB001 是假节点，写进去打印机不动）。
+ *   两条路：
+ *     1）装好原厂驱动、在「打印机属性 → 共享」开共享，用 system 通道（推荐，见 SystemChannel）
+ *     2）蓝牙配对后系统会建一个出向 COM 口，DEVICE 填 \\.\COM5 —— 串口是裸字节，
+ *        波特率取系统里给该 COM 口设的值（SPP 默认 9600）。只能应急，线一抖就断。
+ */
 export class UsbChannel implements PrinterChannel {
   readonly kind = 'usb' as const;
   readonly label: string;
   private device: string;
   constructor(o: ChannelOptions) {
-    if (!o.device) throw new Error('USB 打印机缺少设备路径（如 /dev/usb/lp0）');
+    if (!o.device) throw new Error('USB 打印机缺少设备路径（Linux: /dev/usb/lp0；Windows 蓝牙串口: \\\\.\\COM5）');
     this.device = o.device;
     this.label = `USB ${this.device}`;
   }
@@ -157,13 +166,23 @@ export class UsbChannel implements PrinterChannel {
   }
 }
 
-/** 系统打印队列 */
+/**
+ * 系统打印队列
+ *
+ * Linux/macOS：`lp -o raw`，raw 模式不碰字节。
+ *
+ * Windows：**必须走 `copy /b` 到共享名，不能用 `print`**。
+ *   `print` 是文本打印：ESC/POS 里的 0x0C（换页）、0x0D（回车）会被当控制字符吃掉，
+ *   打出来是半张票、乱码或者干脆空转——这是「Linux 上好好的、搬到 Windows 就不出纸」的头号原因。
+ *   `copy /b` 是二进制原样拷贝，spooler 才把整段字节送给打印机。
+ *   前提：打印机属性里勾了共享（共享名 = PRINT_*_QUEUE；也可以直接填 \\机器名\共享名）。
+ */
 export class SystemChannel implements PrinterChannel {
   readonly kind = 'system' as const;
   readonly label: string;
   private queue: string;
   constructor(o: ChannelOptions) {
-    if (!o.queue) throw new Error('系统打印队列缺少队列名');
+    if (!o.queue) throw new Error('系统打印队列缺少队列名（Windows 填共享名，Linux 填 lp 队列名）');
     this.queue = o.queue;
     this.label = `系统队列 ${this.queue}`;
   }
@@ -179,16 +198,25 @@ export class SystemChannel implements PrinterChannel {
         const tmp = path.join(os.tmpdir(), `xc-print-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.bin`);
         await fs.writeFile(tmp, payload);
         const isWin = process.platform === 'win32';
-        const cmd = isWin ? 'print' : 'lp';
-        const args = isWin ? [`/D:${this.queue}`, tmp] : ['-d', this.queue, '-o', 'raw', tmp];
+        // 已经是 UNC 的（\\POS-PC\XP-236B）原样用；只给了共享名的补成 \\localhost\共享名
+        const share = this.queue.startsWith('\\\\') ? this.queue : `\\\\localhost\\${this.queue}`;
+        const cmd = isWin ? 'cmd' : 'lp';
+        const args = isWin ? ['/c', 'copy', '/b', tmp, share] : ['-d', this.queue, '-o', 'raw', tmp];
         const child = spawn(cmd, args, { windowsHide: true });
         let err = '';
+        child.stdout.on('data', (d) => (err += String(d)));
         child.stderr.on('data', (d) => (err += String(d)));
         child.once('error', reject);
         child.once('close', (code) => {
           void fs.unlink(tmp).catch(() => undefined);
-          if (code === 0) resolve();
-          else reject(new Error(`打印命令失败（${code}）：${err.slice(0, 200)}`));
+          if (code === 0) return resolve();
+          reject(
+            new Error(
+              isWin
+                ? `系统队列失败（${code}）：${this.queue} 可能没开共享或名字不对。打印机属性 → 共享，勾上并把共享名填进 PRINT_*_QUEUE；也可以改用网口（KIND=net）`
+                : `打印命令失败（${code}）：${err.slice(0, 200)}`
+            )
+          );
         });
       })().catch(reject);
     });
@@ -199,7 +227,11 @@ export class SystemChannel implements PrinterChannel {
         const { spawn } = await import('node:child_process');
         const isWin = process.platform === 'win32';
         const child = isWin
-          ? spawn('wmic', ['printer', 'get', 'name'], { windowsHide: true })
+          ? spawn(
+              'powershell',
+              ['-NoProfile', '-NonInteractive', '-Command', `(Get-Printer -Name '${this.queue.replace(/'/g, "''")}' -ErrorAction Stop).Name`],
+              { windowsHide: true }
+            )
           : spawn('lpstat', ['-p', this.queue], { windowsHide: true });
         let out = '';
         child.stdout.on('data', (d) => (out += String(d)));

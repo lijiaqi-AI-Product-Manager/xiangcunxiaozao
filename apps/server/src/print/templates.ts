@@ -7,7 +7,7 @@
  * 3. 打印失败绝不反噬下单——调用方负责兜底，这里只管排版。
  */
 
-import { CMD, PAPER_COLS, type PaperSize, barcode, lr, text, wrap } from './escpos.ts';
+import { CMD, PAPER_COLS, type Encoding, type PaperSize, barcode, lr, preamble, text, wrap } from './escpos.ts';
 
 export interface PrintOrderItem {
   /** 菜品 uid，用来判断是不是饮品（饮品才出杯贴） */
@@ -49,7 +49,7 @@ export interface ShopInfo {
 
 export interface PrintConfig {
   paper: PaperSize;
-  encoding: 'gbk' | 'utf8';
+  encoding: Encoding;
   /** 有没有切刀；没有就多走几行空白让手撕 */
   cutter: boolean;
   /** 是否开钱箱（小票机 RJ11 口接钱箱） */
@@ -76,9 +76,13 @@ export function renderReceipt(o: PrintOrder, shop: ShopInfo, cfg: PrintConfig): 
   // 双宽字一个字符吃两列：店名地址这类放大行必须按半宽折，否则折出来的行会超出纸边
   const colsHalf = Math.floor(cols / 2);
   const W = (s: string): Buffer => text(s, cfg.encoding);
-  const p: Buffer[] = [CMD.init, CMD.align('center')];
+  const p: Buffer[] = [...preamble(cfg.encoding), CMD.align('center')];
 
-  p.push(CMD.emphasis(true, true, true), W(shop.name), W('\n'), CMD.normal);
+  // 店名双高双宽，按半宽折：58mm 纸上的长店名（「湘村小灶 · 吉隆坡店」）不折会吃掉半行
+  for (const line of wrap(shop.name, colsHalf)) {
+    p.push(CMD.emphasis(true, true, true), W(line), W('\n'));
+  }
+  p.push(CMD.normal);
   p.push(W('\n'), CMD.size(3), W(`取餐号 ${o.pickup_no}`), W('\n'), CMD.size(1));
   // 加菜单（P2-6）：取餐号下面单独一行大字标出来。后厨拿着一叠票，靠这一行才不会
   // 把「018 的加菜」当成重复打印的 018 丢掉
@@ -106,7 +110,9 @@ export function renderReceipt(o: PrintOrder, shop: ShopInfo, cfg: PrintConfig): 
       p.push(W(i === 0 ? lr(l, sub, cols) : l), W('\n'));
     });
     p.push(W(lr(`  单价 ${mid}`, '', cols)), W('\n'));
-    if (it.note) p.push(W(lr(`  * ${it.note}`, '', cols)), W('\n'));
+    // 菜品级备注可能写得很长（「不要香菜不要葱，多放辣椒，打包」），必须折行，
+    // 直接 lr 拼一行出去纸就截了——客人写在备注里的恰恰是最要紧的那几个字
+    if (it.note) for (const l of wrap(`  * ${it.note}`, cols)) p.push(W(l), W('\n'));
   }
 
   p.push(W(sep), W('\n'));
@@ -152,22 +158,22 @@ export function cupItems(o: PrintOrder): PrintOrderItem[] {
  *   而不是打一张写「x3」（那样贴不到三个杯子上）。
  * - 炒菜不出杯贴。吧台一天几十单，废纸和撕标签的时间都是真金白银。
  *
- * 版式（79.5mm 纸，按 32 列排）：
+ * 版式（32 列起，按实际纸宽算）：
  *   桌 12        ← 大字号，出杯时一眼对上托盘
  *   菜名
  *   少冰          ← 菜品级备注，印在名字正下方，调饮时最先看到
  *   时间 + 取餐号
  *   1/3
  *
- * 版式按 58mm（32 列）保守排：80mm 纸上会窄一点居中，但绝不会折行出错。
- * 标签纸宽度各家不同，宁可窄不可溢。
+ * 列数跟着配置的纸宽走：58mm 标签 32 列、80mm 纸 48 列。
+ * 标签纸宽度各家不同，宽了会截边、窄了才安全——所以 58mm 是缺省。
  */
 export function renderCups(
   o: PrintOrder,
   label: { bigTable: boolean },
   cfg: PrintConfig
 ): Buffer[] {
-  const cols = 32;
+  const cols = PAPER_COLS[cfg.paper];
   const W = (s: string): Buffer => text(s, cfg.encoding);
   // 取餐号是流水号（3 位），不是单号后 4 位——所以从单号里取「-」后面那段
   const shortNo = o.order_no.split('-')[1] ?? o.order_no.slice(-3);
@@ -177,7 +183,7 @@ export function renderCups(
   for (const it of cupItems(o)) {
     // 序号按「这道菜自己的杯数」从 1 数起，不能跨菜累加
     for (let k = 1; k <= it.qty; k++) {
-      const p: Buffer[] = [CMD.init, CMD.align('center')];
+      const p: Buffer[] = [...preamble(cfg.encoding), CMD.align('center')];
       p.push(CMD.size(label.bigTable ? 3 : 2), W(`桌 ${o.table_no}`), W('\n'), CMD.size(1), W('\n'));
       // 名字最长两行：标签纸就那么大，溢出去的内容等于没印
       const nameLines = wrap(it.name, Math.floor(cols / 2)).slice(0, 2);
