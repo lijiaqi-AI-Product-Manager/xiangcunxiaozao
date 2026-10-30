@@ -105,6 +105,10 @@ setInterval(sweepDaily, 24 * 3600000);
 
 const port = Number(process.env.API_PORT ?? 8787);
 
+// 未知的 /api/* 一律 JSON 404：开启静态托管后，下面的 SPA 兜底会把不存在的接口也回成 HTML，
+// 前端 fetch 拿到 200 的网页再去 res.json()，错误会变得很难查。
+app.all('/api/*', (c) => c.json({ error: 'not_found', message: '接口不存在' }, 404));
+
 // ---------- 静态文件（SERVE_STATIC=1 时） ----------
 if (process.env.SERVE_STATIC === '1') {
   const page = (dir: string, prefix: string) => serveStatic({

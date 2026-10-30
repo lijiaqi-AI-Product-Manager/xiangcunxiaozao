@@ -78,7 +78,7 @@ export function renderReceipt(o: PrintOrder, shop: ShopInfo, cfg: PrintConfig): 
   const W = (s: string): Buffer => text(s, cfg.encoding);
   const p: Buffer[] = [...preamble(cfg.encoding), CMD.align('center')];
 
-  // 店名双高双宽，按半宽折：58mm 纸上的长店名（「湘村小灶 · 吉隆坡店」）不折会吃掉半行
+  // 店名双高双宽，按半宽折：58mm 纸上的长店名（带分店后缀的那种）不折会吃掉半行
   for (const line of wrap(shop.name, colsHalf)) {
     p.push(CMD.emphasis(true, true, true), W(line), W('\n'));
   }

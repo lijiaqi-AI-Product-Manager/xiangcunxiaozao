@@ -284,6 +284,32 @@ describe('配置与环境', () => {
   });
 });
 
+describe('Windows 本机 USB（winspool）', () => {
+  it('KIND=winspool + QUEUE 被接受，不再悄悄降级成 mock', () => {
+    const env = readPrintEnv({
+      PRINT_RECEIPT_ON: '1', PRINT_RECEIPT_KIND: 'winspool', PRINT_RECEIPT_QUEUE: 'ZYWELL Zy307',
+      PRINT_LABEL_ON: '1', PRINT_LABEL_KIND: 'winspool', PRINT_LABEL_QUEUE: 'XP-236B',
+    });
+    expect(env.receiptKind).toBe('winspool');
+    expect(env.receiptQueue).toBe('ZYWELL Zy307');
+    expect(env.labelKind).toBe('winspool');
+    expect(env.labelQueue).toBe('XP-236B');
+  });
+
+  it('通道带着队列名，报表里一眼看得出打给哪台', async () => {
+    const { createChannel, RAW_PRINT_SCRIPT } = await import('./transport.ts');
+    const ch = createChannel('winspool', { queue: 'XP-236B' });
+    expect(ch.kind).toBe('winspool');
+    expect(ch.label).toContain('XP-236B');
+    expect(RAW_PRINT_SCRIPT.endsWith('win-raw-print.ps1')).toBe(true);
+  });
+
+  it('没填打印机名字就明确报错，而不是发去一个空队列', async () => {
+    const { createChannel } = await import('./transport.ts');
+    expect(() => createChannel('winspool', { queue: '' })).toThrow(/打印机名称/);
+  });
+});
+
 describe('健康检查是真检测，不是「网线通了就报绿灯」', () => {
   it('缺纸：机器回「纸尽」位 → ok=false，并且说的是缺纸，不是缺纸以外的话', async () => {
     const net = await import('node:net');

@@ -1,19 +1,29 @@
 /**
  * 打印通道：把字节送到纸上
  *
- * 三种接法，覆盖你店里所有可能：
- * 1) net    —— 网络打印机 / 网口转 USB 打印服务器（推荐，最稳）。打印机 = 局域网 IP:9100
- * 2) usb    —— USB 线直插跑本程序的电脑（Linux 设备节点 /dev/usb/lp0，Windows 走共享名）
- * 3) system —— 交给操作系统打印队列（lp / Windows print 命令）
- * 4) mock   —— 演练模式，只记录不发，没接机器也能跑通全流程自测
+ * 五种接法，覆盖你店里所有可能：
+ * 1) net      —— 网络打印机 / 网口转 USB 打印服务器（推荐，最稳）。打印机 = 局域网 IP:9100
+ * 2) usb      —— USB 线直插跑本程序的电脑（Linux 设备节点 /dev/usb/lp0；Windows 只能是蓝牙串口）
+ * 3) winspool —— Windows 本机 USB：按打印机队列名直送（不共享、不经驱动重编码），详见 WinSpoolChannel
+ * 4) system   —— 交给操作系统打印队列（lp / Windows 共享名）
+ * 5) mock     —— 演练模式，只记录不发，没接机器也能跑通全流程自测
  *
  * 上层（调度器）只认 PrinterChannel 接口，底下换线完全不改业务代码。
  */
 
+import { spawn } from 'node:child_process';
 import net from 'node:net';
+import { fileURLToPath } from 'node:url';
 import { parseStatus, statusQuery, statusText, type PrinterStatus } from './escpos.ts';
 
-export type TransportKind = 'net' | 'usb' | 'system' | 'mock';
+export type TransportKind = 'net' | 'usb' | 'winspool' | 'system' | 'mock';
+
+/**
+ * Windows 本机 USB 打印用的 RAW 助手（P/Invoke 调 winspool.drv）。
+ * 用绝对路径：服务器可能从仓库根目录启动，也可能从 apps/server 启动。
+ * 文件在 scripts/ 下，四层 up 正好是仓库根。
+ */
+export const RAW_PRINT_SCRIPT = fileURLToPath(new URL('../../../../scripts/win-raw-print.ps1', import.meta.url));
 
 export interface PrinterChannel {
   readonly kind: TransportKind;
@@ -29,6 +39,8 @@ export interface ChannelOptions {
   device?: string;
   queue?: string;
   timeoutMs?: number;
+  /** 测试用：覆盖 Windows RAW 助手的路径 */
+  script?: string;
 }
 
 /** 网络打印机（RAW 9100） */
@@ -244,6 +256,133 @@ export class SystemChannel implements PrinterChannel {
   }
 }
 
+/**
+ * Windows 本机 USB 打印（直送 spooler，不需要共享）
+ *
+ * 为什么单独做一条通道：
+ *   - `usb` 在 Windows 没有可写设备节点（\\\\.\\USB001 是假的），只能靠蓝牙串口；
+ *   - `system` 的 Windows 实现走 `copy /b` 到共享名，前提是先开「打印机共享」，
+ *     收银机没开共享、或者 SMB 被安全策略挡住时，就卡在这一步；
+ *   - 直接调 spooler 的 RAW 数据类型，不共享、不过驱动渲染，插上 USB 就能打。
+ *
+ * 实现方式是 scripts/win-raw-print.ps1（Add-Type 调 winspool.drv 的
+ * StartDocPrinter(level 1, "RAW") / WritePrinter）。每次打印起一个 PowerShell 进程，
+ * 首次约 1 秒（编译 C#），之后每次几百毫秒——小票一天几十张，这点开销无所谓，
+ * 换来的是不依赖任何常驻服务或原生模块。
+ *
+ * 前提：这台打印机已经在「控制面板 → 设备和打印机」里，QUEUE 填它的名字。
+ * 驱动选「Generic / Text Only」也可以——RAW 数据类型下驱动不参与渲染。
+ */
+export class WinSpoolChannel implements PrinterChannel {
+  readonly kind = 'winspool' as const;
+  readonly label: string;
+  private queue: string;
+  private script: string;
+  private timeoutMs: number;
+
+  constructor(o: ChannelOptions = {}) {
+    if (!o.queue) throw new Error('Windows 本机打印缺少打印机名称（填控制面板里那台打印机的名字）');
+    this.queue = o.queue;
+    this.script = o.script ?? RAW_PRINT_SCRIPT;
+    // 首次调用要编译 C#，给足时间；正常打印几百毫秒
+    this.timeoutMs = o.timeoutMs ?? 20_000;
+    this.label = `Windows 打印队列 ${this.queue}`;
+  }
+
+  send(payload: Buffer): Promise<void> {
+    return new Promise((resolve, reject) => {
+      void (async () => {
+        if (process.platform !== 'win32') {
+          reject(new Error('winspool 只用于 Windows；Linux 请用 usb 或 system 通道'));
+          return;
+        }
+        const [os, path, fs] = await Promise.all([
+          import('node:os'),
+          import('node:path'),
+          import('node:fs/promises'),
+        ]);
+        const tmp = path.join(os.tmpdir(), `xc-print-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.bin`);
+        await fs.writeFile(tmp, payload);
+        const cleanup = (): void => {
+          void fs.unlink(tmp).catch(() => undefined);
+        };
+        const child = spawn(
+          'powershell.exe',
+          [
+            '-NoLogo', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass',
+            '-File', this.script,
+            '-Printer', this.queue,
+            '-Path', tmp,
+          ],
+          { windowsHide: true }
+        );
+        let msg = '';
+        child.stdout.on('data', (d) => (msg += String(d)));
+        child.stderr.on('data', (d) => (msg += String(d)));
+
+        const timer = setTimeout(() => {
+          child.kill();
+          cleanup();
+          reject(new Error(`Windows 打印超过 ${Math.round(this.timeoutMs / 1000)} 秒没返回：打印机可能卡纸或脱机，看一眼面板灯`));
+        }, this.timeoutMs);
+
+        child.once('error', (e) => {
+          clearTimeout(timer);
+          cleanup();
+          reject(new Error(`启动 PowerShell 失败：${e.message}`));
+        });
+        child.once('close', (code) => {
+          clearTimeout(timer);
+          cleanup();
+          if (code === 0) {
+            resolve();
+            return;
+          }
+          const raw = msg.trim();
+          if (raw.startsWith('OPENPRINTER:')) {
+            reject(new Error(`Windows 里找不到打印机「${this.queue}」：控制面板 → 设备和打印机，名字要一字不差（区分空格）`));
+          } else if (raw.startsWith('FILENOTFOUND:')) {
+            reject(new Error('打印临时文件没写成：磁盘满了或临时目录被安全软件锁住'));
+          } else if (raw.startsWith('ADDTYPE:')) {
+            reject(new Error(`Windows 打印助手启动失败：${raw.slice(8, 200)}`));
+          } else if (raw.startsWith('STARTDOC:') || raw.startsWith('STARTPAGE:') || raw.startsWith('WRITE:')) {
+            reject(new Error(`Windows 打印队列拒收（${raw}）：多半是打印机脱机、纸尽或驱动报错，先在控制面板打一张测试页`));
+          } else if (raw.startsWith('PARTIAL:')) {
+            reject(new Error(`只送出了部分字节（${raw.slice(8)}）：打印机缓冲区异常，重插 USB 再试`));
+          } else {
+            reject(new Error(`Windows 打印失败（退出码 ${code}）：${raw.slice(0, 200) || '没有返回原因'}`));
+          }
+        });
+      })().catch(reject);
+    });
+  }
+
+  health(): Promise<{ ok: boolean; detail: string }> {
+    return new Promise((resolve) => {
+      if (process.platform !== 'win32') {
+        resolve({ ok: false, detail: 'winspool 只用于 Windows' });
+        return;
+      }
+      const child = spawn(
+        'powershell.exe',
+        [
+          '-NoLogo', '-NoProfile', '-NonInteractive', '-Command',
+          `(Get-Printer -Name '${this.queue.replace(/'/g, "''")}' -ErrorAction Stop).Name`,
+        ],
+        { windowsHide: true }
+      );
+      let out = '';
+      child.stdout.on('data', (d) => (out += String(d)));
+      child.stderr.on('data', (d) => (out += String(d)));
+      child.once('error', () => resolve({ ok: false, detail: '找不到 PowerShell，无法检查 Windows 打印队列' }));
+      child.once('close', (code) => {
+        if (code === 0 && out.trim()) resolve({ ok: true, detail: `Windows 队列「${this.queue}」已安装` });
+        else resolve({ ok: false, detail: `Windows 里没有打印机「${this.queue}」：控制面板 → 设备和打印机，确认名字` });
+      });
+    });
+  }
+}
+
 /** 演练通道 */
 export class MockChannel implements PrinterChannel {
   readonly kind = 'mock' as const;
@@ -263,6 +402,8 @@ export function createChannel(kind: TransportKind, o: ChannelOptions = {}): Prin
       return new NetChannel(o);
     case 'usb':
       return new UsbChannel(o);
+    case 'winspool':
+      return new WinSpoolChannel(o);
     case 'system':
       return new SystemChannel(o);
     case 'mock':

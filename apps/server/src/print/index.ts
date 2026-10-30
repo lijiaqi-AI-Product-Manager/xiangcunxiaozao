@@ -55,7 +55,8 @@ export interface PrintEnv {
 export function readPrintEnv(env: NodeJS.ProcessEnv = process.env): PrintEnv {
   const kind = (v: string | undefined): TransportKind => {
     const k = (v ?? 'mock').toLowerCase() as TransportKind;
-    return ['net', 'usb', 'system', 'mock'].includes(k) ? k : 'mock';
+    // winspool：Windows 本机 USB。没写进白名单，配了也会被悄悄降级成 mock（不出纸）
+    return ['net', 'usb', 'winspool', 'system', 'mock'].includes(k) ? k : 'mock';
   };
   const enc = (v: string | undefined): Encoding =>
     v === 'utf8' ? 'utf8' : v === 'gb18030' ? 'gb18030' : 'gbk';
