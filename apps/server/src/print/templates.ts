@@ -8,6 +8,7 @@
  */
 
 import { CMD, PAPER_COLS, type Encoding, type PaperSize, barcode, lr, preamble, text, wrap } from './escpos.ts';
+import { DEFAULT_LABEL_GEOMETRY, renderCupLabelTspl, type LabelGeometry } from './tspl.ts';
 
 export interface PrintOrderItem {
   /** 菜品 uid，用来判断是不是饮品（饮品才出杯贴） */
@@ -54,6 +55,14 @@ export interface PrintConfig {
   cutter: boolean;
   /** 是否开钱箱（小票机 RJ11 口接钱箱） */
   cashDrawer: boolean;
+  /**
+   * 标签机用哪套指令。缺省 escpos（票据模式，按连续纸收字符流）。
+   * 机器切到 Label 模式后必须改成 tspl，否则等于朝只认 TSPL 的机器发 ESC/POS，
+   * 出来的是空白或几行乱码。
+   */
+  protocol?: 'escpos' | 'tspl';
+  /** TSPL 下这卷标签的实际尺寸（mm）；缺省 30×40 间隙纸 */
+  labelSize?: LabelGeometry;
 }
 
 /**
@@ -173,6 +182,8 @@ export function renderCups(
   label: { bigTable: boolean },
   cfg: PrintConfig
 ): Buffer[] {
+  // 标签模式走 TSPL：指令集、坐标系、折行、出纸全都不一样，整条路径分叉比在一处塞 if 干净
+  if (cfg.protocol === 'tspl') return renderCupsTspl(o, label, cfg);
   const cols = PAPER_COLS[cfg.paper];
   const W = (s: string): Buffer => text(s, cfg.encoding);
   // 取餐号是流水号（3 位），不是单号后 4 位——所以从单号里取「-」后面那段
@@ -200,4 +211,37 @@ export function renderCups(
     }
   }
   return cups;
+}
+
+/**
+ * 标签模式的杯贴：一张 TSPL 作业 = 一张标签。
+ *
+ * 和上面的 ESC/POS 版共用的只有「哪些菜出杯、一杯一张、序号怎么数」这三条业务规则；
+ * 排版完全是另一套（绝对坐标、毫米尺寸、Gap 定位）。
+ */
+function renderCupsTspl(o: PrintOrder, label: { bigTable: boolean }, cfg: PrintConfig): Buffer[] {
+  const geom = cfg.labelSize ?? DEFAULT_LABEL_GEOMETRY;
+  const shortNo = o.order_no.split('-')[1] ?? o.order_no.slice(-3);
+  const hhmm = o.created_at.slice(11, 16);
+  const out: Buffer[] = [];
+  for (const it of cupItems(o)) {
+    for (let k = 1; k <= it.qty; k++) {
+      out.push(
+        renderCupLabelTspl(
+          {
+            tableNo: o.table_no,
+            name: it.name,
+            spec: it.note ?? null,
+            time: hhmm,
+            orderNo: shortNo,
+            seq: it.qty > 1 ? { k, n: it.qty } : null,
+            bigTable: label.bigTable,
+          },
+          geom,
+          cfg.encoding
+        )
+      );
+    }
+  }
+  return out;
 }

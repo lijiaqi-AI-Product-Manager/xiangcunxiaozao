@@ -574,6 +574,10 @@ export function createApp(db: DB, brandDir: string, opts: AppOptions) {
       // 两台编码/纸宽各配各的，UI 分别展示，避免"一台对一台错"时看不出哪台要改
       encodings: { receipt: env.receiptEncoding, label: env.labelEncoding },
       papers: { receipt: env.receiptPaper, label: env.labelPaper },
+      // 标签机是「票据模式」还是「标签模式」决定发 ESC/POS 还是 TSPL；选错打出来就是空白，
+      // 页面上必须让人看见当前是哪一种，否则只能靠猜
+      labelProtocol: env.labelProtocol,
+      labelSize: env.labelSize,
       recent: printLog.recent(),
     });
   });

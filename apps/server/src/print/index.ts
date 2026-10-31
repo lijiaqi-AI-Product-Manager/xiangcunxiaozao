@@ -10,6 +10,7 @@
 import { createChannel, type TransportKind } from './transport.ts';
 import type { PrintOrder, ShopInfo } from './templates.ts';
 import type { Encoding } from './escpos.ts';
+import { DEFAULT_LABEL_GEOMETRY, type LabelGeometry } from './tspl.ts';
 import { PrintDispatcher, type PrintJobResult, type TargetName, type TargetSpec } from './dispatcher.ts';
 
 export { PrintDispatcher } from './dispatcher.ts';
@@ -23,6 +24,12 @@ const bool = (v: string | undefined, dflt: boolean): boolean =>
 const num = (v: string | undefined, dflt: number): number => {
   const x = Number(v);
   return Number.isFinite(x) && x >= 0 ? x : dflt;
+};
+
+/** 标签尺寸（mm）：必须是正数；填 0 或写错一律回落默认，免得整卷打废 */
+const mm = (v: string | undefined, dflt: number): number => {
+  const x = Number(v);
+  return Number.isFinite(x) && x > 0 ? x : dflt;
 };
 
 export interface PrintEnv {
@@ -45,6 +52,13 @@ export interface PrintEnv {
   labelPaper: '80' | '58';
   labelCutter: boolean;
   labelEncoding: Encoding;
+  /**
+   * 标签机指令集：escpos = 票据模式（连续纸），tspl = 标签模式（模切间隙纸）。
+   * 机器上按 FEED 开机看自检页：写 Receipt 就 escpos，写 Label 就 tspl。
+   */
+  labelProtocol: 'escpos' | 'tspl';
+  /** TSPL 下这卷标签的物理尺寸；协议是 escpos 时用不到 */
+  labelSize: LabelGeometry;
   /** 标签上「桌 12」用三倍字（占三行高）还是两倍字（省纸）；大桌号看得清，小字号贴得稳 */
   labelBigTable: boolean;
   retries: number;
@@ -86,6 +100,15 @@ export function readPrintEnv(env: NodeJS.ProcessEnv = process.env): PrintEnv {
     // 缺省 off：无切刀的芯烨 XP-236B 收到 GS V 会吐一截空白，宁可让人手撕
     labelCutter: bool(env.PRINT_LABEL_CUTTER, false),
     labelEncoding: enc(env.PRINT_LABEL_ENCODING ?? env.PRINT_ENCODING),
+    // 缺省 escpos：老配置不写这一行时保持原来的票据行为，不让升级悄悄改变出纸方式
+    labelProtocol: env.PRINT_LABEL_PROTOCOL === 'tspl' ? 'tspl' : 'escpos',
+    labelSize: {
+      widthMm: mm(env.PRINT_LABEL_WIDTH_MM, DEFAULT_LABEL_GEOMETRY.widthMm),
+      heightMm: mm(env.PRINT_LABEL_HEIGHT_MM, DEFAULT_LABEL_GEOMETRY.heightMm),
+      // 间隙 0 是合法值（连续纸），不能用 mm() 的「>0 才算数」规则把它吃掉
+      gapMm: env.PRINT_LABEL_GAP_MM === '0' ? 0 : mm(env.PRINT_LABEL_GAP_MM, DEFAULT_LABEL_GEOMETRY.gapMm),
+      font: env.PRINT_LABEL_FONT?.trim() || DEFAULT_LABEL_GEOMETRY.font,
+    },
     labelBigTable: bool(env.PRINT_LABEL_BIGTABLE, true),
     retries: num(env.PRINT_RETRIES, 2),
     backoffMs: num(env.PRINT_BACKOFF_MS, 800),
@@ -136,6 +159,8 @@ export function buildDispatcher(cfg: PrintEnv, sink?: (r: PrintJobResult) => voi
         encoding: cfg.labelEncoding,
         cutter: cfg.labelCutter,
         cashDrawer: false,
+        protocol: cfg.labelProtocol,
+        labelSize: cfg.labelSize,
       },
       bigTable: cfg.labelBigTable,
       retries: cfg.retries,

@@ -28,6 +28,9 @@ const PrintersSchema = z.object({
   /** 两台分机配置（老服务端没有这两块，做可选，避免升级顺序不一致时页面整块白屏） */
   encodings: z.object({ receipt: z.string(), label: z.string() }).optional(),
   papers: z.object({ receipt: z.string(), label: z.string() }).optional(),
+  /** 标签机工作在票据模式(escpos)还是标签模式(tspl)，以及标签纸尺寸 */
+  labelProtocol: z.enum(['escpos', 'tspl']).optional(),
+  labelSize: z.object({ widthMm: z.number(), heightMm: z.number(), gapMm: z.number(), font: z.string() }).optional(),
   recent: z.array(JobRow),
 });
 const JobResult = z.object({ target: z.string(), orderNo: z.string(), ok: z.boolean(), attempts: z.number(), pages: z.number(), error: z.string().optional(), at: z.string() });
@@ -129,6 +132,11 @@ export function PrintersPage() {
                   <strong>{TARGET_LABEL[t]}</strong>
                   <span className="muted small">
                     {data.papers?.[t] ? `纸宽 ${data.papers[t]}mm · ` : ''}
+                    {t === 'label' && data.labelProtocol
+                      ? data.labelProtocol === 'tspl'
+                        ? `标签模式 ${data.labelSize?.widthMm ?? 30}×${data.labelSize?.heightMm ?? 40}mm · `
+                        : '票据模式 · '
+                      : ''}
                     {!h || !h.enabled ? '未启用（在服务器的 .env 里打开 PRINT_' + t.toUpperCase() + '_ON）' : humanError(h.detail)}
                   </span>
                 </div>
